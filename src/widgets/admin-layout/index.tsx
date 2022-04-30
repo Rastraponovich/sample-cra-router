@@ -9,7 +9,9 @@ export const AdminLayout = () => {
     return (
         <>
             <Header title="AdminLayout">
-                <Nav routes={routes} privateRoutes={privateRoutes} />
+                <div className="hidden lg:flex">
+                    <Nav routes={routes} privateRoutes={privateRoutes} />
+                </div>
             </Header>
             <Drawer />
 

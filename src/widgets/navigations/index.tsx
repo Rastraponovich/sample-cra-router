@@ -16,7 +16,8 @@ export const Nav = memo(({ routes, privateRoutes, vertiacal }: NavProps) => {
                 vertiacal
                     ? "flex-col items-center space-y-4"
                     : "flex-row space-x-4 items-center divide-x-2",
-                "flex    divide-gray-200"
+                "    divide-gray-200",
+                "flex"
             )}
         >
             <ul

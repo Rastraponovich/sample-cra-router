@@ -9,7 +9,7 @@ export const BurgerButton = () => {
     const handleClick = useEvent(drawerModel.events.toggleDrawer)
     const isOpened = drawerModel.selectors.useOpenedDrawer()
     return (
-        <button onClick={handleClick}>
+        <button onClick={handleClick} className="lg:hidden block">
             {isOpened ? (
                 <XIcon className="h-6 w-6" />
             ) : (
@@ -27,7 +27,7 @@ export const Drawer = () => {
         <aside
             className={clsx(
                 isOpened ? " translate-x-0" : "translate-x-full",
-                "fixed right-0 h-full flex flex-col z-20 duration-150 transition-all w-full"
+                "fixed right-0 h-full flex lg:hidden flex-col z-20 duration-150 transition-all w-full"
             )}
         >
             <div

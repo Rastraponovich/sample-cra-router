@@ -9,7 +9,9 @@ export const MainLayout = () => {
     return (
         <>
             <Header title="MainLayout">
-                <Nav routes={routes} privateRoutes={privateRoutes} />
+                <div className="hidden lg:flex">
+                    <Nav routes={routes} privateRoutes={privateRoutes} />
+                </div>
             </Header>
             <Drawer />
             <main className="flex flex-col grow">
