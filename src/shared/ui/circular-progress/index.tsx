@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import { memo } from "react"
 
 interface CircularProgressProps {
@@ -30,7 +31,10 @@ export const CircularProgress = memo(
                 />
                 <circle
                     stroke="currentColor"
-                    className="text-blue-600 drop-shadow-sm"
+                    className={clsx(
+                        "text-blue-600 drop-shadow-sm ease-linear",
+                        progress === 0 ? "duration-150" : "duration-1000 "
+                    )}
                     fill="transparent"
                     strokeWidth={stroke}
                     strokeDasharray={circumference + " " + circumference}

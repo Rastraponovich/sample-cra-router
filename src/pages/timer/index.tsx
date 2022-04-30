@@ -1,5 +1,7 @@
+import clsx from "clsx"
 import { useEffect, useRef, useState } from "react"
 import { CircularProgress } from "shared/ui/circular-progress"
+import { WiggledDotted } from "shared/ui/wiggled-dotted"
 
 const MAX = 10
 
@@ -30,7 +32,10 @@ export const TimerPage = () => {
         if (progress >= max) {
             if (looped) return setProgress(0)
 
-            return setStarted(false)
+            return () => {
+                setStarted(false)
+                setProgress(0)
+            }
         }
     }, [progress, max, looped])
 
@@ -57,26 +62,29 @@ export const TimerPage = () => {
                                 radius={radius}
                                 progress={progress}
                             />
-                            <span className="absolute top-0 flex justify-center items-center h-full w-full text-4xl">
-                                {progress}
+                            <span className="absolute top-0 flex justify-center items-center h-full w-full text-4xl drop-shadow-lg">
+                                {started && progress}
                             </span>
                         </div>
+                        <div className="flex space-x-2">
+                            {!started ? (
+                                <button
+                                    className="px-4 py-2 text-center first-letter:uppercase bg-green-600 text-white rounded"
+                                    onClick={handleStart}
+                                >
+                                    start
+                                </button>
+                            ) : (
+                                <button
+                                    className="px-4 py-2 text-center first-letter:uppercase bg-rose-600 text-white rounded"
+                                    onClick={handleStop}
+                                >
+                                    stop
+                                </button>
+                            )}
+                        </div>
 
-                        {!started ? (
-                            <button
-                                className="px-4 py-2 text-center first-letter:uppercase bg-green-600 text-white rounded"
-                                onClick={handleStart}
-                            >
-                                start
-                            </button>
-                        ) : (
-                            <button
-                                className="px-2 py-1 text-center first-letter:uppercase bg-rose-600 text-white rounded"
-                                onClick={handleStop}
-                            >
-                                stop
-                            </button>
-                        )}
+                        <WiggledDotted started={started} />
                     </div>
                     <div className="col-span-1 flex flex-col space-y-2">
                         <label className="flex flex-col space-y-2 rounded p-2 bg-gray-200">
