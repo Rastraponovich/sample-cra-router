@@ -5,7 +5,7 @@ import { Home } from "../../pages/home"
 import { MainLayout } from "../../widgets/main-layout"
 import { Dashboard } from "../../pages/dashboard"
 import { CalculatorPage } from "../../pages/calculator"
-import { ProfilePage } from "../../pages/profile"
+import { TimerPage } from "../../pages/timer"
 import { LKPage } from "../../pages/lk"
 
 export const Router = () => {
@@ -14,7 +14,7 @@ export const Router = () => {
             <Route path="/" element={<MainLayout />}>
                 <Route index element={<Home />} />
                 <Route path="calculator" element={<CalculatorPage />} />
-                <Route path="profile" element={<ProfilePage />} />
+                <Route path="timer" element={<TimerPage />} />
             </Route>
             <Route path="admin" element={<AdminLayout />}>
                 <Route index element={<AdminHome />} />

@@ -5,10 +5,10 @@ import { CalculatorButton } from "../calculator-button"
 export const CalculatorActionsButtons = () => {
     return (
         <div className="grid grid-cols-2 w-full gap-2 content-start">
-            <ClearLastNumberButton />
             <ClearAllValuesButton />
-            <SummButton />
+            <ClearLastNumberButton />
             <MinusButton />
+            <SummButton />
             <MultiplyButton />
             <DelButton />
             <ResultButton />
@@ -23,7 +23,13 @@ const ClearLastNumberButton = () => {
 
 const ClearAllValuesButton = () => {
     const handleClick = useEvent(calculatorModel.events.clearAllButtonClicked)
-    return <CalculatorButton title="C" onClick={handleClick} />
+    return (
+        <CalculatorButton
+            title="C"
+            className="col-span-2 bg-rose-400 text-white hover:bg-rose-600"
+            onClick={handleClick}
+        />
+    )
 }
 
 const SummButton = () => {
@@ -58,7 +64,7 @@ const ResultButton = () => {
         <CalculatorButton
             title="="
             onClick={handleClick}
-            className="col-span-2"
+            className="col-span-2 bg-green-400 hover:bg-green-600 "
         />
     )
 }

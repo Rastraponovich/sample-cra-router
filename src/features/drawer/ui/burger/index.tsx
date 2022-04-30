@@ -27,7 +27,7 @@ export const Drawer = () => {
         <aside
             className={clsx(
                 isOpened ? " translate-x-0" : "translate-x-full",
-                "fixed right-0 h-full flex lg:hidden flex-col z-20 duration-150 transition-all w-full"
+                "fixed right-0 h-full flex lg:hidden flex-col z-20 duration-150 transition-all w-full drop-shadow-xl"
             )}
         >
             <div
