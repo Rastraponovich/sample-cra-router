@@ -17,14 +17,14 @@ export const Header = ({ children, title }: HeaderProps) => {
     const toggleCart = useEvent(showCartClicked)
     const cartQuantity = storeModel.selectors.useCartQuantity()
     return (
-        <header className="flex items-center justify-between bg-ocean px-4 py-2 text-white shadow-md duration-150  hover:shadow-lg md:space-x-12 md:px-8">
+        <header className="flex items-center justify-between bg-ocean px-4 py-2 text-white shadow-md duration-150  hover:shadow-lg sm:space-x-12 md:px-8">
             <NavLink to="/">
                 <h2 className="text-2xl font-bold duration-150 hover:drop-shadow-xl">
                     {title}
                 </h2>
             </NavLink>
             {children}
-            <div className="md:grow"></div>
+            <div className="sm:grow"></div>
             <div className="flex items-center space-x-2">
                 <a
                     href="tg://resolve?domain=WildeDJ"

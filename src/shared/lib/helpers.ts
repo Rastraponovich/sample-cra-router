@@ -8,6 +8,6 @@ export const routes: TRoute[] = [
 
 export const privateRoutes: TRoute[] = [
     { id: 1, path: "/dark-store", title: "Dark Store" },
-    { id: 2, path: "/admin/dashboard", title: "Dashboard" },
-    { id: 3, path: "/admin/lk", title: "LK" },
+    // { id: 2, path: "/admin/dashboard", title: "Dashboard" },
+    // { id: 3, path: "/admin/lk", title: "LK" },
 ]

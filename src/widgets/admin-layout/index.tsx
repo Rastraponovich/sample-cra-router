@@ -1,4 +1,3 @@
-import { ShoppingCartIcon } from "@heroicons/react/outline"
 import { Outlet } from "react-router-dom"
 import { Drawer } from "../../features/drawer"
 import { privateRoutes, routes } from "../../shared/lib"
@@ -9,7 +8,7 @@ import { Nav } from "../navigations"
 export const AdminLayout = () => {
     return (
         <>
-            <Header title="AdminLayout">
+            <Header title="DarkStore">
                 <div className="hidden lg:flex">
                     <Nav routes={routes} privateRoutes={privateRoutes} />
                 </div>

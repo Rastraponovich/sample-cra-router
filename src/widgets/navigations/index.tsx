@@ -1,5 +1,6 @@
 import clsx from "clsx"
 import { memo } from "react"
+import { useLocation } from "react-router-dom"
 import type { TRoute } from "../../shared/lib"
 import { NavLink } from "../../shared/ui"
 
@@ -10,12 +11,13 @@ interface NavProps {
 }
 
 export const Nav = memo(({ routes, privateRoutes, vertiacal }: NavProps) => {
+    const location = useLocation()
     return (
         <nav
             className={clsx(
                 vertiacal
                     ? "flex-col items-center space-y-4"
-                    : "flex-row space-x-4 items-center divide-x-2",
+                    : "flex-row items-center space-x-4 divide-x-2",
                 "    divide-gray-200",
                 "flex"
             )}
@@ -23,8 +25,8 @@ export const Nav = memo(({ routes, privateRoutes, vertiacal }: NavProps) => {
             <ul
                 className={clsx(
                     vertiacal
-                        ? "flex-col space-y-4 items-center w-full px-2"
-                        : "flex-row space-x-4 items-center",
+                        ? "w-full flex-col items-center space-y-4 px-2"
+                        : "flex-row items-center space-x-4",
                     "flex "
                 )}
             >
@@ -34,14 +36,15 @@ export const Nav = memo(({ routes, privateRoutes, vertiacal }: NavProps) => {
                         title={route.title}
                         key={route.id}
                         vertical
+                        selected={location.pathname === route.path}
                     />
                 ))}
             </ul>
             <ul
                 className={clsx(
                     vertiacal
-                        ? "flex-col space-y-4 items-center w-full px-2"
-                        : "flex-row space-x-4 items-center",
+                        ? "w-full flex-col items-center space-y-4 px-2"
+                        : "flex-row items-center space-x-4",
                     "flex "
                 )}
             >
@@ -51,6 +54,7 @@ export const Nav = memo(({ routes, privateRoutes, vertiacal }: NavProps) => {
                         title={route.title}
                         key={route.id}
                         vertical
+                        selected={location.pathname === route.path}
                     />
                 ))}
             </ul>
