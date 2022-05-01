@@ -21,7 +21,7 @@ export const CircularProgress = memo(
                 className="relative -rotate-90 fill-transparent"
             >
                 <circle
-                    className="text-gray-300 drop-shadow-md"
+                    className="text-gray-300 drop-shadow-md ease-linear duration-1000"
                     strokeWidth={stroke}
                     stroke="currentColor"
                     fill="transparent"

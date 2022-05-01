@@ -2,6 +2,12 @@ module.exports = {
     content: ["./src/**/*.{js,jsx,ts,tsx}"],
     theme: {
         extend: {
+            backgroundColor: {
+                ocean: "#015871",
+            },
+            fill: {
+                ocean: "#015871",
+            },
             keyframes: {
                 wave: {
                     "0%": {

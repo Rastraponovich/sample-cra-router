@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom"
-import { AdminHome } from "../../pages/admin-home"
+import { DarkStore } from "../../pages/dark-store"
 import { AdminLayout } from "../../widgets/admin-layout"
 import { Home } from "../../pages/home"
 import { MainLayout } from "../../widgets/main-layout"
@@ -16,8 +16,8 @@ export const Router = () => {
                 <Route path="calculator" element={<CalculatorPage />} />
                 <Route path="timer" element={<TimerPage />} />
             </Route>
-            <Route path="admin" element={<AdminLayout />}>
-                <Route index element={<AdminHome />} />
+            <Route path="dark-store" element={<AdminLayout />}>
+                <Route index element={<DarkStore />} />
                 <Route path="lk" element={<LKPage />} />
                 <Route path="dashboard" element={<Dashboard />} />
             </Route>

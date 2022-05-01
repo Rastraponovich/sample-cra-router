@@ -7,17 +7,27 @@ interface CalculatorButtonProps {
     full?: boolean
     className?: string
     value?: number | string
+    variant?: "normal" | "rose"
 }
 
 export const CalculatorButton = memo(
-    ({ title, onClick, full, className }: CalculatorButtonProps) => {
+    ({
+        title,
+        onClick,
+        full,
+        className,
+        variant = "normal",
+    }: CalculatorButtonProps) => {
         return (
             <button
                 onClick={onClick}
                 className={clsx(
                     full && "col-span-2 w-full",
-                    " bg-gray-50 text-gray-900 rounded p-2 text-center align-middle shadow-sm active:shadow-inner hover:bg-blue-600 hover:text-white duration-150",
-                    className
+                    "  text-gray-900 rounded p-2 text-center align-middle shadow-sm active:shadow-inner  hover:text-white duration-150",
+                    className,
+                    variant === "normal"
+                        ? "bg-gray-50 hover:bg-blue-600"
+                        : "bg-rose-400 hover:bg-rose-600"
                 )}
             >
                 {title}

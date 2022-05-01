@@ -21,7 +21,7 @@ export const TimerPage = () => {
         if (started) {
             const intervalId = setInterval(() => {
                 setProgress((p) => ++p)
-            }, customInterval)
+            }, customInterval * 1000)
             return () => {
                 clearInterval(intervalId)
             }
@@ -151,14 +151,13 @@ export const TimerPage = () => {
                             </span>
 
                             <input
-                                type="number"
-                                className="px-4 py-2 rounded"
-                                value={customInterval / 1000}
-                                step={0.1}
+                                type="range"
+                                value={customInterval}
+                                step={0.05}
+                                min={0.05}
+                                max={5}
                                 onChange={(e) =>
-                                    setCustomInterval(
-                                        Number(e.target.value) * 1000
-                                    )
+                                    setCustomInterval(Number(e.target.value))
                                 }
                             />
                         </label>

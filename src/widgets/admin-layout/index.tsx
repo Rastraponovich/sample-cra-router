@@ -15,9 +15,7 @@ export const AdminLayout = () => {
             </Header>
             <Drawer />
 
-            <main className="flex flex-col grow">
-                <Outlet />
-            </main>
+            <Outlet />
             <Footer />
         </>
     )

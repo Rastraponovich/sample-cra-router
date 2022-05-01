@@ -26,6 +26,7 @@ const ClearAllValuesButton = () => {
     return (
         <CalculatorButton
             title="C"
+            variant="rose"
             className="col-span-2 bg-rose-400 text-white hover:bg-rose-600"
             onClick={handleClick}
         />

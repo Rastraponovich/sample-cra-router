@@ -1,4 +1,9 @@
-import { CalculatorIcon, ClockIcon, WifiIcon } from "@heroicons/react/outline"
+import {
+    CalculatorIcon,
+    ClockIcon,
+    ShoppingCartIcon,
+    WifiIcon,
+} from "@heroicons/react/outline"
 import { useEffect, useState } from "react"
 import { NavLink, useParams, useSearchParams } from "react-router-dom"
 import { NavCard } from "shared/ui/nav-card"
@@ -14,14 +19,14 @@ export const Home = () => {
         return setStarted(false)
     }, [start])
     return (
-        <div className="px-10 py-5 flex flex-col">
+        <div className="flex flex-col px-10 py-5">
             <section className="flex flex-col">
                 <h2>Главная страница</h2>
 
-                <p className="bg-gray-200 shadow-md rounded px-4 py-10 font-semibold text-sm my-12">
+                <p className="my-12 rounded bg-gray-200 px-4 py-10 text-sm font-semibold shadow-md">
                     тут представлены разнообразные решения сделанные мной
                 </p>
-                <div className="grid md:grid-cols-3 gap-4 items-stretch md:mb-0 mb-20">
+                <div className="mb-20 grid items-stretch gap-4 md:mb-0 md:grid-cols-3">
                     <NavCard
                         title="calculator"
                         href="/calculator"
@@ -40,12 +45,18 @@ export const Home = () => {
                         description="simple waves animation with css"
                         icon={<WifiIcon className="h-10 w-10 " />}
                     />
+                    <NavCard
+                        title="Dark Store"
+                        href="/dark-store"
+                        description="simple store effector-way with feature sliced"
+                        icon={<ShoppingCartIcon className="h-10 w-10 " />}
+                    />
                 </div>
-                <div className="flex flex-col space-y-2 my-10">
+                <div className="my-10 flex flex-col space-y-2">
                     {start && (
                         <NavLink
                             to="/"
-                            className="z-50 rounded-xl bg-cyan-600 text-gray-900 duration-150 shadow-xl px-8 py-2 self-start hover:bg-orange-600 hover:text-white"
+                            className="z-50 self-start rounded-xl bg-cyan-600 px-8 py-2 text-gray-900 shadow-xl duration-150 hover:bg-orange-600 hover:text-white"
                         >
                             stop
                         </NavLink>
