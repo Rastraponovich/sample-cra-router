@@ -1,5 +1,9 @@
+import { ShoppingCartIcon } from "@heroicons/react/outline"
+import { useEvent } from "effector-react"
+import { storeModel } from "entities/store"
+import { showCartClicked } from "features/show-cart/model"
 import { ReactNode } from "react"
-import { NavLink } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 import { BurgerButton } from "../../features/drawer"
 
 interface HeaderProps {
@@ -8,15 +12,19 @@ interface HeaderProps {
 }
 
 export const Header = ({ children, title }: HeaderProps) => {
+    const location = useLocation()
+
+    const toggleCart = useEvent(showCartClicked)
+    const cartQuantity = storeModel.selectors.useCartQuantity()
     return (
-        <header className="flex items-center space-x-12 bg-ocean px-4 py-2 text-white  shadow-md duration-150 hover:shadow-lg">
+        <header className="flex items-center justify-between bg-ocean px-4 py-2 text-white shadow-md duration-150  hover:shadow-lg md:space-x-12 md:px-8">
             <NavLink to="/">
                 <h2 className="text-2xl font-bold duration-150 hover:drop-shadow-xl">
                     {title}
                 </h2>
             </NavLink>
             {children}
-            <div className="grow"></div>
+            <div className="md:grow"></div>
             <div className="flex items-center space-x-2">
                 <a
                     href="tg://resolve?domain=WildeDJ"
@@ -48,6 +56,14 @@ export const Header = ({ children, title }: HeaderProps) => {
                     </svg>
                 </a>
             </div>
+            {location.pathname === "/dark-store" && (
+                <button onClick={toggleCart} className="relative">
+                    <span className="absolute -top-2 -right-2  text-sm font-bold ">
+                        {cartQuantity > 0 && cartQuantity}
+                    </span>
+                    <ShoppingCartIcon className="h-6 w-6 text-white" />
+                </button>
+            )}
             <BurgerButton />
         </header>
     )

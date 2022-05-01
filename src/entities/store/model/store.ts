@@ -6,6 +6,10 @@ const $visibledCart = createStore<boolean>(false)
 
 const $cart = createStore<ICartGun[]>([])
 
+const $cartQuantity = $cart.map((state) =>
+    state.reduce((acc, val) => acc + val.quantity, 0)
+)
+
 const $cartKeys = $cart.map((cart) => cart.map((item) => item.id))
 
 const $summaryCart = $cart.map((cart) =>
@@ -23,10 +27,12 @@ const useVisibled = () => useStore($visibledCart)
 const useGetQuantity = (id: number) =>
     useStore($cart).find((item) => item.id === id)?.quantity
 
+const useCartQuantity = () => useStore($cartQuantity)
 export const selectors = {
     useCart,
     useSummaryCart,
     useCartKeys,
     useGetQuantity,
     useVisibled,
+    useCartQuantity,
 }

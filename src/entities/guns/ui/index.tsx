@@ -45,7 +45,7 @@ export const GunList = () => {
     const keys = storeModel.selectors.useCartKeys()
 
     return (
-        <div className="grid grid-cols-2 gap-4 md:col-span-2">
+        <div className="grid gap-4 md:col-span-2 md:grid-cols-2">
             {guns.map((gun) => (
                 <GunCard
                     gun={gun}
