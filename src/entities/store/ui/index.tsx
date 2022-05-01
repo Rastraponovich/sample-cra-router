@@ -1,4 +1,5 @@
 import { memo } from "react"
+import { Modal } from "shared/ui/modal"
 import { storeModel } from ".."
 import type { ICartGun } from "../lib"
 
@@ -13,18 +14,12 @@ export const Cart = () => {
                     {cart
                         .filter((item) => item.quantity > 0)
                         .map((item, idx) => (
-                            <CartItem
-                                cartItem={item}
-                                key={item.id}
-                                idx={++idx}
-                            />
+                            <CartItem cartItem={item} key={item.id} idx={++idx} />
                         ))}
                 </ul>
             ) : (
                 <div className="flex items-center py-4 px-2 text-gray-900 ">
-                    <span className=" w-full bg-gray-50 px-2 py-1 text-center font-bold">
-                        корзина пуста
-                    </span>
+                    <span className=" w-full bg-gray-50 px-2 py-1 text-center font-bold">корзина пуста</span>
                 </div>
             )}
             {total > 0 && (
@@ -51,9 +46,7 @@ const CartItem = memo(({ idx, cartItem }: CartItemProps) => {
             <span className="after:content-['.']">{idx}</span>
             <span className="grow font-bold">{cartItem.model}</span>
             <span>{cartItem.price.toLocaleString()}$</span>
-            <span className="before:text-sm before:content-['x']">
-                {cartItem.quantity}
-            </span>
+            <span className="before:text-sm before:content-['x']">{cartItem.quantity}</span>
             <span className="before:mr-1 before:text-sm before:content-['=']">
                 {(cartItem.quantity * cartItem.price).toLocaleString()}$
             </span>

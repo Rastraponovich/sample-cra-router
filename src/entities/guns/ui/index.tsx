@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import { storeModel } from "entities/store"
 import { AddToCartButton } from "features/add-to-cart"
 import { DecrementButton } from "features/decrement"
@@ -15,12 +16,7 @@ const GunCard = memo(({ gun, existed }: GunProps) => {
     const quantity = storeModel.selectors.useGetQuantity(gun.id)
     return (
         <figure className="flex flex-col  space-y-4 rounded bg-white shadow-lg">
-            <img
-                src={gun.image}
-                height={100}
-                width={300}
-                className="h-[100px]"
-            />
+            <img src={gun.image} height={100} width={300} className="h-[100px]" />
             <figcaption className="flex  flex-col space-y-2 p-4">
                 <h2 className="text-2xl font-semibold">{gun.model}</h2>
                 <span>{gun.price.toLocaleString()}$</span>
@@ -43,15 +39,12 @@ GunCard.displayName = "GunCard"
 export const GunList = () => {
     const guns = gunsModel.selectors.useGuns()
     const keys = storeModel.selectors.useCartKeys()
+    const visibledCart = storeModel.selectors.useVisibled()
 
     return (
-        <div className="grid gap-4 md:col-span-2 md:grid-cols-2">
+        <div className={clsx("grid gap-4  md:grid-cols-2", visibledCart ? "md:col-span-2" : "md:col-span-3")}>
             {guns.map((gun) => (
-                <GunCard
-                    gun={gun}
-                    key={gun.id}
-                    existed={keys.some((item) => item === gun.id)}
-                />
+                <GunCard gun={gun} key={gun.id} existed={keys.some((item) => item === gun.id)} />
             ))}
         </div>
     )
