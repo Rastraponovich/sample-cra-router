@@ -22,6 +22,46 @@ code {
     min-height: 100vh;
     position: relative;
 }
+@font-face {
+    font-family: "El Messiri", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    src: url(/public/assets/ritmstyle/fonts/El_Messiri/ElMessiri-Regular.ttf)
+            format("truetype"),
+        local("El Messiri");
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "El Messiri", sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    src: url(/public/assets/ritmstyle/fonts/El_Messiri/ElMessiri-Medium.ttf)
+            format("truetype"),
+        local("El Messiri");
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "El Messiri", sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    src: url(/public/assets/ritmstyle/fonts/El_Messiri/ElMessiri-SemiBold.ttf)
+            format("truetype"),
+        local("El Messiri");
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "El Messiri", sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    src: url(/public/assets/ritmstyle/fonts/El_Messiri/ElMessiri-Bold.ttf)
+            format("truetype"),
+        local("El Messiri");
+    font-display: swap;
+}
+
 @layer components {
     .bg-wave {
         background: radial-gradient(
@@ -33,7 +73,7 @@ code {
         @apply overflow-hidden;
     }
     .ocean {
-        @apply h-[5%] w-full absolute bottom-0 left-0 bg-[#015871];
+        @apply absolute bottom-0 left-0 h-[5%] w-full bg-[#015871];
     }
     .wave {
         background: url(https://cdn.kcak11.com/codepen_assets/wave_animation/wave.svg)

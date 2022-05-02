@@ -2,11 +2,20 @@ module.exports = {
     content: ["./src/**/*.{js,jsx,ts,tsx}"],
     theme: {
         extend: {
+            backgroundImage: {
+                "ritm-hero": "url('/public/assets/ritmstyle/hero-bg.jpg')",
+            },
             backgroundColor: {
                 ocean: "#015871",
             },
             fill: {
                 ocean: "#015871",
+            },
+            fontFamily: {
+                // Montserrat: "'Montserrat', sans-serif",
+                // Rubik: "'Rubik', sans-serif",
+                // RobotoMono: "'Roboto Mono', monospace",
+                ElMessiri: "'El Messiri', sans-serif",
             },
             keyframes: {
                 wave: {

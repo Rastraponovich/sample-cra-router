@@ -7,6 +7,8 @@ import { Dashboard } from "../../pages/dashboard"
 import { CalculatorPage } from "../../pages/calculator"
 import { TimerPage } from "../../pages/timer"
 import { LKPage } from "../../pages/lk"
+import { RitmStyleLayout } from "widgets/ritm-style-layout"
+import { RitmStypePage } from "pages/ritm-style"
 
 export const Router = () => {
     return (
@@ -20,6 +22,10 @@ export const Router = () => {
                 <Route index element={<DarkStore />} />
                 <Route path="lk" element={<LKPage />} />
                 <Route path="dashboard" element={<Dashboard />} />
+            </Route>
+
+            <Route path="ritm-style" element={<RitmStyleLayout />}>
+                <Route index element={<RitmStypePage />} />
             </Route>
         </Routes>
     )
