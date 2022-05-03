@@ -27,7 +27,7 @@ export const RitmStypePage = () => {
         return setSelectedReview(id)
     }
     return (
-        <main className="grow bg-[#162831] px-[100px] xl:px-[200px]  2xl:px-[312px]">
+        <main className="grow bg-[#162831] px-10 md:px-[100px] xl:px-[200px]  2xl:px-[312px]">
             <header className="flex items-center justify-between  py-[30px] font-sans text-white">
                 <NavLink to="/ritm-style">
                     <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -62,7 +62,7 @@ export const RitmStypePage = () => {
             </header>
             <main className="flex flex-col pt-5">
                 {/* hero */}
-                <section className="flex flex-col items-center justify-center rounded-[10px] bg-ritm-hero bg-center bg-no-repeat pt-[136px] pb-[210px] text-center font-ElMessiri font-bold text-white">
+                <section className="flex flex-col items-center justify-center rounded-[10px] bg-center bg-no-repeat pt-[136px] pb-[210px] text-center font-ElMessiri font-bold text-white sm:bg-ritm-hero">
                     <div className="mb-5 flex items-center 2xl:mb-10">
                         <svg width="28" height="14" viewBox="0 0 28 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M0 0H14C21.732 0 28 6.26801 28 14H14C6.26801 14 0 7.73199 0 0Z" fill="white" />
@@ -74,7 +74,7 @@ export const RitmStypePage = () => {
                         </svg>
                     </div>
 
-                    <h2 className="text-[64px] leading-[90px]">Акватерапия RitmStyle</h2>
+                    <h2 className="text-2xl leading-[90px] sm:text-[64px]">Акватерапия RitmStyle</h2>
                 </section>
 
                 {/* seans */}
@@ -92,7 +92,7 @@ export const RitmStypePage = () => {
                         </svg>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 text-2xl font-bold leading-[33,6] xl:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-6 text-2xl font-bold leading-[33,6] sm:grid-cols-2 xl:grid-cols-3">
                         {__seances__.map((seance) => (
                             <SeanceCard seance={seance} key={seance.id} />
                         ))}
@@ -414,7 +414,7 @@ const SeanceCard = memo(({ seance }: SeanceCardProps) => {
                     : `linear-gradient(0deg, rgba(1, 138, 190, 0.5), rgba(1, 138, 190, 0.5)), url(/assets/ritmstyle/${seance.image}), #8E8E8E`,
                 backgroundSize: "cover",
             }}
-            className="col-span-1 flex h-[258px] items-end rounded-[10px] px-10 pb-[30px] first:row-span-2 first:h-full"
+            className="col-span-1 flex h-[258px] items-end rounded-[10px] px-10 pb-[30px] sm:first:row-span-2 sm:first:h-full"
         >
             <span>{seance.text}</span>
         </div>
