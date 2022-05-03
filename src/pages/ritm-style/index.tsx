@@ -62,19 +62,19 @@ export const RitmStypePage = () => {
             </header>
             <main className="flex flex-col pt-5">
                 {/* hero */}
-                <section className="flex flex-col items-center justify-center rounded-[10px] bg-center bg-no-repeat pt-[136px] pb-[210px] text-center font-ElMessiri font-bold text-white sm:bg-ritm-hero">
-                    <div className="mb-5 flex items-center 2xl:mb-10">
+                <section className="-mx-10 flex flex-col items-center justify-center rounded-[10px] bg-ritm-hero bg-center bg-no-repeat pt-[136px] pb-[210px] text-center font-ElMessiri font-bold text-white sm:-mx-0">
+                    <div className="mb-5 flex items-center px-8 sm:px-0 2xl:mb-10">
                         <svg width="28" height="14" viewBox="0 0 28 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M0 0H14C21.732 0 28 6.26801 28 14H14C6.26801 14 0 7.73199 0 0Z" fill="white" />
                         </svg>
-                        <h3 className="mx-[66px] text-2xl">Укрепление здоровья</h3>
+                        <h3 className="mx-[66px]  text-2xl ">Укрепление здоровья</h3>
 
                         <svg width="28" height="14" viewBox="0 0 28 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M28 0H14C6.26801 0 0 6.26801 0 14H14C21.732 14 28 7.73199 28 0Z" fill="white" />
                         </svg>
                     </div>
 
-                    <h2 className="text-2xl leading-[90px] sm:text-[64px]">Акватерапия RitmStyle</h2>
+                    <h2 className="text-4xl leading-[90px] sm:text-[64px]">Акватерапия RitmStyle</h2>
                 </section>
 
                 {/* seans */}
