@@ -1,12 +1,8 @@
-import { createEffect, createEvent, createStore, sample } from "effector"
+import { combine, createEffect, createEvent, createStore, sample } from "effector"
 import { createGate, useStore } from "effector-react"
 import { debug, reset } from "patronum"
-import {
-    generateChessBoard,
-    generateFigures,
-    __chessBoard__,
-} from "../lib/helpers"
-import type { TCell, TChessBoard, TFigure } from "../lib/models"
+import { generateChessBoard, generateFigures, __chessBoard__ } from "../lib/helpers"
+import { EFigureColor, EFigureType, TCell, TChessBoard, TFigure } from "../lib/models"
 
 export const Game = createGate("ChessBoardPage")
 
@@ -23,20 +19,18 @@ sample({
     target: renderFiguresFx,
 })
 
-const $chessBoard = createStore<TChessBoard>([]).on(
-    renderChessBoardFx.doneData,
-    (_, payload) => payload
-)
+const $chessBoard = createStore<TChessBoard>([]).on(renderChessBoardFx.doneData, (_, payload) => payload)
 
-export const $figures = createStore<TFigure[]>([]).on(
-    renderFiguresFx.doneData,
-    (_, payload) => payload
-)
+export const $figures = createStore<TFigure[]>([]).on(renderFiguresFx.doneData, (_, payload) => payload)
 
-export const $figuresCount = createStore<number>(0).on(
-    $figures,
-    (_, state) => state.length
-)
+const $playersFigures = combine($figures, (figures) => {
+    return {
+        white: figures.filter((item) => item.color === EFigureColor.LIGHT),
+        black: figures.filter((item) => item.color === EFigureColor.DARK),
+    }
+})
+
+export const $figuresCount = createStore<number>(0).on($figures, (_, state) => state.length)
 
 sample({
     clock: renderFiguresFx.doneData,
@@ -45,9 +39,7 @@ sample({
     fn: ([board, figures]: [TChessBoard, TFigure[]], _) => {
         return board.map((row) => {
             return row.map((cell) => {
-                const candidate = figures.find(
-                    (figure) => figure.x === cell.x && figure.y === cell.y
-                )
+                const candidate = figures.find((figure) => figure.x === cell.x && figure.y === cell.y)
 
                 if (candidate) {
                     return { ...cell, figure: candidate } as TCell
@@ -93,11 +85,44 @@ sample({
 
     source: $figures,
     fn: (figures, id) => {
-        if (id !== null)
-            return figures.find((item) => item.id === id) as TFigure
+        if (id !== null) return figures.find((item) => item.id === id) as TFigure
         return null
     },
     target: $selectedFigure,
+})
+
+sample({
+    clock: $selectedFigure,
+    source: $chessBoard,
+    fn: (chessBoard, selected) => {
+        const candidate = selected !== null
+
+        if (candidate) {
+            if (selected.type === EFigureType.PAWN && selected.color === EFigureColor.DARK) {
+                return chessBoard.map((row, rowId) => {
+                    if (rowId === selected.y + 1)
+                        return row.map((cell) => {
+                            if (cell.x === selected.x) return { ...cell, canMove: true }
+                            return cell
+                        })
+                    return row
+                })
+            }
+
+            if (selected.type === EFigureType.ROOK && selected.color === EFigureColor.DARK) {
+                return chessBoard.map((row, rowId) => {
+                    if (rowId > selected.y && rowId < 8)
+                        return row.map((cell) => {
+                            if (cell.x === selected.x) return { ...cell, canMove: true }
+                            return cell
+                        })
+                    return row
+                })
+            }
+        }
+        return chessBoard.map((row) => row.map((cell) => ({ ...cell, canMove: false })))
+    },
+    target: $chessBoard,
 })
 
 reset({ clock: Game.close, target: [$figures, $chessBoard] })
@@ -109,4 +134,5 @@ export const events = {
 const useSelectedFigureId = () => useStore($selectedFigureId)
 
 const useChessBoard = () => useStore($chessBoard)
-export const selectors = { useChessBoard, useSelectedFigureId }
+const usePlayerFigures = () => useStore($playersFigures)
+export const selectors = { useChessBoard, useSelectedFigureId, usePlayerFigures }

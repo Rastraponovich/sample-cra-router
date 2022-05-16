@@ -1,13 +1,5 @@
 import { v4 as uuid } from "uuid"
-import {
-    EFigureColor,
-    EFigureType,
-    TCell,
-    TChessBoard,
-    TColor,
-    TFigure,
-    TFigureType,
-} from "./models"
+import { EFigureColor, EFigureType, TCell, TChessBoard, TColor, TFigure, TFigureType } from "./models"
 
 const selectColor = (row: number, cell: number): TColor => {
     if (row % 2) {
@@ -32,6 +24,7 @@ export const generateChessBoard = () => {
                 color: selectColor(row, cell),
                 // color: "dark",
                 figure: null,
+                canMove: false,
             })
         }
         chessBoard.push(rows)
@@ -47,12 +40,7 @@ interface IGenerateFigureProps {
     y: number
 }
 
-const generateFigure = ({
-    x,
-    y,
-    color,
-    type,
-}: IGenerateFigureProps): TFigure => {
+const generateFigure = ({ x, y, color, type }: IGenerateFigureProps): TFigure => {
     return { color, type, x, y, id: uuid() }
 }
 

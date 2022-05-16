@@ -1,52 +1,53 @@
 import clsx from "clsx"
-import { useEvent, useGate, useList, useStore } from "effector-react"
+import { useEvent, useGate, useStore } from "effector-react"
 import { chessModel } from "entities/chess"
 import { EFigureColor, TCell, TFigure } from "entities/chess/lib/models"
-import {
-    $figures,
-    $figuresCount,
-    events,
-    Game,
-    selectors,
-} from "entities/chess/model"
-import { memo } from "react"
+import { $figuresCount, events, Game, selectors } from "entities/chess/model"
+import { memo, useRef } from "react"
+import { ChessSprites } from "shared/ui/icons/sprites/chess"
 
 export const ChessBoardPage = () => {
     useGate(Game)
-    const selectedFigureid = selectors.useSelectedFigureId()
-    const handleClick = useEvent(events.selectFigure)
 
-    const count = useStore($figuresCount)
+    const players = selectors.usePlayerFigures()
+
     return (
         <section className="flex flex-col">
             <h2>Chess Page</h2>
 
-            <div className="flex flex-col items-center px-10">
-                <ChessBoard />
-                <div className="mt-4 px-4">
-                    <ul className="grid grid-cols-11 gap-2">
-                        {useList($figures, {
-                            keys: [count, selectedFigureid, handleClick],
-                            fn: (figure) => (
-                                <li
-                                    onClick={() => {
-                                        handleClick({ figure } as TCell)
-                                    }}
-                                    className={clsx(
-                                        figure.color === EFigureColor.DARK
-                                            ? "bg-orange-300 "
-                                            : "bg-gray-300",
+            <div className="grid grid-cols-4 gap-x-2 px-10">
+                <div className="flex flex-col justify-between">
+                    <div className="flex flex-col space-y-2 rounded border p-2">
+                        <h2>Black Player</h2>
 
-                                        "border p-2 text-sm",
-                                        selectedFigureid === figure.id &&
-                                            "rounded border-blue-400 text-blue-400"
-                                    )}
-                                >
-                                    {figure.type}
+                        <ul className="grid grid-cols-4 gap-1">
+                            {players.black.map((figure) => (
+                                <li key={figure.id}>
+                                    <ChessSprites
+                                        name={`${figure.type.toLowerCase()}-${figure.color.toLowerCase()}`}
+                                        className="h-6 w-6"
+                                    />
                                 </li>
-                            ),
-                        })}
-                    </ul>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="flex flex-col space-y-2 rounded border p-2">
+                        <h2>White Player</h2>
+
+                        <ul className="grid grid-cols-4 gap-1">
+                            {players.white.map((figure) => (
+                                <li key={figure.id}>
+                                    <ChessSprites
+                                        name={`${figure.type.toLowerCase()}-${figure.color.toLowerCase()}`}
+                                        className="h-6 w-6"
+                                    />
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+                <div className="col-span-3">
+                    <ChessBoard />
                 </div>
             </div>
         </section>
@@ -63,11 +64,12 @@ const Cell = memo(({ cell }: CellProps) => {
         <div
             onClick={() => handleClick(cell)}
             className={clsx(
-                "flex h-16 w-16",
-                cell.color === "dark" ? "bg-orange-300" : "bg-gray-300"
+                "flex h-16 w-16 border",
+                cell.color === "dark" ? "bg-orange-300" : "bg-gray-300",
+                cell.canMove && cell.figure === null && "bg-blue-400/50"
             )}
         >
-            <Figure figure={cell.figure} />
+            {cell.figure !== null && <Figure figure={cell.figure} />}
         </div>
     )
 })
@@ -79,46 +81,24 @@ interface FigureProps {
 }
 
 const Figure = memo(({ figure }: FigureProps) => {
-    const images: any = {
-        KING: {
-            LIGHT: "\u2654",
-            DARK: "\u265A",
-        },
-        PAWN: {
-            LIGHT: "\u2659",
-            DARK: "\u265F",
-        },
-        ROOK: {
-            LIGHT: "\u2656",
-            DARK: "\u265C",
-        },
-        QUEEN: {
-            LIGHT: "\u2655",
-            DARK: "\u265B",
-        },
-        KNIGHT: {
-            LIGHT: "\u2658",
-            DARK: "\u265E",
-        },
-        BISHOP: {
-            LIGHT: "\u2657",
-            DARK: "\u265D",
-        },
-    }
-
     const selectedFigure = selectors.useSelectedFigureId()
+    const ref = useRef<SVGSVGElement | null>(null)
 
     return (
         <span
             className={clsx(
                 "flex w-full grow items-center justify-center p-2 text-center  text-5xl ",
                 selectedFigure === figure?.id && "mb-2",
-                figure?.color === EFigureColor.DARK
-                    ? "text-gray-900"
-                    : "text-white"
+                figure?.color === EFigureColor.DARK ? "text-gray-900" : "text-white"
             )}
         >
-            {figure !== null ? images[figure?.type][figure?.color] : null}
+            {figure !== null && (
+                <ChessSprites
+                    name={`${figure.type.toLowerCase()}-${figure.color.toLowerCase()}`}
+                    ref={ref}
+                    className="h-16 w-16"
+                />
+            )}
         </span>
     )
 })
@@ -143,7 +123,7 @@ const ChessBoard = () => {
     const chessboard = chessModel.selectors.useChessBoard()
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col">
             {chessboard.map((rows, idx) => (
                 <Row key={idx} rows={rows} />
             ))}

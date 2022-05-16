@@ -3,19 +3,14 @@ export type TCell = {
     y: number
     figure: TFigure | null
     color: TColor
+    canMove: boolean
 }
 
 export type TChessBoard = TCell[][]
 
 export type TColor = "dark" | "light"
 
-export type TFigureType =
-    | "PAWN"
-    | "ROOK"
-    | "KING"
-    | "KNIGHT"
-    | "QUEEN"
-    | "BISHOP"
+export type TFigureType = "PAWN" | "ROOK" | "KING" | "KNIGHT" | "QUEEN" | "BISHOP"
 
 export enum EFigureType {
     PAWN = "PAWN",
