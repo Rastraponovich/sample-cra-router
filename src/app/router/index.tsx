@@ -9,6 +9,7 @@ import { TimerPage } from "../../pages/timer"
 import { LKPage } from "../../pages/lk"
 import { RitmStyleLayout } from "widgets/ritm-style-layout"
 import { RitmStypePage } from "pages/ritm-style"
+import { ChessBoardPage } from "pages/chess"
 
 export const Router = () => {
     return (
@@ -17,6 +18,7 @@ export const Router = () => {
                 <Route index element={<Home />} />
                 <Route path="calculator" element={<CalculatorPage />} />
                 <Route path="timer" element={<TimerPage />} />
+                <Route path="chess" element={<ChessBoardPage />} />
             </Route>
             <Route path="dark-store" element={<AdminLayout />}>
                 <Route index element={<DarkStore />} />
