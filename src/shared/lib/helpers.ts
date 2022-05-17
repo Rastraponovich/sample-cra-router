@@ -5,6 +5,7 @@ export const routes: TRoute[] = [
     { id: 2, path: "/calculator", title: "Calculator" },
     { id: 3, path: "/timer", title: "Timer" },
     { id: 4, path: "chess", title: "Chess" },
+    { id: 5, path: "xo", title: "XO Game" },
 ]
 
 export const privateRoutes: TRoute[] = [
