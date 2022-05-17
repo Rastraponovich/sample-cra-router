@@ -1,22 +1,25 @@
-import { createEvent, createStore, sample } from "effector"
+import { createEvent, createStore, guard, sample } from "effector"
 import { useStore } from "effector-react"
+import { reset } from "patronum"
 import { ChangeEvent } from "react"
-import { THistoryRecord, TPlayer, TXOCell, TXOGameState } from "../lib"
+import { api, THistoryRecord, TPlayer, TXOCell, TXOGameState } from "../lib"
 
 const startGame = createEvent()
 
-const $gameState = createStore<TXOGameState>(null).on(
-    startGame,
-    () => "started"
-)
+const $gameState = createStore<TXOGameState>(null).on(startGame, () => "started")
+
+const $gameEnded = createStore<boolean>(false).on($gameState, (_, state) => {
+    if (state === "ended") return true
+    return false
+})
 
 const setReadyPlayer = createEvent<string>()
 
 const changePlayer = createEvent<ChangeEvent<HTMLInputElement>>()
 
 const $players = createStore<Record<number, TPlayer>>({
-    1: { name: "platyer1", id: 1, color: "red", ready: true },
-    2: { name: "player2", id: 2, color: "blue", ready: true },
+    1: { name: "plater1", id: 1, color: "red", ready: false },
+    2: { name: "player2", id: 2, color: "blue", ready: false },
 })
     .on(setReadyPlayer, (state, id) => ({
         ...state,
@@ -35,15 +38,9 @@ const $playersReady = createStore<boolean>(false).on($players, (_, players) => {
     return false
 })
 
-const $currentPlayerId = createStore<number | null>(1).on(
-    $gameState,
-    (_, state) => {
-        if (state === "started") return 1
-        return null
-    }
-)
+const $currentPlayerId = createStore<number>(1)
 
-const $currentPlayer = createStore<TPlayer | null>(null)
+const $currentPlayer = createStore<TPlayer | null>({ name: "player1", id: 1, color: "red", ready: true })
 
 sample({
     clock: $currentPlayerId,
@@ -76,19 +73,8 @@ const $gameFiled = createStore<TXOCell[]>([
     { id: 9, playerId: null, empty: true },
 ])
 
-sample({
-    clock: $gameFiled,
-    source: $currentPlayerId,
-    filter: (current, _) => current !== null,
-    fn: (current, _) => {
-        if (current === 1) return 2
-        return 1
-    },
-
-    target: $currentPlayerId,
-})
-
 const $moveHistory = createStore<THistoryRecord[]>([])
+const $movesCount = createStore<number>(1).on($moveHistory, (state, history) => history.length + 1)
 
 const moved = createEvent<number>()
 
@@ -112,10 +98,7 @@ sample({
 
     //@ts-ignore
     fn: ([current, history]: [number, THistoryRecord[]], event) => {
-        return [
-            ...history,
-            { player: current, cell: event, id: history.length },
-        ] as THistoryRecord[]
+        return [...history, { player: current, cell: event, id: history.length }] as THistoryRecord[]
     },
     target: $moveHistory,
 })
@@ -127,8 +110,7 @@ sample({
     //@ts-ignore
     fn: ([current, field]: [number, TXOCell[]], id) => {
         return field.map((item) => {
-            if (item.id === id)
-                return { ...item, playerId: current, empty: false } as TXOCell
+            if (item.id === id) return { ...item, playerId: current, empty: false } as TXOCell
 
             return item as TXOCell
         })
@@ -136,24 +118,75 @@ sample({
     target: $gameFiled,
 })
 
-// sample({
-//     clock: $gameFiled,
+const checkWinnerMove = guard({
+    clock: $gameFiled,
+    source: $currentPlayer,
+    filter: (player, board) => {
+        const result = api.checkWinner(board, player!)
+        if (result.winner) return true
+        return false
+    },
+})
+const checkNormalMove = guard({
+    clock: $gameFiled,
+    source: $currentPlayer,
+    filter: (player, board) => {
+        const result = api.checkWinner(board, player!)
+        if (result.winner) return false
+        return true
+    },
+})
 
-//     fn: (fields) => {
-//         console.log(fields)
-//     },
-// })
+const $winnerPlayer = createStore<TPlayer | null>(null)
+
+sample({
+    clock: checkWinnerMove,
+    source: $currentPlayer,
+    fn: (result) => result,
+    target: $winnerPlayer,
+})
+
+sample({
+    clock: checkNormalMove,
+    source: $currentPlayerId,
+    fn: (current) => {
+        if (current === 1) return 2
+        return 1
+    },
+    target: $currentPlayerId,
+})
+
+$gameState.on($winnerPlayer, (_, winner) => {
+    if (winner !== null) return "ended"
+})
+
+reset({
+    clock: startGame,
+    target: [$moveHistory, $winnerPlayer, $gameEnded, $gameFiled, $currentPlayerId, $movesCount],
+})
 
 const useGameField = () => useStore($gameFiled)
 const useCurrentPlayerId = () => useStore($currentPlayerId)
 const useCurrentPlayer = () => useStore($currentPlayer)
 const useHistoryMoves = () => useStore($moveHistory)
+const usePlayers = () => useStore($players)
+const useMovesCount = () => useStore($movesCount)
+const useGameState = () => useStore($gameState)
+
+const useGameEnded = () => useStore($gameEnded)
+
+const useWinner = () => useStore($winnerPlayer)
 
 export const selectors = {
+    useWinner,
     useGameField,
+    useGameState,
     useCurrentPlayerId,
     useHistoryMoves,
     useCurrentPlayer,
+    usePlayers,
+    useMovesCount,
+    useGameEnded,
 }
 
 export const events = { changePlayer, startGame, setReadyPlayer, moved }
