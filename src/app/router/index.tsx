@@ -10,7 +10,8 @@ import { LKPage } from "../../pages/lk"
 import { RitmStyleLayout } from "widgets/ritm-style-layout"
 import { RitmStypePage } from "pages/ritm-style"
 import { ChessBoardPage } from "pages/chess"
-import { XOGamePage } from "pages/xo"
+import { XOGamePreparePage } from "pages/xo"
+import { XOGame } from "pages/xo/game"
 
 export const Router = () => {
     return (
@@ -20,7 +21,8 @@ export const Router = () => {
                 <Route path="calculator" element={<CalculatorPage />} />
                 <Route path="timer" element={<TimerPage />} />
                 <Route path="chess" element={<ChessBoardPage />} />
-                <Route path="xo" element={<XOGamePage />} />
+                <Route path="xo" element={<XOGamePreparePage />} />
+                <Route path="xo/game" element={<XOGame />} />
             </Route>
             <Route path="dark-store" element={<AdminLayout />}>
                 <Route index element={<DarkStore />} />

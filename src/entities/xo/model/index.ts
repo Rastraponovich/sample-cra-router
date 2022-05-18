@@ -15,28 +15,35 @@ const $gameEnded = createStore<boolean>(false).on($gameState, (_, state) => {
 
 const setReadyPlayer = createEvent<string>()
 
+const changedPlayer = createEvent<TPlayer>()
+
 const changePlayer = createEvent<ChangeEvent<HTMLInputElement>>()
 
-const $players = createStore<Record<number, TPlayer>>({
-    1: { name: "plater1", id: 1, color: "red", ready: false },
-    2: { name: "player2", id: 2, color: "blue", ready: false },
-})
-    .on(setReadyPlayer, (state, id) => ({
-        ...state,
-        [id]: { ...state[Number(id)], ready: true },
-    }))
-    .on(changePlayer, (state, event) => ({
-        ...state,
-        [event.target.id]: {
-            ...state[Number(event.target.id)],
-            [event.target.name]: event.target.value,
-        },
-    }))
+const $players = createStore<TPlayer[]>([
+    { name: "plater1", id: 1, color: "red", ready: false },
+    { name: "player2", id: 2, color: "blue", ready: false },
+])
+    .on(setReadyPlayer, (players, id) => {
+        return players.map((player) => {
+            if (player.id === Number(id)) return { ...player, ready: true }
+            return player
+        })
+    })
+    .on(changePlayer, (players, event) => {
+        return players.map((player) => {
+            if (player.id === Number(event.target.id)) return { ...player, [event.target.name]: event.target.value }
+            return player
+        })
+    })
+    .on(changedPlayer, (players, player) => {
+        return players.map((p) => {
+            if (p.id === player.id) return player
 
-const $playersReady = createStore<boolean>(false).on($players, (_, players) => {
-    if (Object.entries(players).every(([key, val]) => val.ready)) return true
-    return false
-})
+            return p
+        })
+    })
+
+const $playersReady = $players.map((players) => players.every((item) => item.ready))
 
 const $currentPlayerId = createStore<number>(1)
 
@@ -45,10 +52,8 @@ const $currentPlayer = createStore<TPlayer | null>({ name: "player1", id: 1, col
 sample({
     clock: $currentPlayerId,
     source: $players,
-
-    filter: (players, id) => id !== null,
-    fn: (players, id) => players[id!],
-
+    filter: (_, id) => id !== null,
+    fn: (players, id) => players.find((player) => player.id === id) as TPlayer,
     target: $currentPlayer,
 })
 
@@ -173,6 +178,8 @@ const usePlayers = () => useStore($players)
 const useMovesCount = () => useStore($movesCount)
 const useGameState = () => useStore($gameState)
 
+const usePlayersIsReady = () => useStore($playersReady)
+
 const useGameEnded = () => useStore($gameEnded)
 
 const useWinner = () => useStore($winnerPlayer)
@@ -182,6 +189,7 @@ export const selectors = {
     useGameField,
     useGameState,
     useCurrentPlayerId,
+    usePlayersIsReady,
     useHistoryMoves,
     useCurrentPlayer,
     usePlayers,
@@ -189,4 +197,4 @@ export const selectors = {
     useGameEnded,
 }
 
-export const events = { changePlayer, startGame, setReadyPlayer, moved }
+export const events = { changePlayer, startGame, setReadyPlayer, moved, changedPlayer }
