@@ -1,13 +1,9 @@
-import {
-    CalculatorIcon,
-    ClockIcon,
-    ShoppingCartIcon,
-    WifiIcon,
-} from "@heroicons/react/outline"
+import { CalculatorIcon, ClockIcon, ShoppingCartIcon, WifiIcon } from "@heroicons/react/outline"
 import { useEffect, useState } from "react"
 import { NavLink, useParams, useSearchParams } from "react-router-dom"
 import { NavCard } from "shared/ui/nav-card"
 import { OceanWaves } from "shared/ui/ocean-waves"
+import { SlidedButton } from "shared/ui/slided-button"
 
 export const Home = () => {
     const [started, setStarted] = useState(false)
@@ -52,6 +48,9 @@ export const Home = () => {
                         icon={<ShoppingCartIcon className="h-10 w-10 " />}
                     />
                 </div>
+                <SlidedButton className="mt-2 self-start  border-white bg-blue-600 px-20 py-5 text-white ring-2 ring-blue-600 duration-300 hover:bg-green-600 hover:ring-green-600">
+                    SlidedButton
+                </SlidedButton>
                 <div className="my-10 flex flex-col space-y-2">
                     {start && (
                         <NavLink

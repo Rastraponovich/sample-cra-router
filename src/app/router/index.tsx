@@ -21,7 +21,7 @@ export const Router = () => {
                 <Route path="calculator" element={<CalculatorPage />} />
                 <Route path="timer" element={<TimerPage />} />
                 <Route path="chess" element={<ChessBoardPage />} />
-                <Route path="xo" element={<XOGamePreparePage />}>
+                <Route path="xo">
                     <Route index element={<XOGamePreparePage />} />
                     <Route path="game" element={<XOGame />} />
                 </Route>

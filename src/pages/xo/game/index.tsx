@@ -1,9 +1,11 @@
+import { ClipboardListIcon, RefreshIcon, UserIcon, ArrowCircleLeftIcon } from "@heroicons/react/outline"
 import clsx from "clsx"
 import { useEvent } from "effector-react"
 import { GameResultsModal, xoModel } from "entities/xo"
 import { THistoryRecord, TPlayer, api } from "entities/xo/lib"
 import { PlayerEdit } from "entities/xo/ui/player-edit"
 import { memo, useEffect } from "react"
+import { NavLink } from "react-router-dom"
 
 export const XOGame = () => {
     const gameBoard = xoModel.selectors.useGameField()
@@ -13,28 +15,49 @@ export const XOGame = () => {
     const players = xoModel.selectors.usePlayers()
 
     const handleClick = useEvent(xoModel.events.moved)
+    const handleRestart = useEvent(xoModel.events.startGame)
 
     const gameState = xoModel.selectors.useGameState()
 
     return (
-        <section className="flex flex-col">
-            <h2>XOGame Page</h2>
-
-            <h4>{gameState}</h4>
-
-            <div className="grid grid-cols-4 gap-x-2 px-10">
-                <div className="flex flex-col space-y-2 rounded bg-gray-100 p-2 shadow-lg">
+        <section className="flex flex-col space-y-4 p-5 md:p-10">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col space-y-3">
+                    <h2 className="text-base first-letter:uppercase">
+                        текущий игрок: <b>{currentPlayer?.name}</b>
+                    </h2>
+                    <h3>
+                        текущий ход: <b>{movesCount}</b>
+                    </h3>
+                </div>
+                <div className="flex space-x-2">
+                    <button className="self-start rounded-full bg-transparent outline-none" onClick={handleRestart}>
+                        <RefreshIcon className="h-6 w-6 text-gray-900 duration-150 active:rotate-180 sm:h-8 sm:w-8 md:h-10  md:w-10 lg:h-12 lg:w-12" />
+                    </button>
+                    <button className="self-start rounded-full bg-transparent outline-none md:hidden">
+                        <ClipboardListIcon className="h-6 w-6 text-gray-900 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12  lg:w-12 " />
+                    </button>
+                    <button className="self-start rounded-full bg-transparent outline-none md:hidden">
+                        <UserIcon className="h-6 w-6 text-gray-900 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12  lg:w-12 " />
+                    </button>
+                    <NavLink to="/xo">
+                        <ArrowCircleLeftIcon className="h-6 w-6 text-gray-900 duration-150 hover:fill-gray-900 hover:text-white active:rotate-90 sm:h-8 sm:w-8 md:h-10 md:w-10 lg:h-12  lg:w-12 " />
+                    </NavLink>
+                </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-4 sm:gap-x-2">
+                <div className="order-3  flex flex-col space-y-2 rounded bg-gray-100 p-2 shadow-lg sm:order-1 sm:col-span-1">
                     <h3 className="text-xl font-bold first-letter:uppercase">игроки</h3>
-
-                    {players.map((player, idx) => (
-                        <PlayerCard player={player} key={idx} label={`игрок ${++idx}`} />
-                    ))}
+                    <ul className="spacey-2 flex flex-col">
+                        {players.map((player, idx) => (
+                            <li key={player.id} className="p-2">
+                                {player.name}
+                            </li>
+                        ))}
+                    </ul>
                 </div>
 
-                <div className="col-span-2 justify-self-center">
-                    <h2 className="text-base first-letter:uppercase">
-                        Текущий игрок: {movesCount} - {currentPlayer?.name}
-                    </h2>
+                <div className="order-1   justify-self-center sm:order-2 sm:col-span-2">
                     <div className="flex w-48 flex-wrap">
                         {gameBoard.map((item) => (
                             <div
@@ -49,7 +72,7 @@ export const XOGame = () => {
                         ))}
                     </div>
                 </div>
-                <div className="flex flex-col space-y-4">
+                <div className="order-2 flex flex-col space-y-4 self-stretch sm:order-3 sm:shadow-lg">
                     <History />
                 </div>
             </div>
@@ -59,38 +82,11 @@ export const XOGame = () => {
     )
 }
 
-interface PlayerCardProps {
-    player: TPlayer
-    label: string
-}
-
-const PlayerCard = memo(({ player, label }: PlayerCardProps) => {
-    return (
-        <div
-            className={clsx(
-                "flex flex-col space-y-3 rounded border   p-2 text-white shadow-lg",
-                player.ready ? "bg-green-500" : "bg-rose-500"
-            )}
-        >
-            <span className="first-letter:uppercase">{label}</span>
-            <span className="first-letter:uppercase">
-                имя: <b>{player.name}</b>
-            </span>
-            <span className="first-letter:uppercase">
-                статус: <b>{player.ready ? "готов" : "не готов"}</b>
-            </span>
-            <button className="rounded border border-white bg-transparent px-4 py-2 text-white">редактировать</button>
-        </div>
-    )
-})
-
-PlayerCard.displayName = "PlayerCard"
-
 const History = () => {
     const history = xoModel.selectors.useHistoryMoves()
 
     return (
-        <div className="flex flex-col space-y-2 rounded bg-gray-100 p-2 ">
+        <div className="gorw flex flex-col space-y-2 rounded bg-gray-100 p-2 md:h-full">
             <h3 className="text-xl font-bold first-letter:uppercase">история</h3>
 
             <ul className="-mx-2 flex max-h-52 flex-col space-y-2 overflow-auto">

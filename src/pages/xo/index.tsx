@@ -7,6 +7,7 @@ import { SelectPlayerState } from "entities/xo/ui/select-players"
 import { ChangeEvent, memo, useCallback, useEffect, useState } from "react"
 import { NavLink } from "react-router-dom"
 import { InputField } from "shared/ui/input-field"
+import { SlidedButton } from "shared/ui/slided-button"
 
 export const XOGamePreparePage = () => {
     const players = xoModel.selectors.usePlayers()
