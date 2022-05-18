@@ -12,11 +12,11 @@ export const XOGamePreparePage = () => {
     const players = xoModel.selectors.usePlayers()
     const playersIsReady = xoModel.selectors.usePlayersIsReady()
     return (
-        <section className="flex grow flex-col p-10">
-            <h2>XOGame Page</h2>
-            <h3 className="text-xl font-bold first-letter:uppercase">игроки</h3>
+        <section className="flex grow flex-col space-y-4 p-5 md:p-10">
+            <h2 className="text-2xl  font-bold first-letter:uppercase">настройте игроков</h2>
+            <h3 className="text-xl font-semibold first-letter:uppercase">список игроков</h3>
 
-            <div className="grid grid-cols-2 gap-8 rounded bg-gray-100 p-8 shadow-lg">
+            <div className="grid gap-8 md:grid-cols-2 md:rounded md:bg-gray-100 md:p-8 md:shadow-lg">
                 {players.map((player, idx) => (
                     <PlayerCard player={player} key={idx} label={`игрок ${++idx}`} />
                 ))}
