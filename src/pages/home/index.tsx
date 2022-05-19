@@ -1,6 +1,11 @@
-import { CalculatorIcon, ClockIcon, ShoppingCartIcon, WifiIcon } from "@heroicons/react/outline"
+import {
+    CalculatorIcon,
+    ClockIcon,
+    ShoppingCartIcon,
+    WifiIcon,
+} from "@heroicons/react/outline"
 import { useEffect, useState } from "react"
-import { NavLink, useParams, useSearchParams } from "react-router-dom"
+import { NavLink, useSearchParams } from "react-router-dom"
 import { NavCard } from "shared/ui/nav-card"
 import { OceanWaves } from "shared/ui/ocean-waves"
 import { SlidedButton } from "shared/ui/slided-button"
@@ -14,6 +19,7 @@ export const Home = () => {
         if (start) return setStarted(true)
         return setStarted(false)
     }, [start])
+
     return (
         <div className="flex flex-col px-10 py-5">
             <section className="flex flex-col">
@@ -22,6 +28,7 @@ export const Home = () => {
                 <p className="my-12 rounded bg-gray-200 px-4 py-10 text-sm font-semibold shadow-md">
                     тут представлены разнообразные решения сделанные мной
                 </p>
+
                 <div className="mb-20 grid items-stretch gap-4 md:mb-0 md:grid-cols-3">
                     <NavCard
                         title="calculator"
@@ -45,6 +52,13 @@ export const Home = () => {
                         title="Dark Store"
                         href="/dark-store"
                         description="simple store effector-way with feature sliced"
+                        icon={<ShoppingCartIcon className="h-10 w-10 " />}
+                    />
+
+                    <NavCard
+                        title="Animate Icons"
+                        href="/animate-icons"
+                        description="animate buttons constructor"
                         icon={<ShoppingCartIcon className="h-10 w-10 " />}
                     />
                 </div>

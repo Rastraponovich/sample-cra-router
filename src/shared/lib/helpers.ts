@@ -1,11 +1,12 @@
 import type { TRoute } from "./models"
 
 export const routes: TRoute[] = [
-    { id: 1, path: "/", title: "Home" },
-    { id: 2, path: "/calculator", title: "Calculator" },
-    { id: 3, path: "/timer", title: "Timer" },
-    { id: 4, path: "chess", title: "Chess" },
-    { id: 5, path: "xo", title: "XO Game" },
+    { id: 1, path: "/", title: "главная" },
+    { id: 2, path: "/calculator", title: "калькулятор" },
+    { id: 3, path: "/timer", title: "таймер" },
+    // { id: 4, path: "chess", title: "Chess" },
+    { id: 5, path: "/animate-icons", title: "анимированные иконки" },
+    { id: 6, path: "/xo", title: "крестики-нолики(proccess)" },
 ]
 
 export const privateRoutes: TRoute[] = [
