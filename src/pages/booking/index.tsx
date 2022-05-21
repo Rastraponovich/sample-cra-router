@@ -1,5 +1,13 @@
 import { Transition } from "@headlessui/react"
-import { UsersIcon } from "@heroicons/react/outline"
+import {
+    AdjustmentsIcon,
+    CalendarIcon,
+    CheckIcon,
+    TrashIcon,
+    UsersIcon,
+    XCircleIcon,
+    XIcon,
+} from "@heroicons/react/outline"
 import { MinusSmIcon, PlusSmIcon } from "@heroicons/react/solid"
 import clsx from "clsx"
 import {
@@ -380,9 +388,12 @@ export const BookingPage = () => {
             />
 
             <section className="flex flex-col space-y-2 bg-gray-200 p-4">
-                <h4 className="!my-4 text-2xl font-bold first-letter:uppercase sm:text-xl">
-                    список резервов
-                </h4>
+                <div className="flex items-center space-x-2">
+                    <h4 className="!my-4 text-2xl font-bold first-letter:uppercase sm:text-xl">
+                        список резервов
+                    </h4>
+                    <CalendarIcon className="h-6 w-6" />
+                </div>
                 {orders.length > 0 && (
                     <div className="flex flex-col  space-y-2 text-base sm:text-sm">
                         <ActionPanel
@@ -409,7 +420,7 @@ export const BookingPage = () => {
                         броней нет
                     </span>
                 )}
-                <div className="grid grid-cols-3 gap-4 py-2">
+                <div className="grid gap-4 py-2 sm:grid-cols-2 md:grid-cols-3 md:gap-3 lg:grid-cols-5 xl:grid-cols-6">
                     {filteredOrders.map((order) => (
                         <ScalesComponentAnimation key={order.id}>
                             <BookingCard
@@ -521,36 +532,41 @@ const Filters = memo(
         filteredHallPlanes,
     }: FiltersProps) => {
         return (
-            <div className="flex flex-col space-y-2 rounded bg-gray-100 px-2 py-4">
-                <span className="text-xl font-semibold first-letter:uppercase sm:text-base">
-                    фильтры
-                </span>
-
-                <div className="flex items-center space-x-4">
-                    <span>по залам:</span>
-                    <Select<TDict>
-                        items={[
-                            ...hallPlanes,
-                            {
-                                id: 0,
-                                name: "все залы",
-                                value: "all",
-                            },
-                        ]}
-                        onSelect={selectFilteredHallPlanes}
-                        selected={filteredHallPlanes}
-                        containerClassName="grow"
-                    />
+            <div className="flex flex-col space-y-4 rounded bg-gray-100 px-2 py-4">
+                <div className="flex items-center space-x-2">
+                    <span className="text-xl font-semibold first-letter:uppercase sm:text-base">
+                        фильтры
+                    </span>
+                    <AdjustmentsIcon className="h-6 w-6" />
                 </div>
 
-                <div className="flex items-center space-x-4">
-                    <span>по предоплате:</span>
-                    <Select<TDict>
-                        items={prepaidedDict}
-                        onSelect={selectPrepayFilter}
-                        selected={selectedPrepay}
-                        containerClassName="grow"
-                    />
+                <div className="flex  space-x-4">
+                    <div className="flex grow items-center space-x-4">
+                        <span>по залам:</span>
+                        <Select<TDict>
+                            items={[
+                                ...hallPlanes,
+                                {
+                                    id: 0,
+                                    name: "все залы",
+                                    value: "all",
+                                },
+                            ]}
+                            onSelect={selectFilteredHallPlanes}
+                            selected={filteredHallPlanes}
+                            containerClassName="grow"
+                        />
+                    </div>
+
+                    <div className="flex grow items-center space-x-4">
+                        <span>по предоплате:</span>
+                        <Select<TDict>
+                            items={prepaidedDict}
+                            onSelect={selectPrepayFilter}
+                            selected={selectedPrepay}
+                            containerClassName="grow"
+                        />
+                    </div>
                 </div>
             </div>
         )
@@ -578,10 +594,11 @@ const ActionPanel = memo(
         return (
             <div className="flex items-center space-x-4 rounded border  bg-gray-100 p-2">
                 <button
-                    className="self-start rounded-lg bg-rose-600 px-4 py-2 text-white shadow-lg"
+                    className="flex items-center space-x-2 self-start rounded-lg bg-rose-600 py-2 pl-4 pr-2 text-white shadow-lg"
                     onClick={resetAllOrders}
                 >
-                    отчистить все
+                    <span>отчистить все</span>
+                    <TrashIcon className="h-4 w-4" />
                 </button>
                 <button
                     className="self-start rounded-lg bg-rose-600 px-4 py-2 text-white shadow-lg disabled:opacity-50"
@@ -592,13 +609,26 @@ const ActionPanel = memo(
                     {selectedOrdersCount > 0 && ":" + selectedOrdersCount}
                 </button>
                 <button
-                    className="self-start rounded-lg bg-green-600 px-4 py-2 text-white shadow-lg disabled:opacity-50"
+                    className="flex items-center space-x-2 self-start rounded-lg bg-green-600 py-2 pl-4 pr-2 text-white shadow-lg disabled:opacity-50"
                     onClick={selectAllOrders}
                     disabled={filteredOrdersCount === 0}
                 >
-                    {selectedOrdersCount === filteredOrdersCount
-                        ? "снять выделение"
-                        : "выбрать все"}
+                    <span>
+                        {selectedOrdersCount === filteredOrdersCount
+                            ? "снять выделение"
+                            : "выбрать все"}
+                    </span>
+                    {selectedOrdersCount === filteredOrdersCount ? (
+                        <XIcon className="h-4 w-4" />
+                    ) : (
+                        <CheckIcon className="h-4 w-4" />
+                    )}
+                </button>
+
+                <button className="flex items-center space-x-2 self-start rounded-lg bg-rose-600 py-2 pl-4 pr-2 text-white shadow-lg disabled:opacity-50">
+                    <span>сбросить фильтры</span>
+
+                    <XCircleIcon className="h-4 w-4" />
                 </button>
             </div>
         )
@@ -610,10 +640,16 @@ ActionPanel.displayName = "ActionPanel"
 interface CodeGeneratorProps {
     filteredhallPlanesId: number
     prepaysId: number
+    // params?:Array<string>
 }
 //refactoring needded to accept params array
 const CodeGenerator = memo(
     ({ filteredhallPlanesId, prepaysId }: CodeGeneratorProps) => {
+        const params = [
+            filteredhallPlanesId !== 0 && `hallId=${filteredhallPlanesId}`,
+            prepaysId !== 0 && `prepaysId=${prepaysId}`,
+        ]
+
         return (
             <section className="flex flex-col space-y-4 bg-teal-600 px-4 py-8">
                 <h4 className="text-2xl font-bold text-white sm:text-xl">
@@ -622,17 +658,7 @@ const CodeGenerator = memo(
 
                 <pre className="rounded bg-gray-300 p-4 text-sm">
                     <p>для получения данных выполним запрос</p>
-                    <code>
-                        GET: /api/orders
-                        {filteredhallPlanesId !== 0
-                            ? `?hallId=${filteredhallPlanesId}`
-                            : ""}
-                        {filteredhallPlanesId !== 0 && prepaysId !== 0
-                            ? `&priceLimitId=${prepaysId}`
-                            : prepaysId !== 0
-                            ? `?priceLimitId=${prepaysId}`
-                            : ""}
-                    </code>
+                    <code>GET: /api/orders?{params.join("&")}</code>
                 </pre>
             </section>
         )
