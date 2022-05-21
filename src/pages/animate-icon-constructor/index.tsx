@@ -1,4 +1,4 @@
-import { ClockIcon, ArrowCircleDownIcon } from "@heroicons/react/outline"
+import { ClockIcon, ArrowCircleDownIcon, XIcon } from "@heroicons/react/outline"
 import { Popover, Transition } from "@headlessui/react"
 
 import clsx from "clsx"
@@ -15,16 +15,52 @@ import {
 } from "react"
 import { InputField } from "shared/ui/input-field"
 import { Select } from "shared/ui/select"
+import { CircularProgress } from "shared/ui/circular-progress"
 
 export const AnimateIconsConstructorPage = () => {
     const [opened, setOpened] = useState(false)
+    const [data, setData] = useState()
+    const [isPaused, setIsPaused] = useState(false)
+    const [status, setStatus] = useState("")
+    const ws = useRef<any>(null)
+
+    useEffect(() => {
+        if (data) setOpened(true)
+
+        return () => setOpened(false)
+    }, [data])
+
+    // useEffect(() => {
+    //     if (!isPaused) {
+    //         ws.current = new WebSocket("ws://localhost:9000/") // создаем ws соединение
+    //         ws.current.onopen = () => setStatus("Соединение открыто") // callback на ивент открытия соединения
+    //         ws.current.onclose = () => setStatus("Соединение закрыто") // callback на ивент закрытия соединения
+
+    //         gettingData()
+    //     }
+
+    //     return () => ws.current.close() // кода меняется isPaused - соединение закрывается
+    // }, [ws, isPaused])
+
+    // const gettingData = useCallback(() => {
+    //     if (!ws.current) return
+
+    //     ws.current.onmessage = (e: any) => {
+    //         //подписка на получение данных по вебсокету
+    //         if (isPaused) return
+    //         setData(e.data)
+    //     }
+    // }, [isPaused])
 
     return (
         <div className="relative flex grow flex-col px-10 py-5">
+            {status}
             <AnimateButtonsConstructor />
 
             <button onClick={() => setOpened((prev) => !prev)}>toggle</button>
-            <Baloon opened={opened} />
+            <Baloon opened={opened} interval={4}>
+                {data}
+            </Baloon>
         </div>
     )
 }
@@ -60,12 +96,14 @@ const iconSizes: TIconSize[] = [
 ]
 
 const AnimateButtonsConstructor = () => {
-    const [value, setValue] = useState(0)
+    const [value, setValue] = useState(250)
     const [currentColor, setCurrentColor] = useState("#000000")
 
     const [icons, setIcons] = useState<TIconSet[]>([])
     const [animate, setAnimate] = useState(false)
-    const [iconSize, setIconSize] = useState<TIconSize>(iconSizes[0])
+    const [iconSize, setIconSize] = useState<TIconSize>(
+        iconSizes[iconSizes.length - 1]
+    )
 
     const [firstIcon, setFirstIcon] = useState<TIcon>({
         id: 1,
@@ -234,7 +272,7 @@ const AnimateButton = memo(
                     }}
                     className={clsx(
                         firstIcon.iconSize,
-                        "absolute inset-0 h-10 w-10 opacity-100 drop-shadow-md group-hover:rotate-180 group-hover:scale-0 group-hover:opacity-0 group-focus:rotate-180 group-focus:scale-0 group-focus:opacity-0"
+                        "absolute inset-0 opacity-100 drop-shadow-md group-hover:rotate-180 group-hover:scale-0 group-hover:opacity-0 group-focus:rotate-180 group-focus:scale-0 group-focus:opacity-0"
                     )}
                 />
                 <E2
@@ -257,21 +295,38 @@ AnimateButton.displayName = "AnimateButton"
 interface BaloonProps {
     children?: ReactNode
     opened: boolean
+    interval?: number
 }
 
-const Baloon = ({ children, opened }: BaloonProps) => {
+const Baloon = ({ children, opened, interval = 0 }: BaloonProps) => {
     const [open, setOpen] = useState(false)
 
+    const [time, setTime] = useState(interval)
+
     useEffect(() => {
-        setOpen(opened)
-    }, [opened])
+        if (children) setOpen(true)
+
+        return () => setOpen(false)
+    }, [children])
+
+    useEffect(() => {
+        setTime(interval)
+    }, [open, interval])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTime((prev) => prev - 1)
+        }, 1000)
+
+        return () => clearInterval(interval)
+    }, [time, children])
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setOpen(false)
-        }, 1000)
+        }, interval * 1000)
         return () => clearTimeout(timer)
-    }, [opened])
+    }, [open, interval])
 
     return (
         <Transition
@@ -284,15 +339,26 @@ const Baloon = ({ children, opened }: BaloonProps) => {
             leaveFrom="absolute bottom-10 left-10 transform translate-y-0"
             leaveTo="absolute bottom-10 left-10 transform  translate-y-full opacity-0"
         >
-            <Popover className=" absoulte bottom-10 left-10 flex flex-col rounded-lg bg-green-600 px-4 py-2 text-white">
-                <div className="grid grid-cols-2">
-                    <a href="/analytics">Analytics</a>
-                    <a href="/engagement">Engagement</a>
-                    <a href="/security">Security</a>
-                    <a href="/integrations">Integrations</a>
+            <Popover className=" absoulte bottom-10 left-10 flex flex-col rounded-lg bg-green-600  py-2 text-white">
+                <div className="flex flex-row-reverse items-center justify-between space-x-4 space-x-reverse px-1">
+                    <div className="relative h-fit w-fit self-end">
+                        {interval && (
+                            <CircularProgress
+                                max={interval}
+                                stroke={1}
+                                radius={10}
+                                progress={time}
+                            />
+                        )}
+                        <button className="absolute top-0 flex h-full w-full items-center justify-center text-2xl ">
+                            <XIcon className="h-3 w-3 drop-shadow-lg" />
+                        </button>
+                        {/* <span className="absolute top-0 flex h-full w-full items-center justify-center text-2xl "> */}
+                        {/* {time} */}
+                        {/* </span> */}
+                    </div>
+                    <div className="flex px-4">{children}</div>
                 </div>
-
-                <img src="/solutions.jpg" alt="" />
             </Popover>
         </Transition>
     )
