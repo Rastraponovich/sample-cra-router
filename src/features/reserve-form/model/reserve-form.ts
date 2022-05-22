@@ -1,7 +1,14 @@
 import { combine, createEvent, createStore, sample } from "effector"
 import { useStore } from "effector-react"
 import { bookingModel } from "entities/booking"
-import { TDict, TReserve, TTable, _defaultReserve_, _hallPlanes_, _tables_ } from "entities/booking/lib"
+import {
+    TDict,
+    TReserve,
+    TTable,
+    _defaultReserve_,
+    _hallPlanes_,
+    _tables_,
+} from "entities/booking/lib"
 import { debounce, debug } from "patronum"
 import { ChangeEvent, FormEvent } from "react"
 
@@ -22,8 +29,14 @@ const $reserve = createStore<TReserve>(_defaultReserve_)
 
         return { ...state, [name]: Number(value) }
     })
-    .on(incrementGuestsClicked, (state, _) => ({ ...state, guests: state.guests + 1 }))
-    .on(decrementGuestsClicked, (state, _) => ({ ...state, guests: state.guests - 1 }))
+    .on(incrementGuestsClicked, (state, _) => ({
+        ...state,
+        guests: state.guests + 1,
+    }))
+    .on(decrementGuestsClicked, (state, _) => ({
+        ...state,
+        guests: state.guests - 1,
+    }))
     .on(selectTable, (state, table) => ({ ...state, table }))
     .on(setReserveStatus, (state, status) => ({ ...state, status }))
 
@@ -36,9 +49,12 @@ const $reserve = createStore<TReserve>(_defaultReserve_)
 //     target: $reserve,
 // })
 
-const $hallPlanes = createStore<Array<TDict>>(_hallPlanes_)
+export const $hallPlanes = createStore<Array<TDict>>(_hallPlanes_)
 
-const $selectedHallPlanes = createStore<TDict>(_hallPlanes_[0]).on(selectHallPlane, (_, payload) => payload)
+const $selectedHallPlanes = createStore<TDict>(_hallPlanes_[0]).on(
+    selectHallPlane,
+    (_, payload) => payload
+)
 $reserve.on($selectedHallPlanes, (state, hallPlane) => {
     return {
         ...state,
@@ -53,7 +69,8 @@ $reserve.on($selectedHallPlanes, (state, hallPlane) => {
     }
 })
 const $tables = combine($selectedHallPlanes, (selected) => {
-    if (selected) return _tables_.filter((table) => table.hallId === selected.id)
+    if (selected)
+        return _tables_.filter((table) => table.hallId === selected.id)
     return _tables_
 })
 
