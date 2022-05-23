@@ -70,27 +70,16 @@ export const ReserveForm = () => {
 
 const GuestsFormControl = () => {
     const guests = selectors.useGuestsCount()
-    const handleIncrementGuestsClicked = useEvent(events.incrementGuestsClicked)
-    const handleDecrementGuestsClicked = useEvent(events.decrementGuestsClicked)
 
     return (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-8">
             <span className="first-letter:uppercase">гости</span>
-
             <div className="flex items-center space-x-2">
-                <span className="rounded border py-2 px-4">{guests}</span>
-
-                <button type="button" onClick={handleIncrementGuestsClicked} className=" text-white">
-                    <PlusSmIcon className="h-6 w-6 rounded bg-green-600" />
-                </button>
-                <button
-                    type="button"
-                    disabled={guests === 0}
-                    onClick={handleDecrementGuestsClicked}
-                    className="group text-white"
-                >
-                    <MinusSmIcon className="h-6 w-6 rounded bg-rose-600 group-disabled:bg-rose-300" />
-                </button>
+                <IncrementGuestsButton />
+                <span className="w-16 rounded-lg border py-2 px-4 text-center">
+                    {guests}
+                </span>
+                <DecrementGuestsButton />
             </div>
         </div>
     )
@@ -105,14 +94,51 @@ const FormActions = () => {
             <button
                 type="submit"
                 className="rounded-lg bg-green-600 px-4 py-2 uppercase shadow-lg disabled:opacity-50 "
-                disabled={reserve.guests === 0 || reserve.table.value === 0 || reserve.status.value === "outOfServie"}
+                disabled={
+                    reserve.guests === 0 ||
+                    reserve.table.value === 0 ||
+                    reserve.status.value === "outOfServie"
+                }
             >
                 добавить
             </button>
 
-            <button className="rounded-lg bg-rose-600 px-4 py-2 uppercase shadow-lg " onClick={handleReset}>
+            <button
+                className="rounded-lg bg-rose-600 px-4 py-2 uppercase shadow-lg "
+                onClick={handleReset}
+            >
                 сбросить
             </button>
         </div>
+    )
+}
+
+const IncrementGuestsButton = () => {
+    const handleIncrementGuestsClicked = useEvent(events.incrementGuestsClicked)
+
+    return (
+        <button
+            type="button"
+            onClick={handleIncrementGuestsClicked}
+            className=" group text-white"
+        >
+            <PlusSmIcon className="h-9 w-9 rounded bg-green-600 group-active:shadow-inner group-active:shadow-black/30" />
+        </button>
+    )
+}
+
+const DecrementGuestsButton = () => {
+    const guests = selectors.useGuestsCount()
+    const handleDecrementGuestsClicked = useEvent(events.decrementGuestsClicked)
+
+    return (
+        <button
+            type="button"
+            disabled={guests === 0}
+            onClick={handleDecrementGuestsClicked}
+            className="group text-white"
+        >
+            <MinusSmIcon className="h-9 w-9 rounded bg-rose-600 group-active:shadow-inner group-active:shadow-black/30 group-disabled:bg-rose-300" />
+        </button>
     )
 }

@@ -3,18 +3,18 @@ import { useStore } from "effector-react"
 import { bookingModel } from "entities/booking"
 import {
     TDict,
+    THallplane,
     TReserve,
     TTable,
     _defaultReserve_,
     _hallPlanes_,
     _tables_,
 } from "entities/booking/lib"
-import { debounce, debug } from "patronum"
 import { ChangeEvent, FormEvent } from "react"
 
 const resetClicked = createEvent()
 const selectTable = createEvent<TTable>()
-const selectHallPlane = createEvent<TDict>()
+const selectHallPlane = createEvent<THallplane>()
 const setReserveStatus = createEvent<TDict>()
 const incrementGuestsClicked = createEvent()
 const decrementGuestsClicked = createEvent()
@@ -49,9 +49,9 @@ const $reserve = createStore<TReserve>(_defaultReserve_)
 //     target: $reserve,
 // })
 
-export const $hallPlanes = createStore<Array<TDict>>(_hallPlanes_)
+export const $hallPlanes = createStore<Array<THallplane>>(_hallPlanes_)
 
-const $selectedHallPlanes = createStore<TDict>(_hallPlanes_[0]).on(
+const $selectedHallPlanes = createStore<THallplane>(_hallPlanes_[0]).on(
     selectHallPlane,
     (_, payload) => payload
 )

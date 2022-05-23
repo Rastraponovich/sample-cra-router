@@ -1,11 +1,11 @@
-import type { TReserve, TDict, TTable, TPrepay } from "./models"
+import type { TReserve, TDict, TTable, TPrepay, THallplane } from "./models"
 
-export const _hallPlanes_: TDict[] = [
-    { id: 1, name: "основной", value: "main" },
-    { id: 2, name: "вип", value: "vip" },
-    { id: 3, name: "второй зал", value: "second" },
-    { id: 4, name: "терраса", value: "terrace" },
-    { id: 5, name: "служебный", value: "reserve" },
+export const _hallPlanes_: Array<THallplane> = [
+    { id: 1, name: "основной", value: "main", image: "hall.jpeg" },
+    { id: 2, name: "вип", value: "vip", image: "vip.jpeg" },
+    { id: 3, name: "второй зал", value: "second", image: "second.jpg" },
+    { id: 4, name: "терраса", value: "terrace", image: "terrace.jpeg" },
+    { id: 5, name: "служебный", value: "reserve", image: "reserve.jpeg" },
 ]
 
 export const _tables_: TTable[] = [
@@ -33,7 +33,7 @@ export const _statuses_: TDict[] = [
 export const _defaultReserve_: TReserve = {
     id: 0,
     table: { id: 0, value: 0, name: "выберите стол", hallId: 0, active: true },
-    hall: { id: 1, name: "Основной", value: "main" },
+    hall: { id: 1, name: "основной", value: "main", image: "hall.jpeg" },
     price: 0,
     guests: 0,
     status: { id: 1, name: "свободен", value: "free" },

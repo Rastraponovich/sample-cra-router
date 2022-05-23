@@ -4,6 +4,10 @@ export type TDict = {
     value: string
 }
 
+export type THallplane = {
+    image?: string
+} & TDict
+
 export type TPrepay = {
     id: number
     name: string
@@ -25,5 +29,5 @@ export type TReserve = {
     guests: number
     status: TDict
     orders: any[]
-    hall: TDict
+    hall: THallplane
 }
