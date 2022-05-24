@@ -3,7 +3,7 @@ import { ReactNode, memo } from "react"
 import { useEvent } from "effector-react"
 
 import { bookingModel } from "entities/booking"
-import { selectAllReservesClicked } from "../model"
+import { selectAllReservesClicked, toggleComactClicked } from "../model"
 
 import {
     deleteAllReservesClicked,
@@ -27,6 +27,7 @@ export const ActionPanel = () => {
             <SelectAllButton />
 
             <ResetFiltersButton />
+            <ToggleCompactButton />
         </div>
     )
 }
@@ -79,6 +80,20 @@ const SelectAllButton = () => {
             ) : (
                 <CheckIcon className="h-4 w-4" />
             )}
+        </ActionButton>
+    )
+}
+
+const ToggleCompactButton = () => {
+    const handleToggleComactClicked = useEvent(toggleComactClicked)
+
+    return (
+        <ActionButton
+            caption={"toggleCompact"}
+            onClick={handleToggleComactClicked}
+            className="bg-green-600"
+        >
+            <XIcon className="h-4 w-4" />
         </ActionButton>
     )
 }

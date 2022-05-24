@@ -2,6 +2,10 @@ import { createEvent, sample } from "effector"
 import { bookingModel } from "entities/booking"
 import type { TReserve } from "entities/booking/lib"
 
+export const toggleComactClicked = createEvent()
+
+bookingModel.$compacted.on(toggleComactClicked, (state, _) => !state)
+
 export const deleteAllReservesClicked = createEvent()
 
 bookingModel.$reserves.reset(deleteAllReservesClicked)

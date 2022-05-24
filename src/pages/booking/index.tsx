@@ -16,6 +16,7 @@ import {
     ChevronLeftIcon,
     ChevronRightIcon,
 } from "@heroicons/react/outline"
+import { Accordion } from "shared/ui/accordion"
 dayjs.extend(weekOfYear)
 dayjs.extend(localeData)
 dayjs.locale("ru")
@@ -31,9 +32,10 @@ export const BookingPage = () => {
         const result = records.map((item) => {
             return {
                 ...item,
-                reserve:
-                    reserves.find((reserve) => {
+                reserves:
+                    reserves.filter((reserve) => {
                         const startHour = dayjs(reserve.startDate).hour()
+                        const endHour = dayjs(reserve.endDate).hour()
                         const currentReserveWeek = dayjs(
                             reserve.startDate
                         ).week()
@@ -43,7 +45,12 @@ export const BookingPage = () => {
                             startHour === item.hour
                         )
                             return reserve
-                    }) || null,
+                        if (
+                            currentWeek === currentReserveWeek &&
+                            endHour === item.hour
+                        )
+                            return reserve
+                    }) || [],
             }
         })
 
@@ -80,73 +87,106 @@ export const BookingPage = () => {
 
             <Reserves />
 
-            <div className="gorw flex flex-col">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center ">
-                        <h4 className="text-2xl font-semibold first-letter:uppercase">
-                            расписание
-                        </h4>
-                        <CalendarIcon className="mx-2 h-6 w-6" />
-                    </div>
-
-                    <div className="mb-4 flex items-center space-x-2 self-end">
-                        <button
-                            className="rounded-full bg-gray-200 p-2 shadow-sm duration-150 hover:bg-blue-600 hover:text-white hover:shadow-md active:opacity-75"
-                            onClick={setPrevWeek}
-                        >
-                            <ChevronLeftIcon className="h-4 w-4" />
-                        </button>
-
-                        <div className="flex items-center  rounded border py-2 px-4 text-sm">
-                            <CalendarIcon className="mr-2 h-6 w-6" />
-
-                            <span className=" after:mx-1 after:content-['-']">
-                                {dayjs()
-                                    .week(currentWeek)
-                                    .day(0)
-                                    .format("DD.MM.YY")}
-                            </span>
-                            <span className="mx-1">
-                                {dayjs()
-                                    .week(currentWeek)
-                                    .day(6)
-                                    .format("DD.MM.YY")}
-                            </span>
+            <div className="gorw flex flex-col space-y-4">
+                <Accordion
+                    title={
+                        <div className="flex items-center  ">
+                            <h4 className="text-2xl font-semibold first-letter:uppercase">
+                                расписание
+                            </h4>
+                            <CalendarIcon className="mx-2 h-6 w-6" />
                         </div>
+                    }
+                >
+                    <div className="mb-2 flex flex-col items-center space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
+                        <div className="flex items-center space-x-2 sm:self-end">
+                            <button
+                                className="rounded-full bg-gray-200 p-2 shadow-sm duration-150 hover:bg-blue-600 hover:text-white hover:shadow-md active:opacity-75"
+                                onClick={setPrevWeek}
+                            >
+                                <ChevronLeftIcon className="h-4 w-4" />
+                            </button>
 
-                        <button
-                            className="rounded-full bg-gray-200 p-2 shadow-sm duration-150 hover:bg-blue-600 hover:text-white hover:shadow-md active:opacity-75"
-                            onClick={setNextWeek}
-                        >
-                            <ChevronRightIcon className="h-4 w-4" />
-                        </button>
+                            <div className="flex items-center  rounded border py-2 px-4 text-sm">
+                                <CalendarIcon className="mr-2 h-6 w-6" />
+
+                                <span className=" after:mx-1 after:content-['-']">
+                                    {dayjs()
+                                        .week(currentWeek)
+                                        .day(0)
+                                        .format("DD.MM.YY")}
+                                </span>
+                                <span className="mx-1">
+                                    {dayjs()
+                                        .week(currentWeek)
+                                        .day(6)
+                                        .format("DD.MM.YY")}
+                                </span>
+                            </div>
+
+                            <button
+                                className="rounded-full bg-gray-200 p-2 shadow-sm duration-150 hover:bg-blue-600 hover:text-white hover:shadow-md active:opacity-75"
+                                onClick={setNextWeek}
+                            >
+                                <ChevronRightIcon className="h-4 w-4" />
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <table className="border-collapse rounded border border-slate-400 text-sm font-normal text-gray-900">
-                    <thead>
-                        <tr>
-                            <th className="border border-slate-300 bg-slate-300 p-2 ">
-                                <div className="flex flex-col space-y-1 divide-y divide-gray-900">
-                                    <span>дни недели</span>
-                                    <span>часы</span>
-                                </div>
-                            </th>
-                            {days.map((day) => (
-                                <Day
-                                    number={day.dayOfWeek}
-                                    key={day.id}
-                                    week={currentWeek}
-                                />
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {records.map((record) => (
-                            <CalendarRow {...record} />
-                        ))}
-                    </tbody>
-                    <tfoot></tfoot>
-                </table>
+                    <div className="w-full overflow-x-auto">
+                        <table className="w-full border-collapse overflow-auto rounded border border-slate-400 text-sm font-normal text-gray-900">
+                            <thead>
+                                <tr>
+                                    <th className="border border-slate-300 bg-slate-300 p-2 ">
+                                        <div className="flex flex-col space-y-1 divide-y divide-gray-900">
+                                            <span>дни недели</span>
+                                            <span>часы</span>
+                                        </div>
+                                    </th>
+                                    {days.map((day) => (
+                                        <Day
+                                            number={day.dayOfWeek}
+                                            key={day.id}
+                                            week={currentWeek}
+                                        />
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {records.map((record, idx) => {
+                                    if (
+                                        record.reserves.some(
+                                            (item) =>
+                                                dayjs(item.startDate).hour() ===
+                                                record.hour
+                                        )
+                                    )
+                                        return (
+                                            <CalendarRow
+                                                {...record}
+                                                key={record.id}
+                                                count={
+                                                    record.reserves.filter(
+                                                        (item) =>
+                                                            dayjs(
+                                                                item.startDate
+                                                            ).hour() ===
+                                                            record.hour
+                                                    ).length
+                                                }
+                                            />
+                                        )
+                                    return (
+                                        <CalendarRow
+                                            {...record}
+                                            key={record.id}
+                                        />
+                                    )
+                                })}
+                            </tbody>
+                            <tfoot></tfoot>
+                        </table>
+                    </div>
+                </Accordion>
             </div>
             <div className="flex h-40 grow flex-col"></div>
         </div>
@@ -164,36 +204,36 @@ const days: Array<TDayOfWeek> = [
 ]
 
 const tablesRecord: Array<TTableRecord> = [
-    { id: 0, hour: 0, reserve: null },
-    { id: 1, hour: 1, reserve: null },
-    { id: 2, hour: 2, reserve: null },
-    { id: 3, hour: 3, reserve: null },
-    { id: 4, hour: 4, reserve: null },
-    { id: 5, hour: 5, reserve: null },
-    { id: 6, hour: 6, reserve: null },
-    { id: 7, hour: 7, reserve: null },
-    { id: 8, hour: 8, reserve: null },
-    { id: 9, hour: 9, reserve: null },
-    { id: 10, hour: 10, reserve: null },
-    { id: 11, hour: 11, reserve: null },
-    { id: 12, hour: 12, reserve: null },
-    { id: 13, hour: 13, reserve: null },
-    { id: 14, hour: 14, reserve: null },
-    { id: 15, hour: 15, reserve: null },
-    { id: 16, hour: 16, reserve: null },
-    { id: 17, hour: 17, reserve: null },
-    { id: 18, hour: 18, reserve: null },
-    { id: 19, hour: 19, reserve: null },
-    { id: 20, hour: 20, reserve: null },
-    { id: 21, hour: 21, reserve: null },
-    { id: 22, hour: 22, reserve: null },
-    { id: 23, hour: 23, reserve: null },
+    { id: 0, hour: 0, reserves: [] },
+    { id: 1, hour: 1, reserves: [] },
+    { id: 2, hour: 2, reserves: [] },
+    { id: 3, hour: 3, reserves: [] },
+    { id: 4, hour: 4, reserves: [] },
+    { id: 5, hour: 5, reserves: [] },
+    { id: 6, hour: 6, reserves: [] },
+    { id: 7, hour: 7, reserves: [] },
+    { id: 8, hour: 8, reserves: [] },
+    { id: 9, hour: 9, reserves: [] },
+    { id: 10, hour: 10, reserves: [] },
+    { id: 11, hour: 11, reserves: [] },
+    { id: 12, hour: 12, reserves: [] },
+    { id: 13, hour: 13, reserves: [] },
+    { id: 14, hour: 14, reserves: [] },
+    { id: 15, hour: 15, reserves: [] },
+    { id: 16, hour: 16, reserves: [] },
+    { id: 17, hour: 17, reserves: [] },
+    { id: 18, hour: 18, reserves: [] },
+    { id: 19, hour: 19, reserves: [] },
+    { id: 20, hour: 20, reserves: [] },
+    { id: 21, hour: 21, reserves: [] },
+    { id: 22, hour: 22, reserves: [] },
+    { id: 23, hour: 23, reserves: [] },
 ]
 
 type TTableRecord = {
     id: number
     hour: number
-    reserve: TReserve | null
+    reserves: Array<TReserve>
 }
 
 type TDayOfWeek = {
@@ -203,38 +243,65 @@ type TDayOfWeek = {
 
 interface CalendarRowProps {
     hour: number
-    reserve: TReserve | null
+    reserves: Array<TReserve>
+    start?: boolean
+    count?: number | null
 }
 
-const CalendarRow = memo(({ hour, reserve }: CalendarRowProps) => {
+const StartCell = ({
+    count,
+    reserves,
+}: {
+    count: number | null
+    reserves: Array<TReserve["id"]>
+}) => {
+    const onClick = () => {
+        if (count && reserves.length) console.log(reserves)
+    }
+
     return (
-        <tr key={hour}>
-            <td className="border border-slate-300 bg-gray-200 py-2 text-center">
-                {hour}
-            </td>
-            {days.map((item) =>
-                reserve && dayjs(reserve.startDate).day() === item.dayOfWeek ? (
-                    <td
-                        key={item.id}
-                        className="border border-slate-300 bg-green-600 py-2 text-center text-white"
-                    >
-                        <span className="">{reserve.table.name}</span>
-                    </td>
-                ) : (
-                    <td
-                        key={item.id}
-                        className="border border-slate-300 bg-gray-200 py-2 text-center"
-                    ></td>
-                )
-            )}
-        </tr>
+        <td
+            onClick={onClick}
+            className="border border-slate-300 bg-green-600 py-2 text-center text-white"
+        >
+            <span className="">{count}</span>
+        </td>
     )
-})
-CalendarRow.displayName = "CalendarRow"
-
-const CalendarRowRecord = () => {
-    return <span></span>
 }
+
+const CalendarRow = memo(
+    ({ hour, reserves, count = null }: CalendarRowProps) => {
+        return (
+            <tr key={hour}>
+                <td className="border border-slate-300 bg-gray-200 py-2 text-center">
+                    {hour}
+                </td>
+                {days.map((day) =>
+                    reserves.some(
+                        (reserve) =>
+                            dayjs(reserve.startDate).day() === day.dayOfWeek &&
+                            hour === dayjs(reserve.startDate).hour()
+                    ) ? (
+                        <StartCell
+                            count={count}
+                            reserves={reserves
+                                .filter(
+                                    (reserve) =>
+                                        dayjs(reserve.startDate).hour() === hour
+                                )
+                                .map((item) => item.id)}
+                        />
+                    ) : (
+                        <td className="border border-slate-300 bg-gray-200 py-2 text-center text-gray-900">
+                            <span className=""></span>
+                        </td>
+                    )
+                )}
+            </tr>
+        )
+    }
+)
+CalendarRow.displayName = "CalendarRow"
 
 interface DayProps {
     number: number

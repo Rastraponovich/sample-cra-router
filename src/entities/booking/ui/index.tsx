@@ -1,5 +1,6 @@
 import { UsersIcon } from "@heroicons/react/outline"
 import clsx from "clsx"
+import dayjs from "dayjs"
 import { memo } from "react"
 import { TReserve } from "../lib"
 
@@ -40,9 +41,20 @@ export const ReserveCard = memo(
                         compact && "order-2 space-x-2 "
                     )}
                 >
-                    <h2 className=" truncate drop-shadow-xl first-letter:uppercase">
-                        {reserve.status.name}
-                    </h2>
+                    <div
+                        className={clsx(
+                            compact
+                                ? "flex items-center space-x-2"
+                                : "flex flex-col space-y-1"
+                        )}
+                    >
+                        <span className=" truncate drop-shadow-xl ">
+                            c {dayjs(reserve.startDate).format("DD.MM.YYYY")}
+                        </span>
+                        <span className=" truncate drop-shadow-xl ">
+                            по {dayjs(reserve.endDate).format("DD.MM.YYYY")}
+                        </span>
+                    </div>
                     <span
                         className={clsx(
                             reserve.status.value === "outOfServie"

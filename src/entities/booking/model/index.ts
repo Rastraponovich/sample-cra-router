@@ -2,7 +2,6 @@ import { useStore } from "effector-react"
 import { createEffect, createEvent, createStore, sample } from "effector"
 
 import { type TReserve, _defaultReserve_ } from "../lib"
-import dayjs from "dayjs"
 
 export const addReserveFx = createEffect<TReserve, any>((reserve) => reserve)
 
@@ -35,6 +34,8 @@ export const $selectedReserves = createStore<Array<TReserve["id"]>>([]).on(
     }
 )
 
+export const $compacted = createStore(false)
+
 const $selectedReservesCount = $selectedReserves.map((item) => item.length)
 
 export const $reservesCount = $reserves.map((item) => item.length)
@@ -51,9 +52,11 @@ const useReservesCount = () => useStore($reservesCount)
 const useSelectedReserves = () => useStore($selectedReserves)
 const useFilteredReservesCount = () => useStore($filteredReservesCount)
 const useSelectedReservesCount = () => useStore($selectedReservesCount)
+const useCompactList = () => useStore($compacted)
 
 export const selectors = {
     useReserves,
+    useCompactList,
     useReservesCount,
     useSelectedReserves,
     useSelectedReservesCount,
