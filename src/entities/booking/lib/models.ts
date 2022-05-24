@@ -30,4 +30,6 @@ export type TReserve = {
     status: TDict
     orders: any[]
     hall: THallplane
+    startDate: string
+    endDate: string
 }

@@ -1,6 +1,7 @@
 import { PlusSmIcon, MinusSmIcon } from "@heroicons/react/outline"
 import { useEvent } from "effector-react"
 import { TDict, TTable, _statuses_ } from "entities/booking/lib"
+import { useState } from "react"
 import { InputField } from "shared/ui/input-field"
 import { Select } from "shared/ui/select"
 import { events, selectors } from "../model"
@@ -10,11 +11,16 @@ export const ReserveForm = () => {
     const reserve = selectors.useReserve()
     const hallPlanes = selectors.useHallPlanes()
 
+    const [startDate, setStartDate] = useState("")
+    const [endDate, setEndDate] = useState("")
+
     const handleSelectReserveTable = useEvent(events.selectTable)
     const handleSelectHallPlane = useEvent(events.selectHallPlane)
     const handleAddReserveClicked = useEvent(events.reserveAddClicked)
     const handleSelectReserveStatus = useEvent(events.setReserveStatus)
     const handleChangeReserveNumber = useEvent(events.changeReserveNumber)
+
+    const handleSetDate = useEvent(events.changeReserveDate)
 
     return (
         <form
@@ -61,6 +67,26 @@ export const ReserveForm = () => {
                     selected={reserve.status}
                     onSelect={handleSelectReserveStatus}
                     containerClassName="grow"
+                />
+            </div>
+
+            <div className="flex items-center justify-between space-x-10">
+                <span className="first-letter:uppercase">начало</span>
+                <input
+                    type="datetime-local"
+                    value={reserve.startDate}
+                    name="startDate"
+                    onChange={handleSetDate}
+                />
+            </div>
+
+            <div className="flex items-center justify-between space-x-10">
+                <span className="first-letter:uppercase">конец</span>
+                <input
+                    type="datetime-local"
+                    value={reserve.endDate}
+                    name="endDate"
+                    onChange={handleSetDate}
                 />
             </div>
             <FormActions />

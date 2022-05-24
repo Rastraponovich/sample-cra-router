@@ -37,6 +37,8 @@ export const _defaultReserve_: TReserve = {
     price: 0,
     guests: 0,
     status: { id: 1, name: "свободен", value: "free" },
+    startDate: "",
+    endDate: "",
     orders: [],
 }
 

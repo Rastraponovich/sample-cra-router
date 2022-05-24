@@ -20,7 +20,7 @@ const incrementGuestsClicked = createEvent()
 const decrementGuestsClicked = createEvent()
 
 const changeReserveNumber = createEvent<ChangeEvent<HTMLInputElement>>()
-
+const changeReserveDate = createEvent<ChangeEvent<HTMLInputElement>>()
 const $reserve = createStore<TReserve>(_defaultReserve_)
     .reset([bookingModel.addReserveFx.doneData, resetClicked])
 
@@ -39,6 +39,10 @@ const $reserve = createStore<TReserve>(_defaultReserve_)
     }))
     .on(selectTable, (state, table) => ({ ...state, table }))
     .on(setReserveStatus, (state, status) => ({ ...state, status }))
+    .on(changeReserveDate, (state, event) => ({
+        ...state,
+        [event.target.name]: event.target.value,
+    }))
 
 // debug(incrementGuestsClicked, $reserve)
 
@@ -113,6 +117,7 @@ export const events = {
     selectHallPlane,
     setReserveStatus,
     reserveAddClicked,
+    changeReserveDate,
     changeReserveNumber,
     incrementGuestsClicked,
     decrementGuestsClicked,

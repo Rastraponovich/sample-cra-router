@@ -2,6 +2,7 @@ import { useStore } from "effector-react"
 import { createEffect, createEvent, createStore, sample } from "effector"
 
 import { type TReserve, _defaultReserve_ } from "../lib"
+import dayjs from "dayjs"
 
 export const addReserveFx = createEffect<TReserve, any>((reserve) => reserve)
 
@@ -13,7 +14,13 @@ sample({
     clock: addReserveFx.doneData,
     source: $reserves,
     fn: (reserves, reserve) =>
-        [...reserves, { ...reserve, id: reserves.length }] as Array<TReserve>,
+        [
+            ...reserves,
+            {
+                ...reserve,
+                id: reserves.length,
+            },
+        ] as Array<TReserve>,
     target: $reserves,
 })
 const selectReserve = createEvent<TReserve["id"]>()

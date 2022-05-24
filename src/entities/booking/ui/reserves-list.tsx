@@ -1,7 +1,9 @@
 import { CalendarIcon } from "@heroicons/react/outline"
+import clsx from "clsx"
 import { useEvent } from "effector-react"
 import { ActionPanel } from "features/reserves-action-panel"
 import { Filters } from "features/reserves-filters"
+import { useState } from "react"
 import { ScalesComponentAnimation } from "shared/ui/scale-animation-wrapper"
 import { ReserveCard } from "."
 import { events, selectors } from "../model"
@@ -11,14 +13,31 @@ const ReservesList = () => {
     const selectedReserves = selectors.useSelectedReserves()
     const handleSelectBooking = useEvent(events.selectReserve)
 
+    const [compact, setCompact] = useState(false)
+    const handleToggleCompactMode = () => {
+        setCompact((prev) => !prev)
+    }
     return (
-        <div className="grid justify-center gap-4 py-2 sm:grid-cols-2 md:grid-cols-3 md:justify-start md:gap-3 lg:grid-cols-5 xl:grid-cols-6">
+        <div
+            className={clsx(
+                compact
+                    ? "flex flex-col space-y-2"
+                    : "grid justify-center gap-4 py-2 sm:grid-cols-2 md:grid-cols-3 md:justify-start md:gap-3 lg:grid-cols-5 xl:grid-cols-6"
+            )}
+        >
+            <button
+                className="col-span-3 rounded border bg-green-600 px-4 py-2 text-white shadow-sm"
+                onClick={handleToggleCompactMode}
+            >
+                toggleCompact
+            </button>
             {filteredOrders.map((reserve) => (
                 <ScalesComponentAnimation key={reserve.id}>
                     <ReserveCard
                         key={reserve.id}
                         reserve={reserve}
                         onClick={handleSelectBooking}
+                        compact={compact}
                         selected={selectedReserves.some(
                             (id) => id === reserve.id
                         )}
