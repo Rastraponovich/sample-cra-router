@@ -23,7 +23,10 @@ export const Router = () => {
                 <Route path="calculator" element={<CalculatorPage />} />
                 <Route path="timer" element={<TimerPage />} />
                 <Route path="chess" element={<ChessBoardPage />} />
-                <Route path="animate-icons" element={<AnimateIconsConstructorPage />} />
+                <Route
+                    path="animate-icons"
+                    element={<AnimateIconsConstructorPage />}
+                />
 
                 <Route path="xo">
                     <Route index element={<XOGamePreparePage />} />
