@@ -25,11 +25,14 @@ export type TTable = {
 export type TReserve = {
     id: number
     table: TTable
+    tableId: TTable["id"]
     price: number
     guests: number
     status: TDict
     orders: any[]
     hall: THallplane
+    hallId: THallplane["id"]
     startDate: string
+
     endDate: string
 }

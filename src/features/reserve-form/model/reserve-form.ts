@@ -37,7 +37,7 @@ const $reserve = createStore<TReserve>(_defaultReserve_)
         ...state,
         guests: state.guests - 1,
     }))
-    .on(selectTable, (state, table) => ({ ...state, table }))
+    .on(selectTable, (state, table) => ({ ...state, table, tableId: table.id }))
     .on(setReserveStatus, (state, status) => ({ ...state, status }))
     .on(changeReserveDate, (state, event) => ({
         ...state,
@@ -63,6 +63,7 @@ $reserve.on($selectedHallPlanes, (state, hallPlane) => {
     return {
         ...state,
         hall: hallPlane,
+        hallId: hallPlane.id,
         table: {
             id: 0,
             value: 0,
@@ -70,6 +71,7 @@ $reserve.on($selectedHallPlanes, (state, hallPlane) => {
             hallId: 0,
             active: true,
         },
+        tableId: 0,
     }
 })
 const $tables = combine($selectedHallPlanes, (selected) => {

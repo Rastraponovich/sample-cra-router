@@ -34,6 +34,8 @@ export const _defaultReserve_: TReserve = {
     id: 0,
     table: { id: 0, value: 0, name: "выберите стол", hallId: 0, active: true },
     hall: { id: 1, name: "основной", value: "main", image: "hall.jpeg" },
+    hallId: 1,
+    tableId: 0,
     price: 0,
     guests: 0,
     status: { id: 1, name: "свободен", value: "free" },
