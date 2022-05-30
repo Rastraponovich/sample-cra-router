@@ -2,12 +2,29 @@ import { useStore } from "effector-react"
 import { createEffect, createEvent, createStore, sample } from "effector"
 
 import { type TReserve, _defaultReserve_ } from "../lib"
+import { getReservesFx, getTablesFx } from "../lib/api"
 
 export const addReserveFx = createEffect<TReserve, any>((reserve) => reserve)
 
 export const $reserve = createStore<TReserve>(_defaultReserve_)
 
-export const $reserves = createStore<Array<TReserve>>([])
+const getTables = createEvent()
+
+sample({
+    clock: getTables,
+    target: getTablesFx,
+})
+
+const getReserves = createEvent()
+
+sample({
+    clock: getReserves,
+    target: getReservesFx,
+})
+export const $reserves = createStore<Array<TReserve>>([]).on(
+    getReservesFx.doneData,
+    (_, payload) => payload.data[0]
+)
 
 sample({
     clock: addReserveFx.doneData,
@@ -65,4 +82,6 @@ export const selectors = {
 
 export const events = {
     selectReserve,
+    getReserves,
+    getTables,
 }

@@ -5,11 +5,17 @@ import { ReservePreview } from "features/reserve-form/ui/reserve-preview"
 import { Reserves } from "entities/booking/ui/reserves-list"
 
 import { ReservesSheduler } from "features/reserves-sheduller/ui"
+import { useEvent } from "effector-react"
+import { bookingModel } from "entities/booking"
+import { getTables } from "features/reserve-form/model"
 
 export const BookingPage = () => {
+    const handleGetAll = useEvent(getTables)
+
     return (
         <div className="flex flex-col space-y-2 px-4 py-2 font-sans md:space-y-4 md:px-10 md:py-5">
             <section className="flex flex-col justify-center rounded bg-slate-100 p-4 md:p-8 ">
+                <button onClick={handleGetAll}>getAll</button>
                 <h3 className="mb-4 text-xl font-semibold sm:text-base">
                     Booking Card
                 </h3>

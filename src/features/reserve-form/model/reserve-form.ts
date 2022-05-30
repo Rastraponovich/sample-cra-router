@@ -1,4 +1,4 @@
-import { combine, createEvent, createStore, sample } from "effector"
+import { attach, combine, createEvent, createStore, sample } from "effector"
 import { useStore } from "effector-react"
 import { bookingModel } from "entities/booking"
 import {
@@ -11,6 +11,7 @@ import {
     _tables_,
 } from "entities/booking/lib"
 import { ChangeEvent, FormEvent } from "react"
+import { API } from "../lib"
 
 const resetClicked = createEvent()
 const selectTable = createEvent<TTable>()
@@ -44,16 +45,17 @@ const $reserve = createStore<TReserve>(_defaultReserve_)
         [event.target.name]: event.target.value,
     }))
 
-// debug(incrementGuestsClicked, $reserve)
+const getHallplanes = createEvent()
 
-// sample({
-//     clock: incrementGuestsClicked,
-//     source: $reserve,
-//     fn: (reserve, _) => ({ ...reserve, guests: reserve.guests + 1 }),
-//     target: $reserve,
-// })
+sample({
+    clock: getHallplanes,
+    target: API.getHallplanesFx,
+})
 
-export const $hallPlanes = createStore<Array<THallplane>>(_hallPlanes_)
+export const $hallPlanes = createStore<Array<THallplane>>(_hallPlanes_).on(
+    API.getHallplanesFx.doneData,
+    (_, res) => res.data[0]
+)
 
 const $selectedHallPlanes = createStore<THallplane>(_hallPlanes_[0]).on(
     selectHallPlane,
@@ -74,11 +76,25 @@ $reserve.on($selectedHallPlanes, (state, hallPlane) => {
         tableId: 0,
     }
 })
-const $tables = combine($selectedHallPlanes, (selected) => {
-    if (selected)
-        return _tables_.filter((table) => table.hallId === selected.id)
-    return _tables_
+
+export const getTables = createEvent()
+
+sample({
+    clock: $selectedHallPlanes,
+    fn: (selected) => selected.id,
+    target: API.getTablesFx,
 })
+
+// const $tables = combine($selectedHallPlanes, (selected) => {
+//     if (selected)
+//         return _tables_.filter((table) => table.hallId === selected.id)
+//     return _tables_
+// }).on(API.getTablesFx.doneData, (_, res) => res.data[0])
+
+const $tables = createStore<Array<TTable>>([]).on(
+    API.getTablesFx.doneData,
+    (_, res) => res.data[0]
+)
 
 const reserveAddClicked = createEvent<FormEvent<HTMLFormElement>>()
 reserveAddClicked.watch((e) => e.preventDefault())
@@ -89,17 +105,6 @@ sample({
     fn: (reserve, _) => reserve,
     target: bookingModel.addReserveFx,
 })
-//убрать в другую сущность
-
-// const selectReserve = createEvent<TReserve["id"]>()
-
-// const $selectedReserves = createStore<Array<TReserve["id"]>>([]).on(selectReserve, (reserves, id) => {
-//     const candidate = reserves.some((r) => r === id)
-
-//     if (candidate) return reserves.filter((r) => r !== id)
-
-//     return [...reserves, id]
-// })
 
 const useTables = () => useStore($tables)
 const useReserve = () => useStore($reserve)
@@ -114,6 +119,7 @@ export const selectors = {
 }
 
 export const events = {
+    getTables,
     selectTable,
     resetClicked,
     selectHallPlane,
