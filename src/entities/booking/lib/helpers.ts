@@ -1,28 +1,28 @@
-import type { TReserve, TDict, TTable, TPrepay, THallplane } from "./models"
+import type { TReserve, TDict, TPrepay } from "./models"
 
-export const _hallPlanes_: Array<THallplane> = [
-    { id: 1, name: "основной", value: "main", image: "hall.jpeg" },
-    { id: 2, name: "вип", value: "vip", image: "vip.jpeg" },
-    { id: 3, name: "второй зал", value: "second", image: "second.jpg" },
-    { id: 4, name: "терраса", value: "terrace", image: "terrace.jpeg" },
-    { id: 5, name: "служебный", value: "reserve", image: "reserve.jpeg" },
-]
+// export const _hallPlanes_: Array<THallplane> = [
+//     { id: 1, name: "основной", isActive: true, image: "hall.jpeg" },
+//     { id: 2, name: "вип", isActive: true, image: "vip.jpeg" },
+//     { id: 3, name: "второй зал", isActive: true, image: "second.jpg" },
+//     { id: 4, name: "терраса", isActive: true, image: "terrace.jpeg" },
+//     { id: 5, name: "служебный", isActive: true, image: "reserve.jpeg" },
+// ]
 
-export const _tables_: TTable[] = [
-    { id: 1, value: 1, name: "стол 1", hallId: 1, active: true },
-    { id: 2, value: 2, name: "стол 2", hallId: 1, active: true },
-    { id: 3, value: 3, name: "стол 3", hallId: 1, active: true },
-    { id: 4, value: 4, name: "стол 4", hallId: 1, active: true },
-    { id: 5, value: 5, name: "стол 5", hallId: 3, active: true },
-    { id: 6, value: 6, name: "стол 6", hallId: 3, active: true },
-    { id: 7, value: 7, name: "стол 7", hallId: 3, active: true },
-    { id: 8, value: 8, name: "вип 1", hallId: 2, active: true },
-    { id: 9, value: 9, name: "вип 2", hallId: 2, active: true },
-    { id: 10, value: 10, name: "улица 1", hallId: 4, active: true },
-    { id: 11, value: 11, name: "улица 2", hallId: 4, active: true },
-    { id: 12, value: 12, name: "улица 3", hallId: 4, active: true },
-    { id: 13, value: 13, name: "служебный 1", hallId: 5, active: true },
-]
+// export const _tables_: TTable[] = [
+//     { id: 1, name: "стол 1", hallplaneId: 1, isActive: true },
+//     { id: 2, name: "стол 2", hallplaneId: 1, isActive: true },
+//     { id: 3, name: "стол 3", hallplaneId: 1, isActive: true },
+//     { id: 4, name: "стол 4", hallplaneId: 1, isActive: true },
+//     { id: 5, name: "стол 5", hallplaneId: 3, isActive: true },
+//     { id: 6, name: "стол 6", hallplaneId: 3, isActive: true },
+//     { id: 7, name: "стол 7", hallplaneId: 3, isActive: true },
+//     { id: 8, name: "вип 1", hallplaneId: 2, isActive: true },
+//     { id: 9, name: "вип 2", hallplaneId: 2, isActive: true },
+//     { id: 10, name: "улица 1", hallplaneId: 4, isActive: true },
+//     { id: 11, name: "улица 2", hallplaneId: 4, isActive: true },
+//     { id: 12, name: "улица 3", hallplaneId: 4, isActive: true },
+//     { id: 13, name: "служебный 1", hallplaneId: 5, isActive: true },
+// ]
 
 export const _statuses_: TDict[] = [
     { id: 1, name: "свободен", value: "free" },
@@ -32,16 +32,20 @@ export const _statuses_: TDict[] = [
 
 export const _defaultReserve_: TReserve = {
     id: 0,
-    table: { id: 0, value: 0, name: "выберите стол", hallId: 0, active: true },
-    hall: { id: 1, name: "основной", value: "main", image: "hall.jpeg" },
-    hallId: 1,
+    table: { id: 0, name: "выберите стол", hallplaneId: 0, isActive: true },
+    hallplane: {
+        id: 0,
+        name: "выбирите зал",
+        isActive: true,
+        image: "hall.jpeg",
+    },
+    hallplaneId: 0,
     tableId: 0,
-    price: 0,
+    prepay: 0,
     guests: 0,
     status: { id: 1, name: "свободен", value: "free" },
     startDate: "",
     endDate: "",
-    orders: [],
 }
 
 export const _prepaysDict_: TPrepay[] = [

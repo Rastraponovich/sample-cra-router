@@ -1,4 +1,4 @@
-import { attach, combine, createEvent, createStore, sample } from "effector"
+import { createDomain, sample } from "effector"
 import { useStore } from "effector-react"
 import { bookingModel } from "entities/booking"
 import {
@@ -7,23 +7,27 @@ import {
     TReserve,
     TTable,
     _defaultReserve_,
-    _hallPlanes_,
-    _tables_,
 } from "entities/booking/lib"
+import { debug } from "patronum"
 import { ChangeEvent, FormEvent } from "react"
 import { API } from "../lib"
 
-const resetClicked = createEvent()
-const selectTable = createEvent<TTable>()
-const selectHallPlane = createEvent<THallplane>()
-const setReserveStatus = createEvent<TDict>()
-const incrementGuestsClicked = createEvent()
-const decrementGuestsClicked = createEvent()
+const formDomain = createDomain("formDomain")
 
-const changeReserveNumber = createEvent<ChangeEvent<HTMLInputElement>>()
-const changeReserveDate = createEvent<ChangeEvent<HTMLInputElement>>()
-const $reserve = createStore<TReserve>(_defaultReserve_)
-    .reset([bookingModel.addReserveFx.doneData, resetClicked])
+const resetClicked = formDomain.createEvent()
+const selectTable = formDomain.createEvent<TTable>()
+const selectHallPlane = formDomain.createEvent<THallplane>()
+const setReserveStatus = formDomain.createEvent<TDict>()
+const incrementGuestsClicked = formDomain.createEvent()
+const decrementGuestsClicked = formDomain.createEvent()
+
+const changeReserveNumber =
+    formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
+const changeReserveDate =
+    formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
+const $reserve = formDomain
+    .createStore<TReserve>(_defaultReserve_)
+    .reset([bookingModel.$reserves, resetClicked])
 
     .on(changeReserveNumber, (state, event) => {
         const { name, value } = event.target
@@ -45,39 +49,44 @@ const $reserve = createStore<TReserve>(_defaultReserve_)
         [event.target.name]: event.target.value,
     }))
 
-const getHallplanes = createEvent()
+const getHallplanes = formDomain.createEvent()
 
 sample({
     clock: getHallplanes,
     target: API.getHallplanesFx,
 })
 
-export const $hallPlanes = createStore<Array<THallplane>>(_hallPlanes_).on(
-    API.getHallplanesFx.doneData,
-    (_, res) => res.data[0]
-)
+export const $hallPlanes = formDomain
+    .createStore<Array<THallplane>>([])
+    .on(API.getHallplanesFx.doneData, (_, res) => res.data[0])
+    .on(bookingModel.$hallplanes, (_, halls) => halls)
 
-const $selectedHallPlanes = createStore<THallplane>(_hallPlanes_[0]).on(
-    selectHallPlane,
-    (_, payload) => payload
-)
+const $selectedHallPlanes = formDomain
+    .createStore<THallplane>({
+        id: 0,
+        name: "выбирите зал",
+        image: "hall.jpeg",
+        isActive: true,
+    })
+    .on(selectHallPlane, (_, payload) => payload)
+
+debug($selectedHallPlanes, selectHallPlane, $reserve)
 $reserve.on($selectedHallPlanes, (state, hallPlane) => {
     return {
         ...state,
-        hall: hallPlane,
-        hallId: hallPlane.id,
+        hallplane: hallPlane,
+        hallplaneId: hallPlane.id,
         table: {
             id: 0,
-            value: 0,
             name: "выберите стол",
-            hallId: 0,
-            active: true,
+            hallplaneId: 0,
+            isActive: true,
         },
         tableId: 0,
     }
 })
 
-export const getTables = createEvent()
+export const getTables = formDomain.createEvent()
 
 sample({
     clock: $selectedHallPlanes,
@@ -85,25 +94,18 @@ sample({
     target: API.getTablesFx,
 })
 
-// const $tables = combine($selectedHallPlanes, (selected) => {
-//     if (selected)
-//         return _tables_.filter((table) => table.hallId === selected.id)
-//     return _tables_
-// }).on(API.getTablesFx.doneData, (_, res) => res.data[0])
+const $tables = formDomain
+    .createStore<Array<TTable>>([])
+    .on(API.getTablesFx.doneData, (_, res) => res.data[0])
 
-const $tables = createStore<Array<TTable>>([]).on(
-    API.getTablesFx.doneData,
-    (_, res) => res.data[0]
-)
-
-const reserveAddClicked = createEvent<FormEvent<HTMLFormElement>>()
+const reserveAddClicked = formDomain.createEvent<FormEvent<HTMLFormElement>>()
 reserveAddClicked.watch((e) => e.preventDefault())
 
 sample({
     clock: reserveAddClicked,
     source: $reserve,
     fn: (reserve, _) => reserve,
-    target: bookingModel.addReserveFx,
+    target: API.PostReserveFx,
 })
 
 const useTables = () => useStore($tables)
@@ -119,7 +121,6 @@ export const selectors = {
 }
 
 export const events = {
-    getTables,
     selectTable,
     resetClicked,
     selectHallPlane,

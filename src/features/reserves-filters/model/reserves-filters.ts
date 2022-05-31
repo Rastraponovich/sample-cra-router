@@ -1,20 +1,25 @@
-import { combine, createEvent, createStore, forward, sample } from "effector"
+import { combine, createEvent, createStore, sample } from "effector"
 import { useStore } from "effector-react"
 import { bookingModel } from "entities/booking"
-import { TDict, TPrepay, TReserve, _prepaysDict_ } from "entities/booking/lib"
+import {
+    THallplane,
+    TPrepay,
+    TReserve,
+    _prepaysDict_,
+} from "entities/booking/lib"
 import { $hallPlanes as hp } from "features/reserve-form/model"
 import { resetAllFiltersClicked } from "features/reserves-action-panel"
-import { reset } from "patronum"
 
 const $hallplanes = combine(hp, (hallplanes) => {
     return [{ id: 0, name: "без фильтрации", value: "" }, ...hallplanes]
 })
 
-const selectHallPlane = createEvent<TDict>()
-const $selectedHallPlanes = createStore<TDict>({
+const selectHallPlane = createEvent<THallplane>()
+const $selectedHallPlanes = createStore<THallplane>({
     id: 0,
     name: "без фильтрации",
-    value: "",
+    isActive: true,
+    image: "",
 })
     .on(selectHallPlane, (_, payload) => payload)
     .reset(resetAllFiltersClicked)
@@ -38,38 +43,42 @@ sample({
     source: [bookingModel.$reserves, $selectedHallPlanes, $selectedPrepay],
     //@ts-ignore
     fn: (
-        [reserves, filteredHallPlanes, prepays]: [TReserve[], TDict, TPrepay],
+        [reserves, filteredHallPlanes, prepays]: [
+            TReserve[],
+            THallplane,
+            TPrepay
+        ],
         _
     ): TReserve[] => {
         if (filteredHallPlanes.id !== 0) {
             if (prepays.value.length === 1)
                 return reserves.filter(
                     (order) =>
-                        order.hall.id === filteredHallPlanes.id &&
-                        order.price === prepays.value[0]
+                        order.hallplane.id === filteredHallPlanes.id &&
+                        order.prepay === prepays.value[0]
                 ) as TReserve[]
             if (prepays.value.length === 2)
                 return reserves.filter(
                     (order) =>
-                        order.hall.id === filteredHallPlanes.id &&
-                        order.price >= prepays.value[0] &&
-                        order.price <= prepays.value[1]
+                        order.hallplane.id === filteredHallPlanes.id &&
+                        order.prepay >= prepays.value[0] &&
+                        order.prepay <= prepays.value[1]
                 ) as TReserve[]
 
             return reserves.filter(
-                (order) => order.hall.id === filteredHallPlanes.id
+                (order) => order.hallplane.id === filteredHallPlanes.id
             ) as TReserve[]
         }
 
         if (prepays.value.length === 1)
             return reserves.filter(
-                (order) => order.price === prepays.value[0]
+                (order) => order.prepay === prepays.value[0]
             ) as TReserve[]
         if (prepays.value.length === 2)
             return reserves.filter(
                 (order) =>
-                    order.price >= prepays.value[0] &&
-                    order.price <= prepays.value[1]
+                    order.prepay >= prepays.value[0] &&
+                    order.prepay <= prepays.value[1]
             ) as TReserve[]
 
         return reserves as TReserve[]

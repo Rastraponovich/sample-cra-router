@@ -1,8 +1,9 @@
 import { combine, createEvent, createStore, sample } from "effector"
 import { useStore } from "effector-react"
 import { bookingModel } from "entities/booking"
-import { THallplane, _hallPlanes_, _tables_ } from "entities/booking/lib"
+import { THallplane, TTable } from "entities/booking/lib"
 import { daysJS } from "shared/lib/api"
+import { API } from "../lib"
 
 const setCurrentWeek = createEvent<number>()
 const $currentWeek = createStore<number>(daysJS().week()).on(
@@ -35,41 +36,68 @@ sample({
     target: $currentWeek,
 })
 
-const $hallplanes = createStore<Array<THallplane>>([
-    {
-        id: 0,
-        name: "без фильтрации",
-        value: "",
-    },
-    ..._hallPlanes_,
-])
+const getHallPlanes = createEvent()
+
+sample({
+    clock: getHallPlanes,
+    target: API.getHallplanesFx,
+})
+
+const $hallplanes = createStore<Array<THallplane>>([])
+    .on(API.getHallplanesFx.doneData, (_, res) => [
+        {
+            id: 0,
+            name: "без фильтрации",
+            image: "",
+            isActive: true,
+        },
+        ...res.data[0],
+    ])
+    .on(bookingModel.$hallplanes, (_, halls) => [
+        {
+            id: 0,
+            name: "без фильтрации",
+            image: "",
+            isActive: true,
+        },
+        ...halls,
+    ])
 
 const selectHallplane = createEvent<THallplane>()
 const $selectedHallplane = $hallplanes
     .map((hp) => hp[0])
     .on(selectHallplane, (_, payload) => payload)
 
-const $records = combine(
-    bookingModel.$reserves,
-    $selectedHallplane,
-    $currentWeek,
-    (reserves, selectedHallplane, currentWeek) => {
-        return _tables_
-            .filter((table) => {
-                if (selectedHallplane.id !== 0)
-                    return table.hallId === selectedHallplane.id
-                return table
-            })
-            .map((t) => ({
-                ...t,
-                reserves: reserves.filter(
-                    (reserve) =>
-                        reserve.table.id === t.id &&
-                        daysJS(reserve.startDate).week() === currentWeek
-                ),
-            }))
-    }
+const getTables = createEvent<number>()
+
+sample({
+    clock: $selectedHallplane,
+    fn: (selected) => selected.id,
+    target: getTables,
+})
+
+sample({
+    clock: getTables,
+    fn: (id) => id,
+    target: API.getTablesFx,
+})
+
+const $tables = createStore<Array<TTable>>([]).on(
+    API.getTablesFx.doneData,
+    (_, res) => res.data[0]
 )
+
+const $records = combine($currentWeek, $tables, (currentWeek, tables) => {
+    return tables.map((table) => ({
+        ...table,
+        reserves: [],
+        // reserves: reserves.filter(
+        //     (reserve) =>
+        //         reserve.table.id === table.id &&
+        //         daysJS(reserve.startDate).week() === currentWeek
+        // ),
+    }))
+})
 
 const useRecords = () => useStore($records)
 const useHallplanes = () => useStore($hallplanes)
@@ -84,6 +112,7 @@ export const selectors = {
 }
 
 export const events = {
+    getHallPlanes,
     selectHallplane,
     nextWeekClicked,
     prevWeekClicked,

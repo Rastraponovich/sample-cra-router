@@ -5,8 +5,11 @@ export type TDict = {
 }
 
 export type THallplane = {
-    image?: string
-} & TDict
+    id: number
+    image: string
+    isActive: boolean
+    name: string
+}
 
 export type TPrepay = {
     id: number
@@ -15,24 +18,30 @@ export type TPrepay = {
 }
 
 export type TTable = {
-    hallId: number
-    active: boolean
+    hallplaneId: number
     id: number
+    isActive: boolean
     name: string
-    value: number
+    reserves?: Array<TReserve>
 }
 
 export type TReserve = {
     id: number
     table: TTable
     tableId: TTable["id"]
-    price: number
+    prepay: number
     guests: number
     status: TDict
-    orders: any[]
-    hall: THallplane
-    hallId: THallplane["id"]
+    hallplane: THallplane
+    hallplaneId: THallplane["id"]
     startDate: string
+    person?: any
 
     endDate: string
+} & Partial<TCRUDDate>
+
+type TCRUDDate = {
+    deletedAt: string
+    createdAt: string
+    updatedAt: string
 }

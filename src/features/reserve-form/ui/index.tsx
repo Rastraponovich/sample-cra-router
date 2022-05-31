@@ -1,31 +1,28 @@
-import { Listbox, Transition, Popover } from "@headlessui/react"
+import { Listbox, Transition } from "@headlessui/react"
 import {
     PlusSmIcon,
     MinusSmIcon,
     CheckIcon,
     SelectorIcon,
-    ChevronDoubleRightIcon,
     ChevronDoubleLeftIcon,
     CalendarIcon,
 } from "@heroicons/react/outline"
 import clsx from "clsx"
 import { useEvent } from "effector-react"
-import { TDict, TTable, _statuses_ } from "entities/booking/lib"
+import { TDict, THallplane, TTable, _statuses_ } from "entities/booking/lib"
 import {
     Fragment,
     memo,
     MouseEvent,
     ReactNode,
     useEffect,
-    useRef,
+    useLayoutEffect,
     useState,
 } from "react"
 import { daysJS } from "shared/lib/api"
 import { InputField } from "shared/ui/input-field"
 import { Select } from "shared/ui/select"
 import { events, selectors } from "../model"
-
-import { ChevronDownIcon } from "@heroicons/react/solid"
 
 const Minutes = ["0", "15", "30", "45"]
 const Hours = [
@@ -82,9 +79,9 @@ export const ReserveForm = () => {
         >
             <div className="flex items-center justify-between space-x-10">
                 <span className="first-letter:uppercase">зал</span>
-                <Select<TDict>
+                <Select<THallplane>
                     items={hallPlanes}
-                    selected={reserve.hall}
+                    selected={reserve.hallplane}
                     onSelect={handleSelectHallPlane}
                     containerClassName="grow"
                 />
@@ -95,10 +92,11 @@ export const ReserveForm = () => {
                 placeholder="цена"
                 onChange={handleChangeReserveNumber}
                 name="price"
-                value={reserve.price}
+                value={reserve.prepay}
                 type="number"
+                disabled={reserve.hallplaneId === 0}
                 containerClassName="space-x-10"
-                className="relative  w-full cursor-default appearance-none rounded-lg bg-white px-4 py-2  text-left shadow-md placeholder:italic placeholder:text-gray-500 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm
+                className="relative  w-full cursor-default appearance-none rounded-lg bg-white px-4 py-2  text-left shadow-md placeholder:italic placeholder:text-gray-500 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 disabled:opacity-30 sm:text-sm
                                 "
             />
 
@@ -110,6 +108,7 @@ export const ReserveForm = () => {
                     selected={reserve.table}
                     onSelect={handleSelectReserveTable}
                     containerClassName="grow"
+                    disabled={reserve.hallplaneId === 0}
                 />
             </div>
 
@@ -120,6 +119,7 @@ export const ReserveForm = () => {
                     selected={reserve.status}
                     onSelect={handleSelectReserveStatus}
                     containerClassName="grow"
+                    disabled={reserve.hallplaneId === 0}
                 />
             </div>
 
@@ -129,6 +129,7 @@ export const ReserveForm = () => {
                     type="date"
                     value={reserve.startDate}
                     name="startDate"
+                    disabled={reserve.hallplaneId === 0}
                     onChange={handleSetDate}
                 />
             </div>
@@ -139,6 +140,7 @@ export const ReserveForm = () => {
                     type="date"
                     value={reserve.endDate}
                     name="endDate"
+                    disabled={reserve.hallplaneId === 0}
                     onChange={handleSetDate}
                 />
             </div>
@@ -194,7 +196,7 @@ const FormActions = () => {
                 className="rounded-lg bg-green-600 px-4 py-2 uppercase shadow-lg disabled:opacity-50 "
                 disabled={
                     reserve.guests === 0 ||
-                    reserve.table.value === 0 ||
+                    reserve.table.id === 0 ||
                     reserve.status.value === "outOfServie"
                 }
             >

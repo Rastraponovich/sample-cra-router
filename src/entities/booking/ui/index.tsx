@@ -12,17 +12,20 @@ interface ReserveCardProps {
 }
 export const ReserveCard = memo(
     ({ reserve, onClick, selected, compact }: ReserveCardProps) => {
-        const handleClick = () => onClick(reserve.id)
+        const handleClick = () => {
+            reserve.deletedAt = "" && onClick(reserve.id)
+        }
         return (
             <div
                 style={{
                     backgroundImage: !compact
-                        ? `url(/assets/booking/${reserve.hall.image})`
+                        ? `url(/assets/booking/${reserve.hallplane.image})`
                         : "",
                 }}
                 onClick={handleClick}
                 className={clsx(
                     "group  relative bg-white bg-cover bg-no-repeat bg-origin-border text-white",
+                    reserve.deletedAt && "opacity-30",
                     compact
                         ? "flex-row text-gray-900"
                         : "h-[200px] w-[200px] flex-col",
@@ -57,9 +60,9 @@ export const ReserveCard = memo(
                     </div>
                     <span
                         className={clsx(
-                            reserve.status.value === "outOfServie"
-                                ? "bg-rose-600 ring-2 ring-rose-300 "
-                                : "bg-green-100 ring-2 ring-green-300 ",
+                            // reserve.status.value === "outOfServie"
+                            //     ? "bg-rose-600 ring-2 ring-rose-300 "
+                            //     : "bg-green-100 ring-2 ring-green-300 ",
                             "h-3 w-3 animate-pulse rounded-full border-2  border-white  "
                         )}
                     ></span>
@@ -74,10 +77,10 @@ export const ReserveCard = memo(
                         )}
                     >
                         <h5 className="first-letter:uppercase">
-                            {reserve.hall.name}
+                            {reserve.hallplane.name}
                         </h5>
                         <span className="after:ml-1 after:content-['р']">
-                            {reserve.price}
+                            {reserve.prepay}
                         </span>
                     </div>
                     <div
@@ -87,7 +90,7 @@ export const ReserveCard = memo(
                         )}
                     >
                         <span className="font-medium before:content-['№']">
-                            {reserve.table.value}
+                            {reserve.table.id}
                         </span>
                         <div className="flex items-center space-x-2">
                             <UsersIcon className="h-3 w-3 " />

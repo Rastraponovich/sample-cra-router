@@ -1,57 +1,68 @@
 import { useStore } from "effector-react"
-import { createEffect, createEvent, createStore, sample } from "effector"
+import { createDomain, sample } from "effector"
 
-import { type TReserve, _defaultReserve_ } from "../lib"
-import { getReservesFx, getTablesFx } from "../lib/api"
+import {
+    type TReserve,
+    _defaultReserve_,
+    API,
+    TTable,
+    THallplane,
+} from "../lib"
+import { debug } from "patronum"
 
-export const addReserveFx = createEffect<TReserve, any>((reserve) => reserve)
+const pageDomain = createDomain("pageDomain")
 
-export const $reserve = createStore<TReserve>(_defaultReserve_)
+const $withDeleted = pageDomain.createStore<boolean>(true)
 
-const getTables = createEvent()
+const initPage = pageDomain.createEvent()
+
+export const $reserve = pageDomain.createStore<TReserve>(_defaultReserve_)
+
+const getTables = pageDomain.createEvent()
 
 sample({
     clock: getTables,
-    target: getTablesFx,
+    target: API.getTablesFx,
 })
 
-const getReserves = createEvent()
+export const $tables = pageDomain
+    .createStore<Array<TTable>>([])
+    .on(API.getTablesFx.doneData, (_, res) => res.data[0])
+
+const getHallplanes = pageDomain.createEvent()
+sample({
+    clock: getHallplanes,
+    target: API.getHallPlanesFx,
+})
+
+export const $hallplanes = pageDomain
+    .createStore<Array<THallplane>>([])
+    .on(API.getHallPlanesFx.doneData, (_, res) => res.data[0])
+
+const getReserves = pageDomain.createEvent()
 
 sample({
-    clock: getReserves,
-    target: getReservesFx,
+    clock: [getReserves, $withDeleted],
+    source: $withDeleted,
+    fn: (withDeleted, _) => ({ withDeleted }),
+    target: API.getReservesFx,
 })
-export const $reserves = createStore<Array<TReserve>>([]).on(
-    getReservesFx.doneData,
-    (_, payload) => payload.data[0]
-)
+export const $reserves = pageDomain
+    .createStore<Array<TReserve>>([])
+    .on(API.getReservesFx.doneData, (_, payload) => payload.data[0])
 
-sample({
-    clock: addReserveFx.doneData,
-    source: $reserves,
-    fn: (reserves, reserve) =>
-        [
-            ...reserves,
-            {
-                ...reserve,
-                id: reserves.length,
-            },
-        ] as Array<TReserve>,
-    target: $reserves,
-})
-const selectReserve = createEvent<TReserve["id"]>()
-export const $selectedReserves = createStore<Array<TReserve["id"]>>([]).on(
-    selectReserve,
-    (reserves, id) => {
+const selectReserve = pageDomain.createEvent<TReserve["id"]>()
+export const $selectedReserves = pageDomain
+    .createStore<Array<TReserve["id"]>>([])
+    .on(selectReserve, (reserves, id) => {
         const candidate = reserves.some((r) => r === id)
 
         if (candidate) return reserves.filter((r) => r !== id)
 
         return [...reserves, id]
-    }
-)
+    })
 
-export const $compacted = createStore(false)
+export const $compacted = pageDomain.createStore(false)
 
 const $selectedReservesCount = $selectedReserves.map((item) => item.length)
 
@@ -71,6 +82,11 @@ const useFilteredReservesCount = () => useStore($filteredReservesCount)
 const useSelectedReservesCount = () => useStore($selectedReservesCount)
 const useCompactList = () => useStore($compacted)
 
+sample({
+    clock: initPage,
+    target: [getHallplanes, getReserves, getTables],
+})
+
 export const selectors = {
     useReserves,
     useCompactList,
@@ -81,7 +97,8 @@ export const selectors = {
 }
 
 export const events = {
-    selectReserve,
-    getReserves,
+    initPage,
     getTables,
+    getReserves,
+    selectReserve,
 }

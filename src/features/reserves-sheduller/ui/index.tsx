@@ -1,21 +1,18 @@
 import {
     CalendarIcon,
-    CheckIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
-    SelectorIcon,
 } from "@heroicons/react/outline"
 import clsx from "clsx"
-import { Fragment, memo, useEffect, useMemo, useState } from "react"
+import { memo, useEffect, useMemo, useState } from "react"
 import { Accordion } from "shared/ui/accordion"
 import { Select } from "shared/ui/select"
-import { TDict, TReserve, TTable, _tables_ } from "entities/booking/lib"
+import { THallplane, TReserve, TTable } from "entities/booking/lib"
 
 import { days } from "../lib"
 import { events, selectors } from "../model"
 import { useEvent } from "effector-react"
 import { daysJS } from "shared/lib/api"
-import { Listbox, Transition } from "@headlessui/react"
 
 export const ReservesSheduler = () => {
     const currentWeek = selectors.useCurrentWeek()
@@ -58,7 +55,7 @@ export const ReservesSheduler = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {records.map((record, idx) => (
+                            {records.map((record) => (
                                 <CalendarRow
                                     {...record}
                                     key={record.id + record.name}
@@ -209,9 +206,9 @@ const HallplanesFilter = () => {
     const handleSelectHallplane = useEvent(events.selectHallplane)
 
     return (
-        <div className="flex w-full items-center space-x-2">
+        <div className="flex w-full items-center space-x-2 text-base sm:text-sm">
             <span>по залам:</span>
-            <Select<TDict>
+            <Select<THallplane>
                 items={hallplanes}
                 onSelect={handleSelectHallplane}
                 selected={selectedHallplane}

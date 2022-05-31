@@ -8,7 +8,7 @@ export const ReservePreview = () => {
     return (
         <div
             style={{
-                backgroundImage: `url(/assets/booking/${reserve.hall.image})`,
+                backgroundImage: `url(/assets/booking/${reserve.hallplane.image})`,
             }}
             className="text-md relative flex h-[200px] w-[200px] flex-col justify-between justify-self-center rounded-lg border-2 border-transparent bg-white bg-opacity-50 bg-cover bg-no-repeat bg-origin-border p-4 font-light text-white shadow-lg duration-150 hover:shadow-2xl  md:justify-self-start"
         >
@@ -30,15 +30,15 @@ export const ReservePreview = () => {
             <div className="z-10 flex flex-col">
                 <div className="flex items-center justify-between">
                     <h5 className="first-letter:uppercase">
-                        {reserve.hall.name}
+                        {reserve.hallplane.name}
                     </h5>
                     <span className="after:ml-1 after:content-['р']">
-                        {reserve.price}
+                        {reserve.prepay}
                     </span>
                 </div>
                 <div className="flex items-center justify-between">
                     <span className="font-medium before:content-['№']">
-                        {reserve.table.value}
+                        {reserve.table.id}
                     </span>
                     <div className="flex items-center space-x-2">
                         <UsersIcon className="h-3 w-3 " />
