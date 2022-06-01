@@ -1,5 +1,5 @@
 import { useStore } from "effector-react"
-import { createDomain, sample } from "effector"
+import { createDomain, createStore, sample } from "effector"
 
 import {
     type TReserve,
@@ -12,7 +12,7 @@ import { debug } from "patronum"
 
 const pageDomain = createDomain("pageDomain")
 
-const $withDeleted = pageDomain.createStore<boolean>(true)
+export const $withDeleted = pageDomain.createStore<boolean>(true)
 
 const initPage = pageDomain.createEvent()
 
@@ -42,7 +42,7 @@ export const $hallplanes = pageDomain
 const getReserves = pageDomain.createEvent()
 
 sample({
-    clock: [getReserves, $withDeleted],
+    clock: getReserves,
     source: $withDeleted,
     fn: (withDeleted, _) => ({ withDeleted }),
     target: API.getReservesFx,
@@ -66,21 +66,32 @@ export const $compacted = pageDomain.createStore(false)
 
 const $selectedReservesCount = $selectedReserves.map((item) => item.length)
 
-export const $reservesCount = $reserves.map((item) => item.length)
+export const $reservesCount = pageDomain
+    .createStore<number>(0)
+    .on(API.getReservesFx.doneData, (_, res) => res.data[1])
 
-export const $filteredReserves = $reserves.map((reserves) => reserves)
+export const $filteredReserves = $reserves
+    .map((reserves) => reserves)
+    .on(API.getFliteredReservesFx.doneData, (_, res) => res.data[0])
 
 $selectedReserves.reset($filteredReserves)
 
-const $filteredReservesCount = $filteredReserves.map((item) => item.length)
+const $filteredReservesCount = $reservesCount
+    .map((quantity) => quantity)
+    .on(API.getFliteredReservesFx.doneData, (_, res) => res.data[1])
 
+const $isLoadingReserves = createStore<boolean>(false).on(
+    [API.getFliteredReservesFx.pending, API.getReservesFx.pending],
+    (_, state) => state
+)
+
+const useCompactList = () => useStore($compacted)
 const useReserves = () => useStore($filteredReserves)
-
 const useReservesCount = () => useStore($reservesCount)
 const useSelectedReserves = () => useStore($selectedReserves)
+const useIsLoadingReserves = () => useStore($isLoadingReserves)
 const useFilteredReservesCount = () => useStore($filteredReservesCount)
 const useSelectedReservesCount = () => useStore($selectedReservesCount)
-const useCompactList = () => useStore($compacted)
 
 sample({
     clock: initPage,
@@ -92,6 +103,7 @@ export const selectors = {
     useCompactList,
     useReservesCount,
     useSelectedReserves,
+    useIsLoadingReserves,
     useSelectedReservesCount,
     useFilteredReservesCount,
 }

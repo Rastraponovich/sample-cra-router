@@ -10,11 +10,10 @@ import { events, selectors } from "../model"
 
 const ReservesList = () => {
     const filteredOrders = selectors.useReserves()
-    const selectedReserves = selectors.useSelectedReserves()
-    const handleSelectBooking = useEvent(events.selectReserve)
-
     const compact = bookingModel.selectors.useCompactList()
+    const selectedReserves = selectors.useSelectedReserves()
 
+    const handleSelectBooking = useEvent(events.selectReserve)
     return (
         <div
             className={clsx(
@@ -42,7 +41,9 @@ const ReservesList = () => {
 
 export const Reserves = () => {
     const reservesCount = selectors.useReservesCount()
-    const reserves = selectors.useReserves()
+    const isLoading = selectors.useIsLoadingReserves()
+
+    const filteredReservesCount = selectors.useFilteredReservesCount()
 
     return (
         <section className="flex flex-col space-y-2 bg-gray-200 p-4">
@@ -51,19 +52,17 @@ export const Reserves = () => {
                     список резервов
                 </h4>
                 <span>
-                    {reserves.length} / {reservesCount}
+                    {filteredReservesCount} / {reservesCount}
                 </span>
                 <CalendarIcon className="h-6 w-6" />
             </div>
-            {reservesCount > 0 && (
-                <div className="flex flex-col  space-y-2 text-base sm:text-sm">
-                    <ActionPanel />
+            <div className="flex flex-col  space-y-2 text-base sm:text-sm">
+                <ActionPanel />
 
-                    <Filters />
-                </div>
-            )}
-
-            {reserves.length === 0 && (
+                <Filters />
+            </div>
+            {isLoading && <div>loading...</div>}
+            {filteredReservesCount === 0 && (
                 <span className="w-full text-center text-4xl ">броней нет</span>
             )}
             <ReservesList />

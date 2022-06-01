@@ -1,102 +1,103 @@
-import { combine, createEvent, createStore, sample } from "effector"
+import { combine, createDomain, createEvent, sample } from "effector"
 import { useStore } from "effector-react"
-import { bookingModel } from "entities/booking"
+import { bookingLib, bookingModel } from "entities/booking"
 import {
     THallplane,
     TPrepay,
-    TReserve,
+    TReservesParams,
     _prepaysDict_,
 } from "entities/booking/lib"
-import { $hallPlanes as hp } from "features/reserve-form/model"
 import { resetAllFiltersClicked } from "features/reserves-action-panel"
 
-const $hallplanes = combine(hp, (hallplanes) => {
+const filtersDomain = createDomain("filtersDomain")
+
+const toggleVisibledFiltersClicked = filtersDomain.createEvent()
+const $visibledFilters = filtersDomain
+    .createStore<boolean>(false)
+    .on(toggleVisibledFiltersClicked, (state, _) => !state)
+
+const toggleWithDeleted = createEvent()
+const $withDeleted = filtersDomain
+    .createStore<boolean>(true)
+    .on(toggleWithDeleted, (state, _) => !state)
+
+const $hallplanes = combine(bookingModel.$hallplanes, (hallplanes) => {
     return [{ id: 0, name: "без фильтрации", value: "" }, ...hallplanes]
 })
 
-const selectHallPlane = createEvent<THallplane>()
-const $selectedHallPlanes = createStore<THallplane>({
-    id: 0,
-    name: "без фильтрации",
-    isActive: true,
-    image: "",
-})
+const selectHallPlane = filtersDomain.createEvent<THallplane>()
+const $selectedHallPlanes = filtersDomain
+    .createStore<THallplane>({
+        id: 0,
+        name: "без фильтрации",
+        isActive: true,
+        image: "",
+    })
     .on(selectHallPlane, (_, payload) => payload)
     .reset(resetAllFiltersClicked)
 
-// sample({
-//     clock: $selectedHallPlanes,
-//     fn: (selected) => selected.id,
-//     target: bookingModel.filterReservesByHallplane,
-// })
+const $prepays = filtersDomain.createStore<Array<TPrepay>>(_prepaysDict_)
 
-const $prepays = createStore<Array<TPrepay>>(_prepaysDict_)
-
-const selectPrepay = createEvent<TPrepay>()
-const $selectedPrepay = createStore<TPrepay>(_prepaysDict_[0])
+const selectPrepay = filtersDomain.createEvent<TPrepay>()
+const $selectedPrepay = filtersDomain
+    .createStore<TPrepay>(_prepaysDict_[0])
     .on(selectPrepay, (_, payload) => payload)
     .reset(resetAllFiltersClicked)
 
 sample({
-    clock: [$selectedHallPlanes, $selectedPrepay],
+    clock: [$selectedHallPlanes, $selectedPrepay, $withDeleted],
 
-    source: [bookingModel.$reserves, $selectedHallPlanes, $selectedPrepay],
+    source: [$selectedHallPlanes, $selectedPrepay, $withDeleted],
     //@ts-ignore
     fn: (
-        [reserves, filteredHallPlanes, prepays]: [
-            TReserve[],
+        [filteredHallPlanes, prepays, withDeleted]: [
             THallplane,
-            TPrepay
+            TPrepay,
+            boolean
         ],
         _
-    ): TReserve[] => {
+    ): TReservesParams => {
         if (filteredHallPlanes.id !== 0) {
-            if (prepays.value.length === 1)
-                return reserves.filter(
-                    (order) =>
-                        order.hallplane.id === filteredHallPlanes.id &&
-                        order.prepay === prepays.value[0]
-                ) as TReserve[]
-            if (prepays.value.length === 2)
-                return reserves.filter(
-                    (order) =>
-                        order.hallplane.id === filteredHallPlanes.id &&
-                        order.prepay >= prepays.value[0] &&
-                        order.prepay <= prepays.value[1]
-                ) as TReserve[]
-
-            return reserves.filter(
-                (order) => order.hallplane.id === filteredHallPlanes.id
-            ) as TReserve[]
+            if (prepays.id !== 0)
+                return {
+                    hallplaneId: filteredHallPlanes.id,
+                    prepayType: prepays.id,
+                    withDeleted,
+                } as TReservesParams
+            return {
+                hallplaneId: filteredHallPlanes.id,
+                withDeleted,
+            } as TReservesParams
         }
 
-        if (prepays.value.length === 1)
-            return reserves.filter(
-                (order) => order.prepay === prepays.value[0]
-            ) as TReserve[]
-        if (prepays.value.length === 2)
-            return reserves.filter(
-                (order) =>
-                    order.prepay >= prepays.value[0] &&
-                    order.prepay <= prepays.value[1]
-            ) as TReserve[]
+        if (prepays.value.length !== 0)
+            return { prepayType: prepays.id, withDeleted } as TReservesParams
 
-        return reserves as TReserve[]
+        return { withDeleted }
     },
 
-    target: bookingModel.$filteredReserves,
+    target: bookingLib.API.getFliteredReservesFx,
 })
 
-export const events = { selectHallPlane, selectPrepay }
+export const events = {
+    selectHallPlane,
+    selectPrepay,
+    toggleWithDeleted,
+    toggleVisibledFiltersClicked,
+}
 
 const usePrepays = () => useStore($prepays)
 const useHallPlanes = () => useStore($hallplanes)
+const useWithDeleted = () => useStore($withDeleted)
 const useSelectedPrepay = () => useStore($selectedPrepay)
+const useVisibledFilters = () => useStore($visibledFilters)
 const useSelectedHallPlane = () => useStore($selectedHallPlanes)
 
 export const selectors = {
     usePrepays,
     useHallPlanes,
+    useWithDeleted,
     useSelectedPrepay,
+    useVisibledFilters,
     useSelectedHallPlane,
 }

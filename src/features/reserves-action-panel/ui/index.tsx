@@ -16,7 +16,13 @@ import {
     XCircleIcon,
     XIcon,
     CheckIcon,
+    ViewGridIcon,
+    ViewListIcon,
+    FilterIcon,
 } from "@heroicons/react/outline"
+
+import { FilterIcon as FilterIconSolid } from "@heroicons/react/solid"
+import { events, selectors } from "features/reserves-filters/model"
 
 export const ActionPanel = () => {
     return (
@@ -28,13 +34,14 @@ export const ActionPanel = () => {
 
             <ResetFiltersButton />
             <ToggleCompactButton />
+            <ShowFiltersButton />
         </div>
     )
 }
 
 interface ActionButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    children: ReactNode
+    children?: ReactNode
     caption?: string | ReactNode
 }
 
@@ -86,15 +93,19 @@ const SelectAllButton = () => {
 
 const ToggleCompactButton = () => {
     const handleToggleComactClicked = useEvent(toggleComactClicked)
+    const compact = bookingModel.selectors.useCompactList()
 
     return (
-        <ActionButton
-            caption={"toggleCompact"}
+        <button
+            className="rounded-lg bg-white p-2 text-gray-500 shadow-md hover:text-gray-900 active:text-gray-500"
             onClick={handleToggleComactClicked}
-            className="bg-green-600"
         >
-            <XIcon className="h-4 w-4" />
-        </ActionButton>
+            {compact ? (
+                <ViewGridIcon className="h-5 w-5" />
+            ) : (
+                <ViewListIcon className="h-5 w-5" />
+            )}
+        </button>
     )
 }
 
@@ -122,11 +133,16 @@ const DeleteSelectedReservesButton = () => {
     return (
         <ActionButton
             className="bg-rose-600"
-            caption={<span>отчистить</span>}
+            caption={
+                <span>
+                    отчистить{" "}
+                    {selectedReservesCount > 0 && ": " + selectedReservesCount}
+                </span>
+            }
             onClick={handleDeleteSelectedReservesClicked}
             disabled={selectedReservesCount === 0}
         >
-            {selectedReservesCount > 0 && ":" + selectedReservesCount}
+            <TrashIcon className="h-4 w-4" />
         </ActionButton>
     )
 }
@@ -142,5 +158,25 @@ const ResetFiltersButton = () => {
         >
             <XCircleIcon className="h-4 w-4" />
         </ActionButton>
+    )
+}
+
+const ShowFiltersButton = () => {
+    const handleToggleVisibledClicked = useEvent(
+        events.toggleVisibledFiltersClicked
+    )
+    const visibled = selectors.useVisibledFilters()
+
+    return (
+        <button
+            className="rounded-lg bg-white p-2 text-gray-500 shadow-md hover:text-gray-900 active:text-gray-500"
+            onClick={handleToggleVisibledClicked}
+        >
+            {visibled ? (
+                <FilterIcon className="h-5 w-5" />
+            ) : (
+                <FilterIconSolid className="h-5 w-5" />
+            )}
+        </button>
     )
 }

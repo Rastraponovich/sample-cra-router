@@ -13,7 +13,7 @@ interface ReserveCardProps {
 export const ReserveCard = memo(
     ({ reserve, onClick, selected, compact }: ReserveCardProps) => {
         const handleClick = () => {
-            reserve.deletedAt = "" && onClick(reserve.id)
+            reserve.deletedAt === "" && onClick(reserve.id)
         }
         return (
             <div
@@ -40,7 +40,7 @@ export const ReserveCard = memo(
 
                 <div
                     className={clsx(
-                        "z-10 flex items-center justify-between",
+                        "z-10 flex items-start justify-between",
                         compact && "order-2 space-x-2 "
                     )}
                 >

@@ -45,3 +45,9 @@ type TCRUDDate = {
     createdAt: string
     updatedAt: string
 }
+
+export type TReservesParams = {
+    withDeleted?: boolean
+    hallplaneId?: number
+    prepayType?: number
+}

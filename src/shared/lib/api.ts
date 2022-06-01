@@ -6,7 +6,12 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import ru from "dayjs/locale/ru"
 import axios, { AxiosResponse } from "axios"
 import { createEffect, sample } from "effector"
-import { THallplane, TReserve, TTable } from "entities/booking/lib"
+import {
+    THallplane,
+    TReserve,
+    TReservesParams,
+    TTable,
+} from "entities/booking/lib"
 dayjs.extend(weekOfYear)
 
 dayjs.extend(duration)
@@ -17,11 +22,7 @@ export const daysJS = dayjs
 
 const bookingAPIInstance = axios.create({ baseURL: "http://localhost:4000" })
 
-type TParams = {
-    withDeleted?: boolean
-}
-
-const getReserves = async (params?: TParams) =>
+const getReserves = async (params?: TReservesParams) =>
     await bookingAPIInstance.get("/reserves", { params })
 const getReserve = async (id: number) =>
     await bookingAPIInstance.get("/reserves", { params: id })
