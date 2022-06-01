@@ -1,6 +1,7 @@
 import { createEvent, sample } from "effector"
 import { bookingModel } from "entities/booking"
 import type { TReserve } from "entities/booking/lib"
+import { reservesFilterModel } from "features/reserves-filters"
 import { BookingAPI } from "shared/lib/api"
 
 export const toggleComactClicked = createEvent()
@@ -31,10 +32,7 @@ sample({
     clock: selectAllReservesClicked,
     source: [bookingModel.$filteredReserves, bookingModel.$selectedReserves],
     //@ts-ignore
-    fn: (
-        [filteredReserves, selectedReserves]: [Array<TReserve>, Array<number>],
-        _
-    ) => {
+    fn: ([filteredReserves, selectedReserves]: [Array<TReserve>, Array<number>], _) => {
         const selectedAll = filteredReserves.length === selectedReserves.length
 
         if (selectedAll) return []
@@ -50,3 +48,6 @@ bookingModel.$selectedReserves.reset([
     BookingAPI.deleteAllReservesFx.doneData,
     resetAllFiltersClicked,
 ])
+
+reservesFilterModel.$selectedHallPlanes.reset(resetAllFiltersClicked)
+reservesFilterModel.$selectedPrepay.reset(resetAllFiltersClicked)
