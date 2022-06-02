@@ -123,46 +123,53 @@ export const ReserveForm = () => {
                 />
             </div>
 
-            <div className="flex items-center justify-between space-x-10">
+            <div className="flex items-center justify-between space-x-2">
                 <span className="first-letter:uppercase">начало</span>
-                <input
-                    type="date"
-                    value={reserve.startDate}
-                    name="startDate"
-                    disabled={reserve.hallplaneId === 0}
-                    onChange={handleSetDate}
+                <Calendar
+                    date={reserve.startDate}
+                    setDate={handleSetDate}
+                    id="startDate"
+                />
+                <TimeSelect
+                    caption="часы"
+                    items={hours}
+                    selected={selectedHour}
+                    onSelect={(e) => setSelectedHour(e)}
+                    containerClassName=""
+                />
+                <TimeSelect
+                    caption="минуты"
+                    items={minutes}
+                    selected={selectedMinutes}
+                    onSelect={(e) => setSelectedMinutes(e)}
+                    containerClassName=""
                 />
             </div>
 
             <div className="flex items-center justify-between space-x-10">
                 <span className="first-letter:uppercase">конец</span>
-                <input
-                    type="date"
-                    value={reserve.endDate}
-                    name="endDate"
-                    disabled={reserve.hallplaneId === 0}
-                    onChange={handleSetDate}
+                <Calendar
+                    date={reserve.endDate}
+                    setDate={handleSetDate}
+                    id="endDate"
+                />
+
+                <TimeSelect
+                    caption="часы"
+                    items={hours}
+                    selected={selectedHour}
+                    onSelect={(e) => setSelectedHour(e)}
+                    containerClassName="w-1/3"
+                />
+                <TimeSelect
+                    caption="минуты"
+                    items={minutes}
+                    selected={selectedMinutes}
+                    onSelect={(e) => setSelectedMinutes(e)}
+                    containerClassName="w-1/3"
                 />
             </div>
-            <TimeSelect
-                caption="часы"
-                items={hours}
-                selected={selectedHour}
-                onSelect={(e) => setSelectedHour(e)}
-                containerClassName="w-1/3"
-            />
-            <TimeSelect
-                caption="минуты"
-                items={minutes}
-                selected={selectedMinutes}
-                onSelect={(e) => setSelectedMinutes(e)}
-                containerClassName="w-1/3"
-            />
 
-            <div className="flex flex-col space-y-2">
-                <span>calendar</span>
-                <Calendar date={startDate} setDate={setStartDate} />
-            </div>
             <FormActions />
         </form>
     )
@@ -258,12 +265,12 @@ const TimeSelect = ({
     items,
 }: TimeSelectProps) => {
     return (
-        <div className="flex items-center justify-between">
-            <span>{caption}</span>
+        <div className="flex items-center justify-between space-x-2">
+            <span className="after:content-[':']">{caption}</span>
 
             <Listbox value={selected} onChange={onSelect}>
                 <div className={clsx(containerClassName, "relative")}>
-                    <Listbox.Button className="group relative w-full max-w-xs cursor-pointer rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+                    <Listbox.Button className="group relative w-full max-w-xs cursor-pointer rounded-lg bg-white py-2 pl-6 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
                         <span className="block truncate">{selected}</span>
                         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                             <SelectorIcon
@@ -324,10 +331,11 @@ const TimeSelect = ({
 
 interface CalendarProps {
     date: string
-    setDate(date: string): void
+    setDate({ date, id }: { date: string; id: string }): void
+    id: string
 }
 
-const Calendar = ({ date, setDate }: CalendarProps) => {
+const Calendar = ({ date, setDate, id }: CalendarProps) => {
     const [show, setShow] = useState(false)
     const [daysInMonth, setDaysInMonth] = useState<Array<number>>([])
     const [selectedDay, setSelectedDay] = useState<number | null>(null)
@@ -339,7 +347,7 @@ const Calendar = ({ date, setDate }: CalendarProps) => {
     const [resultDate, setResultDate] = useState<string>(date)
 
     const handleConfirm = () => {
-        setDate(resultDate)
+        setDate({ date: resultDate, id })
         setShow(false)
     }
 
@@ -397,7 +405,7 @@ const Calendar = ({ date, setDate }: CalendarProps) => {
     }
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col disabled:opacity-30">
             <div className="relative">
                 <button
                     onClick={() => setShow((prev) => !prev)}
@@ -424,7 +432,7 @@ const Calendar = ({ date, setDate }: CalendarProps) => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                 >
-                    <div className="absolute left-1/2 z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform bg-white px-4 sm:px-0 lg:max-w-3xl">
+                    <div className="absolute left-0 z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform rounded-lg bg-white px-4 sm:px-0 ">
                         <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
                             <div className="flex flex-col rounded-lg border ">
                                 <div className="my-2 flex items-center justify-between px-4">

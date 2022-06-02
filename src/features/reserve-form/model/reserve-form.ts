@@ -23,8 +23,11 @@ const decrementGuestsClicked = formDomain.createEvent()
 
 const changeReserveNumber =
     formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
-const changeReserveDate =
-    formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
+// const changeReserveDate =
+//     formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
+
+const changeReserveDate = formDomain.createEvent<{ date: string; id: string }>()
+
 const $reserve = formDomain
     .createStore<TReserve>(_defaultReserve_)
     .reset([bookingModel.$reserves, resetClicked])
@@ -46,8 +49,12 @@ const $reserve = formDomain
     .on(setReserveStatus, (state, status) => ({ ...state, status }))
     .on(changeReserveDate, (state, event) => ({
         ...state,
-        [event.target.name]: event.target.value,
+        [event.id]: event.date,
     }))
+// .on(changeReserveDate, (state, event) => ({
+//     ...state,
+//     [event.target.name]: event.target.value,
+// }))
 
 const getHallplanes = formDomain.createEvent()
 
@@ -70,7 +77,6 @@ const $selectedHallPlanes = formDomain
     })
     .on(selectHallPlane, (_, payload) => payload)
 
-debug($selectedHallPlanes, selectHallPlane, $reserve)
 $reserve.on($selectedHallPlanes, (state, hallPlane) => {
     return {
         ...state,
