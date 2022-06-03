@@ -34,10 +34,10 @@ export type TReserve = {
     status: TDict
     hallplane: THallplane
     hallplaneId: THallplane["id"]
-    startDate: string
+    startDate: number
     person?: any
 
-    endDate: string
+    endDate: number
 } & Partial<TCRUDDate>
 
 type TCRUDDate = {

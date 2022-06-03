@@ -26,7 +26,7 @@ const changeReserveNumber =
 // const changeReserveDate =
 //     formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
 
-const changeReserveDate = formDomain.createEvent<{ date: string; id: string }>()
+const changeReserveDate = formDomain.createEvent<{ date: number; id: string }>()
 
 const $reserve = formDomain
     .createStore<TReserve>(_defaultReserve_)

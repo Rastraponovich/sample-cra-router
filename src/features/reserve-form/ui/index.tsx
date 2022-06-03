@@ -6,17 +6,22 @@ import {
     SelectorIcon,
     ChevronDoubleLeftIcon,
     CalendarIcon,
+    ChevronDoubleDownIcon,
 } from "@heroicons/react/outline"
 import clsx from "clsx"
 import { useEvent } from "effector-react"
 import { TDict, THallplane, TTable, _statuses_ } from "entities/booking/lib"
 import {
+    createRef,
     Fragment,
+    HTMLAttributes,
     memo,
     MouseEvent,
     ReactNode,
+    RefObject,
     useEffect,
-    useLayoutEffect,
+    useMemo,
+    useRef,
     useState,
 } from "react"
 import { daysJS } from "shared/lib/api"
@@ -24,51 +29,16 @@ import { InputField } from "shared/ui/input-field"
 import { Select } from "shared/ui/select"
 import { events, selectors } from "../model"
 
-const Minutes = ["0", "15", "30", "45"]
-const Hours = [
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20",
-    "21",
-    "22",
-    "23",
-]
-
 export const ReserveForm = () => {
     const tables = selectors.useTables()
     const reserve = selectors.useReserve()
     const hallPlanes = selectors.useHallPlanes()
-
-    const hours = Hours
-    const minutes = Minutes
-    const [selectedHour, setSelectedHour] = useState(Hours[0])
-    const [selectedMinutes, setSelectedMinutes] = useState(Minutes[0])
 
     const handleSelectReserveTable = useEvent(events.selectTable)
     const handleSelectHallPlane = useEvent(events.selectHallPlane)
     const handleAddReserveClicked = useEvent(events.reserveAddClicked)
     const handleSelectReserveStatus = useEvent(events.setReserveStatus)
     const handleChangeReserveNumber = useEvent(events.changeReserveNumber)
-
-    const [startDate, setStartDate] = useState("")
 
     const handleSetDate = useEvent(events.changeReserveDate)
 
@@ -130,20 +100,6 @@ export const ReserveForm = () => {
                     setDate={handleSetDate}
                     id="startDate"
                 />
-                <TimeSelect
-                    caption="часы"
-                    items={hours}
-                    selected={selectedHour}
-                    onSelect={(e) => setSelectedHour(e)}
-                    containerClassName=""
-                />
-                <TimeSelect
-                    caption="минуты"
-                    items={minutes}
-                    selected={selectedMinutes}
-                    onSelect={(e) => setSelectedMinutes(e)}
-                    containerClassName=""
-                />
             </div>
 
             <div className="flex items-center justify-between space-x-10">
@@ -152,21 +108,6 @@ export const ReserveForm = () => {
                     date={reserve.endDate}
                     setDate={handleSetDate}
                     id="endDate"
-                />
-
-                <TimeSelect
-                    caption="часы"
-                    items={hours}
-                    selected={selectedHour}
-                    onSelect={(e) => setSelectedHour(e)}
-                    containerClassName="w-1/3"
-                />
-                <TimeSelect
-                    caption="минуты"
-                    items={minutes}
-                    selected={selectedMinutes}
-                    onSelect={(e) => setSelectedMinutes(e)}
-                    containerClassName="w-1/3"
                 />
             </div>
 
@@ -330,21 +271,34 @@ const TimeSelect = ({
 }
 
 interface CalendarProps {
-    date: string
-    setDate({ date, id }: { date: string; id: string }): void
+    date: number
+    setDate({ date, id }: { date: number; id: string }): void
     id: string
 }
 
-const Calendar = ({ date, setDate, id }: CalendarProps) => {
+const Calendar = memo(({ date, setDate, id }: CalendarProps) => {
     const [show, setShow] = useState(false)
     const [daysInMonth, setDaysInMonth] = useState<Array<number>>([])
-    const [selectedDay, setSelectedDay] = useState<number | null>(null)
+    const [selectedDay, setSelectedDay] = useState<number>(daysJS(date).date())
 
-    const [currentDay, setCurrentDay] = useState<number>(0)
+    const [currentDay, setCurrentDay] = useState<number>(
+        daysJS(date).daysInMonth()
+    )
 
-    const [currentMonth, setCurrentMonth] = useState<number>(0)
+    const [currentMonth, setCurrentMonth] = useState<number>(
+        daysJS(date).month()
+    )
 
-    const [resultDate, setResultDate] = useState<string>(date)
+    const [resultDate, setResultDate] = useState<number>(date)
+
+    const hours = useMemo(() => [...Array(24)].map((i, idx) => idx), [])
+    const minutes = useMemo(
+        () => [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
+        []
+    )
+
+    const [selectedHour, setSelectedHour] = useState(daysJS(date).hour())
+    const [selectedMinutes, setSelectedMinutes] = useState(0)
 
     const handleConfirm = () => {
         setDate({ date: resultDate, id })
@@ -365,13 +319,7 @@ const Calendar = ({ date, setDate, id }: CalendarProps) => {
 
     useEffect(() => {
         const days = daysJS().daysInMonth()
-
         setDaysInMonth([...Array(days).keys()].map((i) => i + 1))
-
-        setSelectedDay(daysJS().date())
-        setCurrentDay(daysJS().date())
-
-        setCurrentMonth(daysJS().month())
     }, [])
 
     useEffect(() => {
@@ -381,13 +329,16 @@ const Calendar = ({ date, setDate, id }: CalendarProps) => {
 
     useEffect(() => {
         if (currentDay && currentMonth) {
-            const date = daysJS()
-                .month(currentMonth)
-                .date(selectedDay!)
-                .format()
-            setResultDate(date)
+            setResultDate((prev) =>
+                daysJS(prev)
+                    .set("hour", selectedHour)
+                    .set("minutes", Number(selectedMinutes))
+                    .month(currentMonth)
+                    .date(selectedDay!)
+                    .valueOf()
+            )
         }
-    }, [selectedDay, currentMonth])
+    }, [selectedDay, currentMonth, selectedHour, selectedMinutes])
 
     const handleSelectDay = (e: MouseEvent<HTMLDivElement>) => {
         setSelectedDay(Number(e.currentTarget.id))
@@ -432,85 +383,102 @@ const Calendar = ({ date, setDate, id }: CalendarProps) => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                 >
-                    <div className="absolute left-0 z-10 mt-3 w-screen max-w-xs -translate-x-1/2 transform rounded-lg bg-white px-4 sm:px-0 ">
+                    <div className="absolute left-0 z-10 mt-3 w-screen max-w-sm -translate-x-1/2 transform rounded-lg bg-white px-4 sm:px-0 ">
                         <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-                            <div className="flex flex-col rounded-lg border ">
-                                <div className="my-2 flex items-center justify-between px-4">
-                                    <button
-                                        type="button"
-                                        onClick={handlePrevMonth}
-                                        className="group relative rounded-full bg-gray-200 p-2 text-gray-500 duration-100 hover:bg-blue-600 hover:text-white active:opacity-75"
-                                    >
-                                        <ChevronDoubleLeftIcon className="will-change h-4 w-4 group-active:animate-slideArrow" />
-                                    </button>
-                                    <div className="flex justify-center ">
-                                        <span className=" text-xl font-bold first-letter:uppercase">
-                                            {daysJS()
-                                                .month(currentMonth)
-                                                .format("MMMM YYYY")}
-                                        </span>
+                            <div className="grid grid-cols-3 divide-x rounded-t-lg">
+                                <div className="flex max-h-[300px] w-full justify-between divide-x">
+                                    <TimeList
+                                        onSelect={setSelectedHour}
+                                        values={hours}
+                                        selected={selectedHour}
+                                    />
+
+                                    <TimeList
+                                        onSelect={setSelectedMinutes}
+                                        values={minutes}
+                                        selected={selectedMinutes}
+                                    />
+                                </div>
+
+                                <div className="col-span-2 flex flex-col ">
+                                    <div className="my-2 flex items-center justify-between px-4">
+                                        <button
+                                            type="button"
+                                            onClick={handlePrevMonth}
+                                            className="group relative rounded-full bg-gray-200 p-2 text-gray-500 duration-100 hover:bg-blue-600 hover:text-white active:opacity-75"
+                                        >
+                                            <ChevronDoubleLeftIcon className="will-change h-4 w-4 group-active:animate-slideArrow" />
+                                        </button>
+                                        <div className="flex justify-center ">
+                                            <span className=" text-xl font-bold first-letter:uppercase">
+                                                {daysJS()
+                                                    .month(currentMonth)
+                                                    .format("MMMM YYYY")}
+                                            </span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={handleNextMonth}
+                                            className="group rotate-180 rounded-full bg-gray-200 p-2 text-gray-500 duration-100 hover:bg-blue-600 hover:text-white active:opacity-75"
+                                        >
+                                            <ChevronDoubleLeftIcon className="will-change h-4 w-4  group-active:animate-slideArrow" />
+
+                                            {/* <ChevronDoubleRightIcon className="h-4 w-4 group-hover:animate-slideArrow" /> */}
+                                        </button>
                                     </div>
-                                    <button
-                                        type="button"
-                                        onClick={handleNextMonth}
-                                        className="group rotate-180 rounded-full bg-gray-200 p-2 text-gray-500 duration-100 hover:bg-blue-600 hover:text-white active:opacity-75"
-                                    >
-                                        <ChevronDoubleLeftIcon className="will-change h-4 w-4  group-active:animate-slideArrow" />
-
-                                        {/* <ChevronDoubleRightIcon className="h-4 w-4 group-hover:animate-slideArrow" /> */}
-                                    </button>
+                                    <div className="mb-2 flex items-center justify-center space-x-2">
+                                        <span>текущий: </span>
+                                        <button
+                                            type="button"
+                                            onClick={handleSelectCurrentByType}
+                                            id="date"
+                                            className="text-blue-500 underline underline-offset-1 duration-150 hover:text-blue-600 active:text-blue-700"
+                                        >
+                                            дата
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleSelectCurrentByType}
+                                            id="month"
+                                            className="text-blue-500 underline underline-offset-1 duration-150 hover:text-blue-600 active:text-blue-700"
+                                        >
+                                            месяц
+                                        </button>
+                                    </div>
+                                    <span className="mb-2 px-4 text-center">
+                                        {daysJS(resultDate).format(
+                                            "DD.MM.YYYY HH:mm"
+                                        )}
+                                    </span>
+                                    <DaysGrid>
+                                        {daysInMonth.map((day) => (
+                                            <DayInMonth
+                                                key={day}
+                                                selectDay={handleSelectDay}
+                                                selectedDay={selectedDay!}
+                                                day={day}
+                                                currentDay={currentDay}
+                                                currentMonth={currentMonth}
+                                            />
+                                        ))}
+                                    </DaysGrid>
                                 </div>
-                                <div className="mb-2 flex items-center justify-center space-x-2">
-                                    <span>текущий: </span>
-                                    <button
-                                        type="button"
-                                        onClick={handleSelectCurrentByType}
-                                        id="date"
-                                        className="text-blue-500 underline underline-offset-1 duration-150 hover:text-blue-600 active:text-blue-700"
-                                    >
-                                        дата
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={handleSelectCurrentByType}
-                                        id="month"
-                                        className="text-blue-500 underline underline-offset-1 duration-150 hover:text-blue-600 active:text-blue-700"
-                                    >
-                                        месяц
-                                    </button>
-                                </div>
-                                <span className="mb-2 px-4 text-center">
-                                    {resultDate}
-                                </span>
-                                <DaysGrid>
-                                    {daysInMonth.map((day) => (
-                                        <DayInMonth
-                                            key={day}
-                                            selectDay={handleSelectDay}
-                                            selectedDay={selectedDay!}
-                                            day={day}
-                                            currentDay={currentDay}
-                                            currentMonth={currentMonth}
-                                        />
-                                    ))}
-                                </DaysGrid>
-
-                                <div className="flex items-center justify-between px-4 py-2">
-                                    <button
-                                        onClick={handleClose}
-                                        className="rounded-lg bg-rose-600 px-4 py-2 text-white duration-100 first-letter:uppercase hover:ring-2 hover:ring-rose-600 hover:ring-offset-2 active:opacity-75"
-                                        type="button"
-                                    >
-                                        отмена
-                                    </button>
-                                    <button
-                                        onClick={handleConfirm}
-                                        type="button"
-                                        className="rounded-lg bg-green-600 px-4 py-2 text-white duration-100 first-letter:uppercase hover:ring-2 hover:ring-green-600 hover:ring-offset-2 active:opacity-75"
-                                    >
-                                        выбрать
-                                    </button>
-                                </div>
+                            </div>
+                            <div className="flex items-center justify-between border-t px-4 py-2">
+                                <button
+                                    onClick={handleClose}
+                                    className="rounded-lg bg-rose-600 px-4 py-2 text-white duration-100 first-letter:uppercase hover:ring-2 hover:ring-rose-600 hover:ring-offset-2 active:opacity-75"
+                                    type="button"
+                                >
+                                    отмена
+                                </button>
+                                <button
+                                    onClick={handleConfirm}
+                                    type="button"
+                                    className="rounded-lg bg-green-600 px-4 py-2 text-white duration-100 first-letter:uppercase hover:ring-2 hover:ring-green-600 hover:ring-offset-2 active:opacity-75"
+                                >
+                                    выбрать
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -518,7 +486,8 @@ const Calendar = ({ date, setDate, id }: CalendarProps) => {
             </div>
         </div>
     )
-}
+})
+Calendar.displayName = "Calendar"
 
 interface DayInMonthProps {
     day: number
@@ -567,9 +536,93 @@ const DaysGrid = ({ children }: { children: ReactNode }) => {
             leaveFrom="opacity-100 translate-x-0"
             leaveTo="opacity-0 -translate-x-full"
         >
-            <div className="grid grid-cols-7 place-items-center border p-1">
+            <div className="grid grid-cols-7 place-items-center border-t p-1">
                 {children}
             </div>
         </Transition>
     )
 }
+
+interface TimeListProps {
+    values: Array<number>
+    onSelect(value: number): void
+    selected: number
+}
+
+const TimeList = memo(({ values, selected, onSelect }: TimeListProps) => {
+    const handleNextButtonClicked = () => {
+        const currentIndex = values.indexOf(selected)
+        const isLastItem = currentIndex === values.length - 1
+
+        if (isLastItem) {
+            onSelect(values[0])
+        } else {
+            onSelect(values[currentIndex + 1])
+        }
+    }
+
+    const refs = values.reduce(
+        (acc: Record<number, RefObject<HTMLLIElement | any>>, value) => {
+            acc[value] = createRef<HTMLLIElement>()
+            return acc
+        },
+        {}
+    )
+
+    useEffect(() => {
+        refs[selected]?.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+            inline: "nearest",
+        })
+    }, [selected])
+
+    return (
+        <div className="flex w-1/2 flex-col space-y-2">
+            <ul className="flex  flex-col overflow-auto">
+                {values.map((value) => (
+                    <TimeListItem
+                        value={value}
+                        selected={selected}
+                        onSelected={onSelect}
+                        key={value}
+                        refs={refs}
+                    />
+                ))}
+            </ul>
+            <button
+                type="button"
+                onClick={handleNextButtonClicked}
+                className="flex items-center justify-center border-t bg-gray-50 p-1 text-gray-400 duration-150 hover:text-gray-900 active:opacity-70"
+            >
+                <ChevronDoubleDownIcon className="h-3 w-full" />
+            </button>
+        </div>
+    )
+})
+TimeList.displayName = "TimeList"
+
+interface TimeListItemProps extends HTMLAttributes<HTMLLIElement> {
+    onSelected(value: number): void
+    selected: number
+    value: number
+    refs: any
+}
+const TimeListItem = memo(
+    ({ onSelected, selected, value, refs, ...props }: TimeListItemProps) => {
+        return (
+            <li
+                {...props}
+                ref={refs[value]}
+                onClick={() => onSelected(value)}
+                className={clsx(
+                    "  border-y p-2 text-center",
+                    selected === value && "bg-gray-200"
+                )}
+            >
+                {value}
+            </li>
+        )
+    }
+)
+TimeListItem.displayName = "TimeListItem"

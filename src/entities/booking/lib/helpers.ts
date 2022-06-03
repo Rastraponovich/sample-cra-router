@@ -44,8 +44,8 @@ export const _defaultReserve_: TReserve = {
     prepay: 0,
     guests: 0,
     status: { id: 1, name: "свободен", value: "free" },
-    startDate: "",
-    endDate: "",
+    startDate: Date.now(),
+    endDate: Date.now(),
 }
 
 export const _prepaysDict_: TPrepay[] = [

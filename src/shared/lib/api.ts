@@ -3,6 +3,9 @@ import weekOfYear from "dayjs/plugin/weekOfYear"
 
 import duration from "dayjs/plugin/duration"
 import relativeTime from "dayjs/plugin/relativeTime"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
+
 import ru from "dayjs/locale/ru"
 import axios, { AxiosResponse } from "axios"
 import { createEffect, sample } from "effector"
@@ -16,6 +19,9 @@ dayjs.extend(weekOfYear)
 
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault(dayjs.tz.guess())
 dayjs.locale(ru)
 
 export const daysJS = dayjs
