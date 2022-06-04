@@ -14,6 +14,7 @@ import { XOGamePreparePage } from "pages/xo"
 import { XOGame } from "pages/xo/game"
 import { AnimateIconsConstructorPage } from "pages/animate-icon-constructor"
 import { BookingPage } from "pages/booking"
+import { SchedullerPage } from "pages/booking/scheduller"
 
 export const Router = () => {
     return (
@@ -35,6 +36,7 @@ export const Router = () => {
 
                 <Route path="booking">
                     <Route index element={<BookingPage />} />
+                    <Route path="scheduller" element={<SchedullerPage />} />
                 </Route>
             </Route>
             <Route path="dark-store" element={<AdminLayout />}>

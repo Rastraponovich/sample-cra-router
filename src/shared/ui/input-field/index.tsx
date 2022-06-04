@@ -3,32 +3,29 @@ import { InputHTMLAttributes, memo } from "react"
 
 interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
     caption?: string
-    vertical?: boolean
     containerClassName?: string
     captionClassName?: string
 }
 export const InputField = memo(
     ({
-        vertical,
         caption,
         containerClassName,
         captionClassName,
         ...props
     }: InputFieldProps) => {
         return (
-            <label
-                className={clsx(
-                    containerClassName,
-                    vertical && "flex flex-col space-y-2",
-                    "flex items-center justify-between space-x-4"
-                )}
-            >
+            <label className={clsx(containerClassName, "group relative")}>
+                <input {...props} />
+
                 <span
-                    className={clsx("first-letter:uppercase", captionClassName)}
+                    className={clsx(
+                        "first-letter:uppercase",
+                        captionClassName,
+                        "absolute -top-2.5 left-2 bg-white px-1 text-gray-500 peer-focus:text-blue-900"
+                    )}
                 >
                     {caption}
                 </span>
-                <input {...props} />
             </label>
         )
     }

@@ -47,13 +47,13 @@ export const ReserveForm = () => {
             onSubmit={handleAddReserveClicked}
             className="flex flex-col space-y-4 bg-white p-4 text-base shadow-md sm:text-sm"
         >
-            <div className="flex items-center justify-between space-x-10">
+            <div className="grid grid-cols-3 items-center  py-2 px-4">
                 <span className="first-letter:uppercase">зал</span>
                 <Select<THallplane>
                     items={hallPlanes}
                     selected={reserve.hallplane}
                     onSelect={handleSelectHallPlane}
-                    containerClassName="grow"
+                    containerClassName="w-full col-span-2"
                 />
             </div>
 
@@ -61,40 +61,43 @@ export const ReserveForm = () => {
                 caption="цена"
                 placeholder="цена"
                 onChange={handleChangeReserveNumber}
-                name="price"
+                name="prepay"
                 value={reserve.prepay}
                 type="number"
                 disabled={reserve.hallplaneId === 0}
-                containerClassName="space-x-10"
-                className="relative  w-full cursor-default appearance-none rounded-lg bg-white px-4 py-2  text-left shadow-md placeholder:italic placeholder:text-gray-500 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 disabled:opacity-30 sm:text-sm
-                                "
+                className="peer  w-full rounded-lg border py-3 px-4 text-left sm:text-sm"
             />
 
             <GuestsFormControl />
-            <div className="flex items-center justify-between space-x-10">
+            <div className="grid grid-cols-3 items-center  px-4 py-2">
                 <span className="first-letter:uppercase">стол</span>
                 <Select<TTable>
                     items={tables}
                     selected={reserve.table}
                     onSelect={handleSelectReserveTable}
-                    containerClassName="grow"
+                    containerClassName="grow col-span-2"
                     disabled={reserve.hallplaneId === 0}
                 />
             </div>
 
-            <div className="flex items-center justify-between space-x-10">
+            <div className="grid grid-cols-3 items-center  px-4 py-2">
                 <span className="first-letter:uppercase">статус</span>
                 <Select<TDict>
                     items={_statuses_}
                     selected={reserve.status}
                     onSelect={handleSelectReserveStatus}
-                    containerClassName="grow"
+                    containerClassName="grow col-span-2"
                     disabled={reserve.hallplaneId === 0}
                 />
             </div>
 
-            <div className="flex items-center justify-between space-x-2">
-                <span className="first-letter:uppercase">начало</span>
+            <div className="relative grid grid-cols-2  items-center justify-items-end  rounded-lg border py-2 px-4">
+                <span className="absolute left-2 -top-2.5 bg-white px-2 first-letter:uppercase">
+                    начало
+                </span>
+                <span className="justify-self-start">
+                    {daysJS(reserve.startDate).format("DD MMM YYYY HH:mm")}
+                </span>
                 <Calendar
                     date={reserve.startDate}
                     setDate={handleSetDate}
@@ -102,8 +105,14 @@ export const ReserveForm = () => {
                 />
             </div>
 
-            <div className="flex items-center justify-between space-x-10">
-                <span className="first-letter:uppercase">конец</span>
+            <div className="relative grid grid-cols-2  items-center justify-items-end  rounded-lg border py-2 px-4">
+                <span className="absolute left-2 -top-2.5 bg-white px-2 first-letter:uppercase">
+                    конец
+                </span>
+                <span className="justify-self-start">
+                    {daysJS(reserve.endDate).format("DD MMM YYYY HH:mm")}
+                </span>
+
                 <Calendar
                     date={reserve.endDate}
                     setDate={handleSetDate}
@@ -120,9 +129,9 @@ const GuestsFormControl = () => {
     const guests = selectors.useGuestsCount()
 
     return (
-        <div className="flex items-center space-x-8">
+        <div className="grid grid-cols-3 items-center  px-4 py-2">
             <span className="first-letter:uppercase">гости</span>
-            <div className="flex items-center space-x-2">
+            <div className="col-span-2 flex items-center space-x-2">
                 <IncrementGuestsButton />
                 <span className="w-16 rounded-lg border py-2 px-4 text-center">
                     {guests}

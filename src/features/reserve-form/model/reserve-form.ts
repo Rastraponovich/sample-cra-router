@@ -23,8 +23,6 @@ const decrementGuestsClicked = formDomain.createEvent()
 
 const changeReserveNumber =
     formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
-// const changeReserveDate =
-//     formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
 
 const changeReserveDate = formDomain.createEvent<{ date: number; id: string }>()
 
@@ -87,6 +85,7 @@ $reserve.on($selectedHallPlanes, (state, hallPlane) => {
             name: "выберите стол",
             hallplaneId: 0,
             isActive: true,
+            reserves: [],
         },
         tableId: 0,
     }

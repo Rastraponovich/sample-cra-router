@@ -5,7 +5,6 @@ import {
 } from "@heroicons/react/outline"
 import clsx from "clsx"
 import { memo, useEffect, useMemo, useState } from "react"
-import { Accordion } from "shared/ui/accordion"
 import { Select } from "shared/ui/select"
 import { THallplane, TReserve, TTable } from "entities/booking/lib"
 
@@ -21,57 +20,50 @@ export const ReservesSheduler = () => {
 
     return (
         <div className="gorw flex flex-col space-y-4">
-            <Accordion
-                title={
-                    <div className="flex items-center  ">
-                        <h4 className="text-2xl font-semibold first-letter:uppercase">
-                            расписание
-                        </h4>
-                        <CalendarIcon className="mx-2 h-6 w-6" />
-                    </div>
-                }
-            >
-                <div className="mb-2 flex items-center space-x-4">
-                    <WeekSelector />
-                    <HallplanesFilter />
-                </div>
-                <div className="w-full overflow-x-auto">
-                    <table className="w-full border-collapse overflow-auto rounded border border-slate-400 text-sm font-normal text-gray-900">
-                        <thead>
-                            <tr>
-                                <th className="border border-slate-300 bg-slate-300 p-2 ">
-                                    <div className="flex flex-col space-y-1 divide-y divide-gray-900">
-                                        <span>дни недели</span>
-                                        <span>столы</span>
-                                    </div>
-                                </th>
-                                {days.map((day) => (
-                                    <Day
-                                        number={day.dayOfWeek}
-                                        key={day.id}
-                                        week={currentWeek}
-                                    />
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {records.map((record) => (
-                                <CalendarRow
-                                    {...record}
-                                    key={record.id + record.name}
+            <div className="flex items-center  ">
+                <h4 className="text-2xl font-semibold first-letter:uppercase">
+                    расписание
+                </h4>
+                <CalendarIcon className="mx-2 h-6 w-6" />
+            </div>
+            <div className="mb-2 flex items-center space-x-4">
+                <WeekSelector />
+                <HallplanesFilter />
+            </div>
+            <div className="w-full overflow-x-auto">
+                <table className="w-full border-collapse overflow-auto rounded border border-slate-400 text-sm font-normal text-gray-900">
+                    <thead>
+                        <tr>
+                            <th className="border border-slate-300 bg-slate-300 p-2 ">
+                                <div className="flex flex-col space-y-1 divide-y divide-gray-900">
+                                    <span>дни недели</span>
+                                    <span>столы</span>
+                                </div>
+                            </th>
+                            {days.map((day) => (
+                                <Day
+                                    number={day.dayOfWeek}
+                                    key={day.id}
+                                    week={currentWeek}
                                 />
                             ))}
-                        </tbody>
-                        <tfoot></tfoot>
-                    </table>
-                </div>
-            </Accordion>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {records.map((record) => (
+                            <CalendarRow
+                                {...record}
+                                key={record.id + record.name}
+                            />
+                        ))}
+                    </tbody>
+                    <tfoot></tfoot>
+                </table>
+            </div>
         </div>
     )
 }
-interface CalendarRowProps extends TTable {
-    reserves: Array<TReserve>
-}
+interface CalendarRowProps extends TTable {}
 
 const Cell = memo(({ reserves }: { reserves: Array<TReserve["id"]> }) => {
     const onClick = () => {
@@ -98,14 +90,15 @@ const CalendarRow = memo(({ reserves, id, name }: CalendarRowProps) => {
             {days.map((day) =>
                 reserves.some(
                     (reserve) =>
-                        daysJS(reserve.startDate).day() === day.dayOfWeek
+                        daysJS(Number(reserve.startDate)).day() ===
+                        day.dayOfWeek
                 ) ? (
                     <Cell
                         key={day.dayOfWeek}
                         reserves={reserves
                             .filter(
                                 (reserve) =>
-                                    daysJS(reserve.startDate).day() ===
+                                    daysJS(Number(reserve.startDate)).day() ===
                                     day.dayOfWeek
                             )
                             .map((item) => item.id)}

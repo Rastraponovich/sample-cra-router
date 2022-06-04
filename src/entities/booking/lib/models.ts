@@ -22,7 +22,7 @@ export type TTable = {
     id: number
     isActive: boolean
     name: string
-    reserves?: Array<TReserve>
+    reserves: Array<TReserve>
 }
 
 export type TReserve = {

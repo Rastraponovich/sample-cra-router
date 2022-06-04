@@ -32,7 +32,13 @@ export const _statuses_: TDict[] = [
 
 export const _defaultReserve_: TReserve = {
     id: 0,
-    table: { id: 0, name: "выберите стол", hallplaneId: 0, isActive: true },
+    table: {
+        id: 0,
+        name: "выберите стол",
+        hallplaneId: 0,
+        isActive: true,
+        reserves: [],
+    },
     hallplane: {
         id: 0,
         name: "выбирите зал",

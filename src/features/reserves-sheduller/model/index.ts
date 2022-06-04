@@ -90,12 +90,10 @@ const $tables = createStore<Array<TTable>>([]).on(
 const $records = combine($currentWeek, $tables, (currentWeek, tables) => {
     return tables.map((table) => ({
         ...table,
-        reserves: [],
-        // reserves: reserves.filter(
-        //     (reserve) =>
-        //         reserve.table.id === table.id &&
-        //         daysJS(reserve.startDate).week() === currentWeek
-        // ),
+        reserves: table.reserves.filter(
+            (reserve) =>
+                daysJS(Number(reserve.startDate)).week() === currentWeek
+        ),
     }))
 })
 
