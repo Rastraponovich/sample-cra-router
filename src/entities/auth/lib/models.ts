@@ -12,3 +12,7 @@ export type TCredentialUser = {
     email: string
     password: string
 }
+
+export type TAccessToken = {
+    accessToken: string
+}
