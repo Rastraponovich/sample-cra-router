@@ -16,3 +16,8 @@ export type TCredentialUser = {
 export type TAccessToken = {
     accessToken: string
 }
+
+export type TRegistrationCredential = {
+    name: string
+    roleId?: number
+} & TCredentialUser

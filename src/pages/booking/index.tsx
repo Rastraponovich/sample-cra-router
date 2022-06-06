@@ -1,7 +1,5 @@
 import { memo, useEffect } from "react"
 
-import { ReserveForm } from "features/reserve-form/ui"
-import { ReservePreview } from "features/reserve-form/ui/reserve-preview"
 import { Reserves } from "entities/booking/ui/reserves-list"
 
 import { useEvent } from "effector-react"
@@ -14,10 +12,8 @@ export const BookingPage = () => {
     const initPage = useEvent(bookingModel.events.initPage)
     const pageMounted = bookingModel.selectors.usePageMounted()
 
-    const handleCheckAuth = useEvent(authModel.events.checkAuth)
     useEffect(() => {
         initPage()
-        handleCheckAuth()
     }, [])
 
     return (
@@ -26,6 +22,7 @@ export const BookingPage = () => {
                 <NavLink to="/booking">Главная</NavLink>
                 <NavLink to="/booking/scheduller">Расписание</NavLink>
             </nav>
+
             <Loader />
             {/* {pageMounted && (
                 <section className="flex flex-col justify-center rounded bg-slate-100 p-4 md:p-8 ">

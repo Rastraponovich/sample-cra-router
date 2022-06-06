@@ -1,9 +1,10 @@
 import { createDomain, sample } from "effector"
 import { useStore } from "effector-react"
-import { debug } from "patronum"
+import { appModel } from "entities/app"
+import { debug, delay, reset } from "patronum"
 import { ChangeEvent, FormEvent } from "react"
-import { TCredentialUser, TUser } from "../lib"
-import { checkAuthFx, loginFx } from "../lib/api"
+import { TCredentialUser, TRegistrationCredential, TUser } from "../lib"
+import { checkAuthFx, loginFx, logoutFx, registrationFx } from "../lib/api"
 
 const _bulkCredential_: TCredentialUser = {
     email: "test2@test.ru",
@@ -13,20 +14,16 @@ const _bulkCredential_: TCredentialUser = {
 const AuthDomain = createDomain("authDomain")
 
 const $user = AuthDomain.createStore<null | TUser>(null)
-const $accessToken = AuthDomain.createStore<string | null>(null).reset(
-    loginFx.fail
-)
+const $accessToken = AuthDomain.createStore<string | null>(null)
 
 const setCredential = AuthDomain.createEvent<ChangeEvent<HTMLInputElement>>()
 const $credential = AuthDomain.createStore<TCredentialUser>({
     email: "",
     password: "",
-} as TCredentialUser)
-    .on(setCredential, (state, event) => ({
-        ...state,
-        [event.target.name]: event.target.value,
-    }))
-    .reset(loginFx.doneData)
+} as TCredentialUser).on(setCredential, (state, event) => ({
+    ...state,
+    [event.target.name]: event.target.value,
+}))
 
 const login = AuthDomain.createEvent<FormEvent<HTMLFormElement>>()
 
@@ -53,7 +50,7 @@ sample({
     clock: loginFx.failData,
     fn: (res) => res.message,
     target: $authError,
-}).reset([login, setCredential])
+})
 
 const checkAuth = AuthDomain.createEvent()
 
@@ -74,18 +71,123 @@ sample({
     target: $user,
 })
 
-debug($user)
+const $isAuth = AuthDomain.createStore<boolean | null>(null)
+    .on(checkAuthFx.doneData, () => true)
+    .on(checkAuthFx.fail, () => false)
 
-export const events = { login, setCredential, checkAuth }
+const $pending = AuthDomain.createStore<boolean>(false).on(
+    checkAuthFx.pending,
+    (_, state) => state
+)
+
+sample({
+    clock: $isAuth,
+    filter: (auth) => auth !== null,
+
+    target: appModel.events.startedApp,
+})
+
+const setRegistrationCredential =
+    AuthDomain.createEvent<ChangeEvent<HTMLInputElement>>()
+const $registrationCredential = AuthDomain.createStore<TRegistrationCredential>(
+    { roleId: 1 } as TRegistrationCredential
+).on(setRegistrationCredential, (state, event) => ({
+    ...state,
+    [event.target.name]: event.target.value,
+}))
+
+const registration = AuthDomain.createEvent<FormEvent<HTMLFormElement>>()
+const $registrationComplited = AuthDomain.createStore<boolean>(false).reset([
+    setRegistrationCredential,
+    setCredential,
+])
+sample({
+    clock: registration,
+    source: $registrationCredential,
+    target: registrationFx,
+})
+
+sample({
+    clock: registrationFx.doneData,
+    target: $registrationComplited,
+    fn: () => true,
+})
+
+registration.watch((e) => e.preventDefault())
+
+const logout = AuthDomain.createEvent()
+
+sample({
+    clock: logout,
+    target: logoutFx,
+})
+
+reset({
+    clock: [logoutFx.finally],
+    target: [$user, $isAuth, $accessToken],
+})
+reset({
+    clock: [$isAuth, loginFx.finally, logoutFx.finally],
+    target: [$credential, $registrationCredential, $registrationComplited],
+})
+
+reset({ clock: [login, setCredential], target: $authError })
+
+reset({ clock: loginFx.fail, target: $accessToken })
+
+delay({
+    source: sample({
+        clock: checkAuth,
+        fn: () => "start checking authorization",
+    }),
+    timeout: 1000,
+    target: appModel.events.setEventMessage,
+})
+
+delay({
+    source: sample({
+        clock: checkAuthFx.done,
+        fn: () => "authorization complite",
+    }),
+    timeout: 1000,
+    target: appModel.events.setEventMessage,
+})
+
+delay({
+    source: sample({
+        clock: checkAuthFx.fail,
+        fn: () => "authorization failed",
+    }),
+    timeout: 1000,
+    target: appModel.events.setEventMessage,
+})
+
+export const events = {
+    login,
+    logout,
+    checkAuth,
+    registration,
+    setCredential,
+    setRegistrationCredential,
+}
 
 const useUser = () => useStore($user)
+const useIsAuth = () => useStore($isAuth)
+const usePending = () => useStore($pending)
+const useAuthError = () => useStore($authError)
 const useCredential = () => useStore($credential)
 const useAccessToken = () => useStore($accessToken)
-const useAuthError = () => useStore($authError)
+const useRegistrationComlited = () => useStore($registrationComplited)
+
+const useRegistrationCredential = () => useStore($registrationCredential)
 
 export const selectors = {
     useUser,
+    useIsAuth,
+    usePending,
+    useAuthError,
     useCredential,
     useAccessToken,
-    useAuthError,
+    useRegistrationComlited,
+    useRegistrationCredential,
 }

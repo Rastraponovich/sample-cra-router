@@ -8,7 +8,6 @@ import {
     TTable,
     THallplane,
 } from "../lib"
-import { debug } from "patronum"
 
 const pageDomain = createDomain("pageDomain")
 
