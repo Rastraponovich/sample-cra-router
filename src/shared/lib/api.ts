@@ -15,7 +15,11 @@ import {
     TReservesParams,
     TTable,
 } from "entities/booking/lib"
-import { TCredentialUser, TRegistrationCredential } from "entities/auth/lib"
+import {
+    TCredentialUser,
+    TRegistrationCredential,
+    TUser,
+} from "entities/auth/lib"
 dayjs.extend(weekOfYear)
 
 dayjs.extend(duration)
@@ -135,10 +139,14 @@ const deleteSelectedReservesFx = createEffect<
     Error
 >(deleteSelectedReserves)
 
+const modifyUser = async ({ id, ...user }: TUser) =>
+    await bookingAPIInstance.patch(`/users/${id}`, { ...user })
+
 export const BookingAPI = {
     getMe,
     login,
     logout,
+    modifyUser,
     getReserve,
     getReserves,
     getTablesFx,

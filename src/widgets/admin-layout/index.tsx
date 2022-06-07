@@ -10,7 +10,7 @@ export const AdminLayout = () => {
         <>
             <Header title="DarkStore">
                 <div className="hidden lg:flex">
-                    <Nav routes={routes} privateRoutes={privateRoutes} />
+                    <Nav routes={routes} />
                 </div>
             </Header>
 

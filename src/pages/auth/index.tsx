@@ -19,7 +19,7 @@ export const AuthPage = () => {
         return setWind("auth")
     }
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (isAuth) navigate(fromPage, { replace: true })
     }, [isAuth])
 
@@ -28,13 +28,7 @@ export const AuthPage = () => {
             {fromPage}
             <button onClick={handleSetWindow}>toggle</button>
             <div className="flex flex-col items-center space-y-4 rounded-lg bg-gray-200 p-4">
-                {registrationComlited ? (
-                    <div>ой красава!</div>
-                ) : wind === "auth" ? (
-                    <AuthForm />
-                ) : (
-                    <RegistrationForm />
-                )}
+                {registrationComlited ? <div>ой красава!</div> : wind === "auth" ? <AuthForm /> : <RegistrationForm />}
             </div>
         </div>
     )
