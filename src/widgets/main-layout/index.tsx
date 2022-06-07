@@ -1,7 +1,9 @@
 import { Transition } from "@headlessui/react"
 import { appModel } from "entities/app"
 import { authModel } from "entities/auth"
-import { Outlet } from "react-router-dom"
+import { Poupup } from "features/poupup"
+import { useMemo } from "react"
+import { Outlet, useLocation } from "react-router-dom"
 import { SpinerLoader } from "shared/ui/spinner-loading"
 import { Drawer } from "../../features/drawer"
 import { privateRoutes, routes } from "../../shared/lib"
@@ -13,18 +15,25 @@ export const MainLayout = () => {
     const isAppStarted = appModel.selectors.useAppStarted()
     const user = authModel.selectors.useUser()
 
+    const location = useLocation()
+
+    const pageName = useMemo(() => {
+        const names = location.pathname.split("/")
+        return names[names.length - 1]
+    }, [location])
+
     return (
         <>
-            <Header title="MainLayout">
+            <Header title={pageName}>
                 <div className="hidden lg:flex">
                     <Nav routes={routes} privateRoutes={privateRoutes} />
                 </div>
             </Header>
             <Drawer />
             <main className="flex grow flex-col">
-                {isAppStarted && <span>{user?.email}</span>}
                 {!isAppStarted ? <FirstLoader /> : <Outlet />}
             </main>
+            <Poupup />
             <Footer />
         </>
     )

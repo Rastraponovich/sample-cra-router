@@ -1,10 +1,7 @@
-import { ShoppingCartIcon } from "@heroicons/react/outline"
 import { useEvent } from "effector-react"
 import { authModel } from "entities/auth"
-import { storeModel } from "entities/store"
-import { showCartClicked } from "features/show-cart/model"
 import { ReactNode } from "react"
-import { NavLink, useLocation } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
 import { BurgerButton } from "../../features/drawer"
 
 interface HeaderProps {
@@ -13,18 +10,14 @@ interface HeaderProps {
 }
 
 export const Header = ({ children, title }: HeaderProps) => {
-    // const location = useLocation()
-
     const handleLogOut = useEvent(authModel.events.logout)
     const user = authModel.selectors.useUser()
     const isAuth = authModel.selectors.useUser()
 
-    // const toggleCart = useEvent(showCartClicked)
-    // const cartQuantity = storeModel.selectors.useCartQuantity()
     return (
         <header className="flex items-center justify-between bg-ocean px-4 py-2 text-white shadow-md duration-150  hover:shadow-lg sm:space-x-12 md:px-8">
             <NavLink to="/">
-                <h2 className="text-2xl font-bold duration-150 hover:drop-shadow-xl">
+                <h2 className="text-2xl font-bold duration-150 first-letter:uppercase hover:drop-shadow-xl">
                     {title}
                 </h2>
             </NavLink>
@@ -62,16 +55,28 @@ export const Header = ({ children, title }: HeaderProps) => {
                     </svg>
                 </a>
             </div>
-            {isAuth && user && <button onClick={handleLogOut}>logout</button>}
-
-            {/* {location.pathname === "/dark-store" && (
-                <button onClick={toggleCart} className="relative">
-                    <span className="absolute -top-2 -right-2  text-sm font-bold ">
-                        {cartQuantity > 0 && cartQuantity}
-                    </span>
-                    <ShoppingCartIcon className="h-6 w-6 text-white" />
+            {user && (
+                <Link to="/profile" className="underline underline-offset-2">
+                    {user.email}
+                </Link>
+            )}
+            {isAuth && user && (
+                <button
+                    onClick={handleLogOut}
+                    className="flex items-center justify-center rounded-lg bg-gray-200 px-4 py-2 uppercase text-gray-900 duration-150 hover:bg-blue-600 hover:text-white"
+                >
+                    выход
                 </button>
-            )} */}
+            )}
+            {!isAuth && (
+                <Link
+                    to="/auth"
+                    className="flex items-center justify-center rounded-lg bg-gray-200 px-4 py-2 uppercase text-gray-900 duration-150 hover:bg-blue-600 hover:text-white"
+                >
+                    вход/регистрация
+                </Link>
+            )}
+
             <BurgerButton />
         </header>
     )

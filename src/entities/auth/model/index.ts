@@ -1,9 +1,10 @@
 import { createDomain, sample } from "effector"
 import { useStore } from "effector-react"
 import { appModel } from "entities/app"
+import { poupupModel } from "features/poupup"
 import { debug, delay, reset } from "patronum"
 import { ChangeEvent, FormEvent } from "react"
-import { TCredentialUser, TRegistrationCredential, TUser } from "../lib"
+import { API, TCredentialUser, TRegistrationCredential, TUser } from "../lib"
 import { checkAuthFx, loginFx, logoutFx, registrationFx } from "../lib/api"
 
 const _bulkCredential_: TCredentialUser = {
@@ -12,8 +13,15 @@ const _bulkCredential_: TCredentialUser = {
 }
 
 const AuthDomain = createDomain("authDomain")
+const changeUserValues = AuthDomain.createEvent<ChangeEvent<HTMLInputElement>>()
+const $user = AuthDomain.createStore<null | TUser>(null).on(
+    changeUserValues,
+    (user, event) => ({
+        ...user!,
+        [event.target.name]: event.target.value,
+    })
+)
 
-const $user = AuthDomain.createStore<null | TUser>(null)
 const $accessToken = AuthDomain.createStore<string | null>(null)
 
 const setCredential = AuthDomain.createEvent<ChangeEvent<HTMLInputElement>>()
@@ -162,12 +170,34 @@ delay({
     target: appModel.events.setEventMessage,
 })
 
+const modifyUser = AuthDomain.createEvent()
+
+sample({
+    //@ts-ignore
+    clock: modifyUser,
+    source: $user,
+    filter: (user, _) => user !== null,
+    fn: (user, _) => user,
+    target: API.modifyUserFx,
+})
+
+sample({
+    clock: API.modifyUserFx.doneData,
+
+    fn: (res) => JSON.stringify(res.data),
+
+    target: poupupModel.events.setMessage,
+})
+
 export const events = {
     login,
     logout,
     checkAuth,
+    modifyUser,
+
     registration,
     setCredential,
+    changeUserValues,
     setRegistrationCredential,
 }
 

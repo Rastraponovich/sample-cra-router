@@ -23,3 +23,5 @@ export const registrationFx = createEffect<
 >(BookingAPI.registration)
 
 export const logoutFx = createEffect(BookingAPI.logout)
+
+export const modifyUserFx = createEffect(BookingAPI.modifyUser)

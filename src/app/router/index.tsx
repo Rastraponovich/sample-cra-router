@@ -7,6 +7,7 @@ import { AuthPage } from "pages/auth"
 import { authModel } from "entities/auth"
 import { ReactNode } from "react"
 import { NotFoundPage } from "pages/404"
+import { ProfilePage } from "pages/profile"
 
 export const Router = () => {
     return (
@@ -25,6 +26,15 @@ export const Router = () => {
                     <Route index element={<BookingPage />} />
                     <Route path="scheduller" element={<SchedullerPage />} />
                 </Route>
+                <Route
+                    path="profile"
+                    element={
+                        <PrivateRoute>
+                            <ProfilePage />
+                        </PrivateRoute>
+                    }
+                />
+
                 <Route path="*" element={<NotFoundPage />} />
             </Route>
             {/* <Route path="dark-store" element={<AdminLayout />}>
