@@ -1,7 +1,9 @@
 import { useEvent } from "effector-react"
 import { authModel } from "entities/auth"
+import jwtDecode from "jwt-decode"
 import { createContext, useContext, useEffect, useLayoutEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
+import { daysJS } from "shared/lib/api"
 
 const AuthContext = createContext({})
 
@@ -18,19 +20,23 @@ const AuthProvider = (props: AuthProviderProps) => {
     const navigate = useNavigate()
 
     useLayoutEffect(() => {
-        checkAuth()
+        const token = localStorage.getItem("token")
+        if (token) {
+            const decodedToken: { exp: number } = jwtDecode(token!)
+
+            if (decodedToken.exp <= daysJS().unix()) checkAuth()
+        }
     }, [location])
+
+    useEffect(() => {
+        checkAuth()
+    }, [])
 
     useEffect(() => {
         if (!isAuth) navigate("/auth", { state: { from: location } })
     }, [isAuth])
 
-    return (
-        <AuthContext.Provider
-            value={{ login, logout, registration, isAuth, checkAuth }}
-            {...props}
-        />
-    )
+    return <AuthContext.Provider value={{ login, logout, registration, isAuth, checkAuth }} {...props} />
 }
 
 const useAuth = () => useContext(AuthContext)

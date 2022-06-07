@@ -1,11 +1,11 @@
 import { Transition } from "@headlessui/react"
 import { appModel } from "entities/app"
 import { authModel } from "entities/auth"
+import { Drawer } from "features/drawer"
 import { Poupup } from "features/poupup"
 import { useMemo } from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import { SpinerLoader } from "shared/ui/spinner-loading"
-import { Drawer } from "../../features/drawer"
 import { privateRoutes, routes } from "../../shared/lib"
 import { Footer } from "../footer"
 import { Header } from "../header"
@@ -26,13 +26,11 @@ export const MainLayout = () => {
         <>
             <Header title={pageName}>
                 <div className="hidden lg:flex">
-                    <Nav routes={routes} privateRoutes={privateRoutes} />
+                    <Nav routes={routes} />
                 </div>
             </Header>
             <Drawer />
-            <main className="flex grow flex-col">
-                {!isAppStarted ? <FirstLoader /> : <Outlet />}
-            </main>
+            <main className="flex grow flex-col">{!isAppStarted ? <FirstLoader /> : <Outlet />}</main>
             <Poupup />
             <Footer />
         </>

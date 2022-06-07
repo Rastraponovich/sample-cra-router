@@ -7,20 +7,12 @@ import { ChangeEvent, FormEvent } from "react"
 import { API, TCredentialUser, TRegistrationCredential, TUser } from "../lib"
 import { checkAuthFx, loginFx, logoutFx, registrationFx } from "../lib/api"
 
-const _bulkCredential_: TCredentialUser = {
-    email: "test2@test.ru",
-    password: "1",
-}
-
 const AuthDomain = createDomain("authDomain")
 const changeUserValues = AuthDomain.createEvent<ChangeEvent<HTMLInputElement>>()
-const $user = AuthDomain.createStore<null | TUser>(null).on(
-    changeUserValues,
-    (user, event) => ({
-        ...user!,
-        [event.target.name]: event.target.value,
-    })
-)
+const $user = AuthDomain.createStore<null | TUser>(null).on(changeUserValues, (user, event) => ({
+    ...user!,
+    [event.target.name]: event.target.value,
+}))
 
 const $accessToken = AuthDomain.createStore<string | null>(null)
 
@@ -83,10 +75,7 @@ const $isAuth = AuthDomain.createStore<boolean | null>(null)
     .on(checkAuthFx.doneData, () => true)
     .on(checkAuthFx.fail, () => false)
 
-const $pending = AuthDomain.createStore<boolean>(false).on(
-    checkAuthFx.pending,
-    (_, state) => state
-)
+const $pending = AuthDomain.createStore<boolean>(false).on(checkAuthFx.pending, (_, state) => state)
 
 sample({
     clock: $isAuth,
@@ -95,20 +84,16 @@ sample({
     target: appModel.events.startedApp,
 })
 
-const setRegistrationCredential =
-    AuthDomain.createEvent<ChangeEvent<HTMLInputElement>>()
-const $registrationCredential = AuthDomain.createStore<TRegistrationCredential>(
-    { roleId: 1 } as TRegistrationCredential
-).on(setRegistrationCredential, (state, event) => ({
+const setRegistrationCredential = AuthDomain.createEvent<ChangeEvent<HTMLInputElement>>()
+const $registrationCredential = AuthDomain.createStore<TRegistrationCredential>({
+    roleId: 1,
+} as TRegistrationCredential).on(setRegistrationCredential, (state, event) => ({
     ...state,
     [event.target.name]: event.target.value,
 }))
 
 const registration = AuthDomain.createEvent<FormEvent<HTMLFormElement>>()
-const $registrationComplited = AuthDomain.createStore<boolean>(false).reset([
-    setRegistrationCredential,
-    setCredential,
-])
+const $registrationComplited = AuthDomain.createStore<boolean>(false).reset([setRegistrationCredential, setCredential])
 sample({
     clock: registration,
     source: $registrationCredential,

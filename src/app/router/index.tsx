@@ -5,7 +5,6 @@ import { BookingPage } from "pages/booking"
 import { SchedullerPage } from "pages/booking/scheduller"
 import { AuthPage } from "pages/auth"
 import { authModel } from "entities/auth"
-import { ReactNode } from "react"
 import { NotFoundPage } from "pages/404"
 import { ProfilePage } from "pages/profile"
 
@@ -37,15 +36,6 @@ export const Router = () => {
 
                 <Route path="*" element={<NotFoundPage />} />
             </Route>
-            {/* <Route path="dark-store" element={<AdminLayout />}>
-                <Route index element={<DarkStore />} />
-                <Route path="lk" element={<LKPage />} />
-                <Route path="dashboard" element={<Dashboard />} />
-            </Route> */}
-
-            {/* <Route path="ritm-style" element={<RitmStyleLayout />}>
-                <Route index element={<RitmStypePage />} />
-            </Route> */}
         </Routes>
     )
 }
