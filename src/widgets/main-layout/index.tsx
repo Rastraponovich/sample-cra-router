@@ -1,6 +1,5 @@
 import { Transition } from "@headlessui/react"
 import { appModel } from "entities/app"
-import { authModel } from "entities/auth"
 import { Drawer } from "features/drawer"
 import { Poupup } from "features/poupup"
 import { useMemo } from "react"
