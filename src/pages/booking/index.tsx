@@ -35,7 +35,7 @@ export const BookingPage = () => {
                 </section>
             )} */}
 
-            {pageMounted && <Reserves />}
+            <Reserves />
         </div>
     )
 }

@@ -43,8 +43,8 @@ const FirstLoader = () => {
             <div className="flex flex-col space-y-2 overflow-hidden rounded-lg bg-gray-200 p-10 text-gray-900">
                 {messages.map((message) => (
                     <Transition
-                        key={message}
                         as="div"
+                        key={Date.now()}
                         show={true}
                         appear
                         enterFrom="opacity-0 -translate-y-full"

@@ -1,13 +1,7 @@
 import { useStore } from "effector-react"
 import { createDomain, createStore, sample } from "effector"
 
-import {
-    type TReserve,
-    _defaultReserve_,
-    API,
-    TTable,
-    THallplane,
-} from "../lib"
+import { type TReserve, _defaultReserve_, API, TTable, THallplane } from "../lib"
 
 const pageDomain = createDomain("pageDomain")
 
@@ -25,9 +19,7 @@ sample({
     target: API.getTablesFx,
 })
 
-export const $tables = pageDomain
-    .createStore<Array<TTable>>([])
-    .on(API.getTablesFx.doneData, (_, res) => res.data[0])
+export const $tables = pageDomain.createStore<Array<TTable>>([]).on(API.getTablesFx.doneData, (_, res) => res.data[0])
 
 const getHallplanes = pageDomain.createEvent()
 sample({
@@ -52,27 +44,23 @@ export const $reserves = pageDomain
     .on(API.getReservesFx.doneData, (_, payload) => payload.data[0])
 
 const selectReserve = pageDomain.createEvent<TReserve["id"]>()
-export const $selectedReserves = pageDomain
-    .createStore<Array<TReserve["id"]>>([])
-    .on(selectReserve, (reserves, id) => {
-        const candidate = reserves.some((r) => r === id)
+export const $selectedReserves = pageDomain.createStore<Array<TReserve["id"]>>([]).on(selectReserve, (reserves, id) => {
+    const candidate = reserves.some((r) => r === id)
 
-        if (candidate) return reserves.filter((r) => r !== id)
+    if (candidate) return reserves.filter((r) => r !== id)
 
-        return [...reserves, id]
-    })
+    return [...reserves, id]
+})
 
 export const $compacted = pageDomain.createStore(false)
 
 const $selectedReservesCount = $selectedReserves.map((item) => item.length)
 
-export const $reservesCount = pageDomain
-    .createStore<number>(0)
-    .on(API.getReservesFx.doneData, (_, res) => res.data[1])
+export const $reservesCount = pageDomain.createStore<number>(0).on(API.getReservesFx.doneData, (_, res) => res.data[1])
 
-export const $filteredReserves = $reserves
-    .map((reserves) => reserves)
+export const $filteredReserves = createStore<Array<TReserve>>([])
     .on(API.getFliteredReservesFx.doneData, (_, res) => res.data[0])
+    .on($reserves, (_, r) => r)
 
 $selectedReserves.reset($filteredReserves)
 
@@ -99,21 +87,13 @@ sample({
 })
 
 sample({
-    clock: [
-        API.getHallPlanesFx.fail,
-        API.getReservesFx.fail,
-        API.getTablesFx.fail,
-    ],
+    clock: [API.getHallPlanesFx.fail, API.getReservesFx.fail, API.getTablesFx.fail],
     fn: () => false,
     target: $pageMounted,
 })
 
 sample({
-    clock: [
-        API.getHallPlanesFx.doneData,
-        API.getReservesFx.doneData,
-        API.getTablesFx.doneData,
-    ],
+    clock: [API.getHallPlanesFx.doneData, API.getReservesFx.doneData, API.getTablesFx.doneData],
     fn: () => true,
     target: $pageMounted,
 })
