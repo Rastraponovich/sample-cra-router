@@ -1,21 +1,17 @@
 import { AxiosResponse } from "axios"
-import { attach, createEffect, Effect, sample } from "effector"
+import { attach, createEffect, sample } from "effector"
 import { BookingAPI } from "shared/lib/api"
-import { TReserve, TReservesParams, TTable } from "./models"
+import { TReserve, TReservesParams } from "./models"
 
-export const getReservesFx = createEffect<
-    TReservesParams,
-    AxiosResponse<[Array<TReserve>, number], Error>
->(BookingAPI.getReserves)
-
-export const getFliteredReservesFx = createEffect<
-    TReservesParams,
-    AxiosResponse<[Array<TReserve>, number], Error>
->(BookingAPI.getReserves)
-
-export const getReserveFx = createEffect<number, AxiosResponse<TReserve>>(
-    BookingAPI.getReserve
+export const getReservesFx = createEffect<TReservesParams, AxiosResponse<[Array<TReserve>, number], Error>>(
+    BookingAPI.getReserves
 )
+
+export const getFliteredReservesFx = createEffect<TReservesParams, AxiosResponse<[Array<TReserve>, number], Error>>(
+    BookingAPI.getReserves
+)
+
+export const getReserveFx = createEffect<number, AxiosResponse<TReserve>>(BookingAPI.getReserve)
 
 export const getTablesFx = attach({
     effect: BookingAPI.getTablesFx,

@@ -1,6 +1,6 @@
 import { AuthForm, authModel, RegistrationForm } from "entities/auth"
-import { useEffect, useLayoutEffect, useState } from "react"
-import { Location, useLocation, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Location, Navigate, useLocation, useNavigate } from "react-router-dom"
 
 export const AuthPage = () => {
     const isAuth = authModel.selectors.useIsAuth()
@@ -19,9 +19,7 @@ export const AuthPage = () => {
         return setWind("auth")
     }
 
-    useEffect(() => {
-        if (isAuth) navigate(fromPage, { replace: true })
-    }, [isAuth])
+    if (isAuth) return <Navigate to={fromPage} replace />
 
     return (
         <div className="flex grow flex-col space-y-2 px-4 py-2 font-sans md:space-y-4 md:px-10 md:py-5">

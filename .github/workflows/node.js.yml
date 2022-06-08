@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
     push:
-        branches: ["master"]
+        branches: ["testing"]
     pull_request:
-        branches: ["master"]
+        branches: ["testing"]
 
 jobs:
     build:
@@ -24,9 +24,6 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
-            - name: Install dependencies
-              run: yarn install --frozen-lockfile
-            - name: Prebuild
-              run: yarn prebuild
-            - name: Build
-              run: yarn build --if-present
+            - run: yarn install --frozen-lockfile
+            - run: yarn prebuild
+            - run: yarn build --if-present

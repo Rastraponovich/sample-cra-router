@@ -1,10 +1,9 @@
 import { Dialog, Transition } from "@headlessui/react"
 import { MenuIcon, XIcon } from "@heroicons/react/outline"
-import clsx from "clsx"
 import { useEvent } from "effector-react"
 import { Fragment, useRef } from "react"
 import { drawerModel } from ".."
-import { privateRoutes, routes } from "../../../shared/lib"
+import { routes } from "../../../shared/lib"
 import { Nav } from "../../../widgets/navigations"
 
 export const BurgerButton = () => {

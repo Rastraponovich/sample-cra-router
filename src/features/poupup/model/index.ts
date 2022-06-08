@@ -1,6 +1,5 @@
-import { createDomain, Event, sample } from "effector"
+import { createDomain, sample } from "effector"
 import { useStore } from "effector-react"
-import { delay } from "patronum"
 
 const PoupupDomain = createDomain("PoupupDomain")
 

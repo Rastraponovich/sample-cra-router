@@ -1,19 +1,17 @@
 import { Transition } from "@headlessui/react"
 import { appModel } from "entities/app"
-import { authModel } from "entities/auth"
 import { Drawer } from "features/drawer"
 import { Poupup } from "features/poupup"
 import { useMemo } from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import { SpinerLoader } from "shared/ui/spinner-loading"
-import { privateRoutes, routes } from "../../shared/lib"
+import { routes } from "../../shared/lib"
 import { Footer } from "../footer"
 import { Header } from "../header"
 import { Nav } from "../navigations"
 
 export const MainLayout = () => {
     const isAppStarted = appModel.selectors.useAppStarted()
-    const user = authModel.selectors.useUser()
 
     const location = useLocation()
 

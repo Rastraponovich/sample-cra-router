@@ -17,6 +17,7 @@ export const Poupup = () => {
                 setShow((prev) => !prev)
                 handleClose()
             }, 3000)
+            return () => clearTimeout(timer)
         }
     }, [opened])
 

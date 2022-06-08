@@ -2,7 +2,6 @@ import { combine, createDomain, createEvent, sample } from "effector"
 import { useStore } from "effector-react"
 import { bookingLib, bookingModel } from "entities/booking"
 import { THallplane, TPrepay, TReservesParams, _prepaysDict_ } from "entities/booking/lib"
-import { resetAllFiltersClicked } from "features/reserves-action-panel"
 
 const filtersDomain = createDomain("filtersDomain")
 
