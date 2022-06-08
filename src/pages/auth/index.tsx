@@ -1,5 +1,5 @@
 import { AuthForm, authModel, RegistrationForm } from "entities/auth"
-import { useEffect, useLayoutEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { Location, useLocation, useNavigate } from "react-router-dom"
 
 export const AuthPage = () => {

@@ -8,18 +8,9 @@ import timezone from "dayjs/plugin/timezone"
 
 import ru from "dayjs/locale/ru"
 import axios, { AxiosResponse } from "axios"
-import { createEffect, sample } from "effector"
-import {
-    THallplane,
-    TReserve,
-    TReservesParams,
-    TTable,
-} from "entities/booking/lib"
-import {
-    TCredentialUser,
-    TRegistrationCredential,
-    TUser,
-} from "entities/auth/lib"
+import { createEffect } from "effector"
+import { THallplane, TReserve, TReservesParams, TTable } from "entities/booking/lib"
+import { TCredentialUser, TRegistrationCredential, TUser } from "entities/auth/lib"
 dayjs.extend(weekOfYear)
 
 dayjs.extend(duration)
@@ -54,17 +45,10 @@ bookingAPIInstance.interceptors.response.use(
     },
     async (error) => {
         const originalRequest = error.config
-        if (
-            error.response.status === 401 &&
-            error.config &&
-            !error.config._isRetry
-        ) {
+        if (error.response.status === 401 && error.config && !error.config._isRetry) {
             originalRequest._isRetry = true
             try {
-                const response = await axios.get<AuthResponse>(
-                    `${API_URL}/auth/refresh`,
-                    { withCredentials: true }
-                )
+                const response = await axios.get<AuthResponse>(`${API_URL}/auth/refresh`, { withCredentials: true })
 
                 localStorage.setItem("token", response.data.accessToken)
                 return bookingAPIInstance.request(originalRequest)
@@ -82,8 +66,7 @@ const login = async (cred: TCredentialUser) => {
 
 const getMe = async () => await bookingAPIInstance.get("/auth/profile")
 
-const registration = async (user: TRegistrationCredential) =>
-    await bookingAPIInstance.post("/auth/registration", user)
+const registration = async (user: TRegistrationCredential) => await bookingAPIInstance.post("/auth/registration", user)
 
 const logout = async () => {
     const req = await bookingAPIInstance.post("/auth/logout")
@@ -93,54 +76,32 @@ const logout = async () => {
     return req
 }
 
-const getReserves = async (params?: TReservesParams) =>
-    await bookingAPIInstance.get("/reserves", { params })
-const getReserve = async (id: number) =>
-    await bookingAPIInstance.get("/reserves", { params: id })
+const getReserves = async (params?: TReservesParams) => await bookingAPIInstance.get("/reserves", { params })
+const getReserve = async (id: number) => await bookingAPIInstance.get("/reserves", { params: id })
 
-const getTables = async (id: number | void) =>
-    await bookingAPIInstance.get("/tables", { params: { id } })
+const getTables = async (id: number | void) => await bookingAPIInstance.get("/tables", { params: { id } })
 
-const deleteReserve = async (id: number) =>
-    bookingAPIInstance.delete(`/reserves/${id}`)
+const deleteReserve = async (id: number) => bookingAPIInstance.delete(`/reserves/${id}`)
 
-const deleteSelectedReserves = async (ids: Array<number>) =>
-    bookingAPIInstance.post("/reserves/selected", ids)
+const deleteSelectedReserves = async (ids: Array<number>) => bookingAPIInstance.post("/reserves/selected", ids)
 
 const deleteAllReserves = async () => bookingAPIInstance.delete("/reserves/all")
 
 const getHallplanes = async () => bookingAPIInstance.get("/hallplanes")
 
-const postReserve = async (reserve: TReserve) =>
-    await bookingAPIInstance.post("/reserves", reserve)
+const postReserve = async (reserve: TReserve) => await bookingAPIInstance.post("/reserves", reserve)
 
-const getTablesFx = createEffect<
-    number | never | void,
-    AxiosResponse<[Array<TTable>, number]>,
-    Error
->(getTables)
-const getHallplanesFx = createEffect<
-    void,
-    AxiosResponse<[Array<THallplane>, number], Error>
->(getHallplanes)
+const getTablesFx = createEffect<number | never | void, AxiosResponse<[Array<TTable>, number]>, Error>(getTables)
+const getHallplanesFx = createEffect<void, AxiosResponse<[Array<THallplane>, number], Error>>(getHallplanes)
 
-const postReserveFx = createEffect<TReserve, AxiosResponse<TReserve>, Error>(
-    postReserve
-)
+const postReserveFx = createEffect<TReserve, AxiosResponse<TReserve>, Error>(postReserve)
 
-const deleteReserveByIdFx = createEffect<number, AxiosResponse<any>, Error>(
-    deleteReserve
-)
+const deleteReserveByIdFx = createEffect<number, AxiosResponse<any>, Error>(deleteReserve)
 
 const deleteAllReservesFx = createEffect(deleteAllReserves)
-const deleteSelectedReservesFx = createEffect<
-    Array<number>,
-    AxiosResponse<any>,
-    Error
->(deleteSelectedReserves)
+const deleteSelectedReservesFx = createEffect<Array<number>, AxiosResponse<any>, Error>(deleteSelectedReserves)
 
-const modifyUser = async ({ id, ...user }: TUser) =>
-    await bookingAPIInstance.patch(`/users/${id}`, { ...user })
+const modifyUser = async ({ id, ...user }: TUser) => await bookingAPIInstance.patch(`/users/${id}`, { ...user })
 
 export const BookingAPI = {
     getMe,

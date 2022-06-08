@@ -2,16 +2,7 @@ import { PencilIcon, SaveIcon, UserCircleIcon } from "@heroicons/react/outline"
 import clsx from "clsx"
 import { useEvent } from "effector-react"
 import { authModel } from "entities/auth"
-import { TUser } from "entities/auth/lib"
-import {
-    ChangeEvent,
-    InputHTMLAttributes,
-    memo,
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
-} from "react"
+import { InputHTMLAttributes, memo, useCallback, useEffect, useRef, useState } from "react"
 
 export const ProfilePage = () => {
     const user = authModel.selectors.useUser()
@@ -111,10 +102,7 @@ const UserInput = memo(
                 <button
                     onClick={onSaveClicked}
                     type="button"
-                    className={clsx(
-                        "absolute right-0  rounded bg-gray-200 p-2",
-                        !disabledField ? "block" : "hidden"
-                    )}
+                    className={clsx("absolute right-0  rounded bg-gray-200 p-2", !disabledField ? "block" : "hidden")}
                 >
                     <SaveIcon className="h-4 w-4" />
                 </button>
