@@ -5,36 +5,33 @@
     "dependencies": {
         "@headlessui/react": "^1.6.1",
         "@heroicons/react": "^1.0.6",
-        "@testing-library/jest-dom": "^5.16.4",
-        "@testing-library/react": "^13.1.1",
-        "@testing-library/user-event": "^13.5.0",
-        "@types/jest": "^27.4.1",
-        "@types/node": "^17.0.30",
-        "@types/react": "^18.0.8",
-        "@types/react-dom": "^18.0.3",
         "axios": "^0.27.2",
         "clsx": "^1.1.1",
+        "css-loader": "^6.7.1",
         "dayjs": "^1.11.2",
         "effector": "^22.3.0",
         "effector-react": "^22.0.6",
+        "html-webpack-plugin": "^5.5.0",
         "jwt-decode": "^3.1.2",
         "patronum": "^1.8.2",
         "react": "^18.1.0",
         "react-dom": "^18.1.0",
         "react-jwt": "^1.1.6",
         "react-router-dom": "^6.3.0",
-        "react-scripts": "5.0.1",
         "rimraf": "^3.0.2",
+        "style-loader": "^3.3.1",
         "typescript": "^4.6.4",
         "uuid": "^8.3.2",
-        "web-vitals": "^2.1.4"
+        "web-vitals": "^2.1.4",
+        "webpack": "^5.73.0",
+        "webpack-cli": "^4.9.2",
+        "webpack-dev-server": "^4.9.2"
     },
     "scripts": {
         "prebuild": "rimraf dist",
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "dev": "webpack serve",
+        "build": "webpack --mode=production",
+        "build2": "webpack -c configs/prod.js"
     },
     "eslintConfig": {
         "extends": [
@@ -55,13 +52,29 @@
         ]
     },
     "devDependencies": {
+        "@babel/core": "^7.18.2",
+        "@babel/plugin-transform-runtime": "^7.18.2",
+        "@babel/preset-env": "^7.18.2",
+        "@babel/preset-react": "^7.17.12",
         "@tailwindcss/typography": "^0.5.2",
+        "@types/jest": "^27.4.1",
+        "@types/node": "^17.0.30",
+        "@types/react": "^18.0.8",
+        "@types/react-dom": "^18.0.3",
         "@types/uuid": "^8.3.4",
         "autoprefixer": "^10.4.5",
+        "babel-loader": "^8.2.5",
+        "css-minimizer-webpack-plugin": "^4.0.0",
+        "cssnano": "^5.1.11",
+        "dotenv-webpack": "^7.1.0",
+        "mini-css-extract-plugin": "^2.6.0",
         "postcss": "^8.4.12",
+        "postcss-loader": "^7.0.0",
         "prettier": "^2.6.2",
         "prettier-plugin-tailwindcss": "^0.1.10",
-        "react-test-renderer": "^18.1.0",
-        "tailwindcss": "^3.0.24"
+        "tailwindcss": "^3.0.24",
+        "ts-loader": "^9.3.0",
+        "webpack-bundle-analyzer": "^4.5.0",
+        "webpack-merge": "^5.8.0"
     }
 }
