@@ -19,14 +19,7 @@ module.exports = merge(common, {
         filename: "js/[name].[contenthash].bundle.js",
         publicPath: "./",
     },
-    module: {
-        rules: [
-            {
-                test: /\.css$/i,
-                use: [stylesHandler, "css-loader", "postcss-loader"],
-            },
-        ],
-    },
+
     plugins: [
         new MiniCssExtractPlugin({
             filename: "css/[name].[contenthash].css",

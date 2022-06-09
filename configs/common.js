@@ -12,8 +12,8 @@ const babelLoader = {
     options: {
         presets: ["@babel/preset-env", "@babel/preset-react"],
         plugins: [
-            "@babel/plugin-proposal-class-properties",
-            "@babel/plugin-syntax-dynamic-import",
+            // "@babel/plugin-proposal-class-properties",
+            // "@babel/plugin-syntax-dynamic-import",
             // "@babel/plugin-transform-runtime",
         ],
     },
@@ -58,7 +58,7 @@ module.exports = {
             // JavaScript, React
             {
                 test: /\.tsx?$/,
-                use: [babelLoader, "ts-loader"],
+                use: ["ts-loader"],
                 exclude: /node_modules/,
             },
             {
@@ -66,10 +66,10 @@ module.exports = {
                 use: [stylesHandler, "css-loader", "postcss-loader"],
             },
             // MD
-            {
-                test: /\.md$/i,
-                use: ["html-loader", "markdown-loader"],
-            },
+            // {
+            //     test: /\.md$/i,
+            //     use: ["html-loader", "markdown-loader"],
+            // },
             // static files
             {
                 test: /\.(jpe?g|png|gif|svg|eot|ttf|woff2?)$/i,
@@ -79,7 +79,6 @@ module.exports = {
     },
     plugins: [
         new webpack.ProgressPlugin(),
-
         new HtmlWebpackPlugin({
             template: `${paths.public}/index.html`,
             filename: "index.html",

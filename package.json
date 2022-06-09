@@ -29,9 +29,10 @@
     },
     "scripts": {
         "prebuild": "rimraf dist",
-        "dev": "webpack serve",
-        "build": "webpack --mode=production",
-        "build2": "webpack -c configs/prod.js"
+        "dev-old": "webpack serve",
+        "dev": "webpack serve -c configs/dev.js",
+        "build-old": "webpack --mode=production",
+        "build": "webpack -c configs/prod.js"
     },
     "eslintConfig": {
         "extends": [
