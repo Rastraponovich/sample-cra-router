@@ -7,7 +7,10 @@ import { ChangeEvent, FormEvent } from "react"
 import { API, TCredentialUser, TRegistrationCredential, TUser } from "../lib"
 import { checkAuthFx, loginFx, logoutFx, registrationFx } from "../lib/api"
 
-const AuthDomain = createDomain("authDomain")
+export const AuthDomain = createDomain("authDomain")
+//for test
+export const setCredentialFx = AuthDomain.createEffect<TCredentialUser, TCredentialUser, Error>()
+
 const changeUserValues = AuthDomain.createEvent<ChangeEvent<HTMLInputElement>>()
 const $user = AuthDomain.createStore<null | TUser>(null).on(changeUserValues, (user, event) => ({
     ...user!,
@@ -17,13 +20,15 @@ const $user = AuthDomain.createStore<null | TUser>(null).on(changeUserValues, (u
 const $accessToken = AuthDomain.createStore<string | null>(null)
 
 const setCredential = AuthDomain.createEvent<ChangeEvent<HTMLInputElement>>()
-const $credential = AuthDomain.createStore<TCredentialUser>({
+export const $credential = AuthDomain.createStore<TCredentialUser>({
     email: "",
     password: "",
-} as TCredentialUser).on(setCredential, (state, event) => ({
-    ...state,
-    [event.target.name]: event.target.value,
-}))
+} as TCredentialUser)
+    .on(setCredential, (state, event) => ({
+        ...state,
+        [event.target.name]: event.target.value,
+    }))
+    .on(setCredentialFx.doneData, (state, payload) => ({ ...state, ...payload }))
 
 const login = AuthDomain.createEvent<FormEvent<HTMLFormElement>>()
 

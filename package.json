@@ -29,10 +29,10 @@
     },
     "scripts": {
         "prebuild": "rimraf dist",
-        "dev-old": "webpack serve",
         "dev": "webpack serve --mode development",
-        "build-old": "webpack --mode=production",
-        "build": "webpack --mode=production"
+        "build": "webpack --mode=production",
+        "test": "jest",
+        "test:watch": "jest --watch"
     },
     "eslintConfig": {
         "extends": [
@@ -57,6 +57,7 @@
         "@babel/plugin-transform-runtime": "^7.18.2",
         "@babel/preset-env": "^7.18.2",
         "@babel/preset-react": "^7.17.12",
+        "@babel/preset-typescript": "^7.17.12",
         "@tailwindcss/typography": "^0.5.2",
         "@types/jest": "^27.4.1",
         "@types/node": "^17.0.41",
@@ -69,6 +70,7 @@
         "css-minimizer-webpack-plugin": "^4.0.0",
         "cssnano": "^5.1.11",
         "dotenv-webpack": "^7.1.0",
+        "jest": "^28.1.1",
         "mini-css-extract-plugin": "^2.6.0",
         "postcss": "^8.4.12",
         "postcss-loader": "^7.0.0",

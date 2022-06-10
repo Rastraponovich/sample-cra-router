@@ -1,9 +1,13 @@
-import { createEvent, createStore } from "effector"
+import { createDomain } from "effector"
 import { useStore } from "effector-react"
 
-const toggleDrawer = createEvent()
-const $isOpenedDrawer = createStore<boolean>(false).on(
-    toggleDrawer,
+export const DrawerDomain = createDomain("DrawerDomain")
+
+export const toggleDrawerFx = DrawerDomain.createEffect()
+
+const toggleDrawer = DrawerDomain.createEvent()
+export const $isOpenedDrawer = DrawerDomain.createStore<boolean>(false).on(
+    [toggleDrawer, toggleDrawerFx],
     (state, _) => !state
 )
 
