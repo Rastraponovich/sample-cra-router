@@ -10,14 +10,9 @@ export const AuthForm = () => {
 
     return (
         <div className="flex w-full max-w-xl flex-col space-y-4 rounded-lg bg-gray-100 shadow-sm">
-            <h3 className=" rounded-t-lg bg-white p-2 text-center first-letter:uppercase">
-                авторизация
-            </h3>
+            <h3 className=" rounded-t-lg bg-white p-2 text-center first-letter:uppercase">авторизация</h3>
 
-            <form
-                onSubmit={handleSubmit}
-                className="flex flex-col space-y-4 p-4 "
-            >
+            <form onSubmit={handleSubmit} className="flex flex-col space-y-4 p-4 ">
                 <InputFiled
                     label="login"
                     placeholder="email"
@@ -73,14 +68,9 @@ export const RegistrationForm = () => {
 
     return (
         <div className="flex w-full max-w-xl flex-col space-y-4 rounded-lg bg-gray-100 shadow-sm">
-            <h3 className=" rounded-t-lg bg-white p-2 text-center first-letter:uppercase">
-                регистрация
-            </h3>
+            <h3 className=" rounded-t-lg bg-white p-2 text-center first-letter:uppercase">регистрация</h3>
 
-            <form
-                onSubmit={handleSubmit}
-                className="flex flex-col space-y-4 p-4 "
-            >
+            <form onSubmit={handleSubmit} className="flex flex-col space-y-4 p-4 ">
                 <InputFiled
                     label="email"
                     placeholder="email"

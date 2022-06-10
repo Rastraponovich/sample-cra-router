@@ -15,7 +15,6 @@ module.exports = {
         },
         historyApiFallback: true,
         hot: true,
-        open: true,
         port: 3000,
         client: {
             progress: true,
@@ -25,5 +24,5 @@ module.exports = {
             },
         },
     },
-    plugins: [new MiniCssExtractPlugin(), new webpack.HotModuleReplacementPlugin()],
+    plugins: [new MiniCssExtractPlugin()],
 }

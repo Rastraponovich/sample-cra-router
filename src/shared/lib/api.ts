@@ -10,7 +10,9 @@ import ru from "dayjs/locale/ru"
 import axios, { AxiosResponse } from "axios"
 import { createEffect } from "effector"
 import { THallplane, TReserve, TReservesParams, TTable } from "entities/booking/lib"
-import { TCredentialUser, TRegistrationCredential, TUser } from "entities/auth/lib"
+import { TCredentialUser, TRegistrationCredential } from "entities/auth/lib"
+import { TUser } from "entities/user/lib"
+import { Rule } from "effector-forms/dist-types"
 dayjs.extend(weekOfYear)
 
 dayjs.extend(duration)
@@ -117,4 +119,32 @@ export const BookingAPI = {
     deleteReserveByIdFx,
     deleteAllReservesFx,
     deleteSelectedReservesFx,
+}
+
+export const rules = {
+    required: (): Rule<string> => ({
+        name: "required",
+        validator: (value) => Boolean(value),
+    }),
+    email: (): Rule<string | any> => ({
+        name: "email",
+        validator: (value) => ({
+            isValid: /\S+@\S+\.\S+/.test(value),
+            errorText: "email is not correct",
+        }),
+    }),
+    minLength: (min: number): Rule<string | any> => ({
+        name: "minLength",
+        validator: (value) => ({
+            isValid: value.length >= min,
+            errorText: "length must be > 0",
+        }),
+    }),
+    maxLength: (max: number): Rule<string | any> => ({
+        name: "maxLength",
+        validator: (value) => ({
+            isValid: value.length <= max,
+            errorText: "length > max capacity",
+        }),
+    }),
 }
