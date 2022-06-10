@@ -1,12 +1,10 @@
 const paths = require("./paths")
 
 const webpack = require("webpack")
-const { merge } = require("webpack-merge")
 
-const common = require("./common")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
-module.exports = merge(common, {
+module.exports = {
     mode: "development",
     devtool: "eval-cheap-source-map",
     devServer: {
@@ -28,4 +26,4 @@ module.exports = merge(common, {
         },
     },
     plugins: [new MiniCssExtractPlugin(), new webpack.HotModuleReplacementPlugin()],
-})
+}

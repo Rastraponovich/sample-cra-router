@@ -1,11 +1,8 @@
 const paths = require("./paths")
-const { merge } = require("webpack-merge")
-const common = require("./common")
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const stylesHandler = MiniCssExtractPlugin.loader
 
-module.exports = merge(common, {
+module.exports = {
     mode: "production",
     entry: {
         index: {
@@ -34,4 +31,4 @@ module.exports = merge(common, {
         maxEntrypointSize: 512000,
         maxAssetSize: 512000,
     },
-})
+}
