@@ -9,7 +9,6 @@ const AuthContext = createContext({})
 
 interface AuthProviderProps {}
 const AuthProvider = (props: AuthProviderProps) => {
-    const login = useEvent(authModel.events.login)
     const logout = useEvent(authModel.events.logout)
     const registration = useEvent(authModel.events.registration)
     const checkAuth = useEvent(authModel.events.checkAuth)
@@ -33,10 +32,10 @@ const AuthProvider = (props: AuthProviderProps) => {
     }, [])
 
     useEffect(() => {
-        if (!isAuth) navigate("/auth", { state: { from: location } })
+        if (!isAuth) navigate("/auth?login=true", { state: { from: location } })
     }, [isAuth])
 
-    return <AuthContext.Provider value={{ login, logout, registration, isAuth, checkAuth }} {...props} />
+    return <AuthContext.Provider value={{ logout, registration, isAuth, checkAuth }} {...props} />
 }
 
 const useAuth = () => useContext(AuthContext)

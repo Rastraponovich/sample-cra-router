@@ -1,22 +1,11 @@
 import { useField, useForm } from "effector-forms"
 import { useEvent } from "effector-react"
-import {
-    InputHTMLAttributes,
-    ReactNode,
-    memo,
-    ChangeEvent,
-    useCallback,
-    FormEvent,
-} from "react"
+import { InputHTMLAttributes, ReactNode, memo, ChangeEvent, useCallback, FormEvent } from "react"
 import { UserInput } from "shared/ui/user-input"
 import { authModel } from ".."
-import { selectors } from "../model"
-import { useServerError } from "../model/selectors"
 
 export const AuthForm = () => {
     const { fields, submit, eachValid } = useForm(authModel.$loginForm)
-
-    const error = useServerError()
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -24,26 +13,25 @@ export const AuthForm = () => {
     }
 
     return (
-        <div className="flex w-full max-w-xl flex-col space-y-4 rounded-lg bg-gray-100 shadow-sm">
-            <h3 className=" rounded-t-lg bg-white p-2 text-center first-letter:uppercase">
-                авторизация
-            </h3>
-
-            <form onSubmit={onSubmit} className="flex flex-col space-y-8 p-4 ">
-                <UserEmailField />
-                <UserPasswordField />
-
-                <button
-                    type="submit"
-                    className="flex justify-center self-center rounded-lg bg-green-600 px-4 py-2 uppercase text-white duration-150 hover:bg-green-500"
-                >
-                    войти
+        <form onSubmit={onSubmit} className="flex w-full flex-col space-y-8">
+            <UserEmailField />
+            <UserPasswordField />
+            <div className="!my-4 flex justify-between text-sm text-gray-400">
+                <button className="hover:text-gray-900" type="button">
+                    запомнить
                 </button>
-            </form>
-            <span className="p-4 text-base italic text-rose-600">
-                {error?.response?.data.message}
-            </span>
-        </div>
+                <button className="hover:text-gray-900" type="button">
+                    забыли пароль?
+                </button>
+            </div>
+
+            <button
+                type="submit"
+                className="flex justify-center  rounded-lg bg-cyan-600 px-8 py-4 text-sm uppercase text-white duration-150 hover:bg-green-500"
+            >
+                вход
+            </button>
+        </form>
     )
 }
 
@@ -67,53 +55,48 @@ export const RegistrationForm = () => {
     const handleSubmit = useEvent(authModel.events.registration)
 
     return (
-        <div className="flex w-full max-w-xl flex-col space-y-4 rounded-lg bg-gray-100 shadow-sm">
-            <h3 className=" rounded-t-lg bg-white p-2 text-center first-letter:uppercase">
-                регистрация
-            </h3>
+        <form onSubmit={handleSubmit} className="flex w-full flex-col space-y-4 ">
+            <UserInput
+                value={credential.email}
+                onChange={handleChange}
+                errorText={() => ""}
+                placeholder="почта"
+                name="почта"
+            />
+            <UserInput
+                value={credential.name}
+                onChange={handleChange}
+                errorText={() => ""}
+                placeholder="имя"
+                name="имя"
+            />
+            <UserInput
+                value={credential.password}
+                onChange={handleChange}
+                errorText={() => ""}
+                placeholder="пароль"
+                name="пароль"
+            />
+            <UserInput
+                value={credential.password}
+                onChange={handleChange}
+                errorText={() => ""}
+                placeholder="повтор пароля"
+                name="повтор пароля"
+            />
 
-            <form
-                onSubmit={handleSubmit}
-                className="flex flex-col space-y-4 p-4 "
+            <button
+                type="submit"
+                className="flex justify-center  rounded-lg bg-cyan-600 px-8 py-4 text-sm uppercase text-white duration-150 hover:bg-green-500"
             >
-                <InputFiled
-                    label="email"
-                    placeholder="email"
-                    name="email"
-                    value={credential.email}
-                    onChange={handleChange}
-                />
-                <InputFiled
-                    label="name"
-                    placeholder="name"
-                    name="name"
-                    value={credential.name}
-                    onChange={handleChange}
-                />
-                <InputFiled
-                    label="password"
-                    placeholder="password"
-                    type="password"
-                    name="password"
-                    value={credential.password}
-                    onChange={handleChange}
-                />
-
-                <button
-                    type="submit"
-                    className="flex justify-center rounded-lg bg-green-600 px-4 py-2 text-white duration-150 hover:bg-green-500"
-                >
-                    войти
-                </button>
-            </form>
-        </div>
+                регистрация
+            </button>
+        </form>
     )
 }
 
 const UserPasswordField = () => {
-    const { value, onChange, errorText } = useField(
-        authModel.$loginForm.fields!.password!
-    )
+    const { value, onChange, errorText } = useField(authModel.$loginForm.fields!.password!)
     const handleChange = useCallback(
         (e: ChangeEvent<HTMLInputElement>) => {
             onChange(e.target.value)
@@ -134,9 +117,7 @@ const UserPasswordField = () => {
 }
 
 const UserEmailField = () => {
-    const { value, onChange, errorText } = useField(
-        authModel.$loginForm.fields!.email!
-    )
+    const { value, onChange, errorText } = useField(authModel.$loginForm.fields!.email!)
     const handleChange = useCallback(
         (e: ChangeEvent<HTMLInputElement>) => {
             onChange(e.target.value)
@@ -144,13 +125,5 @@ const UserEmailField = () => {
         [value]
     )
 
-    return (
-        <UserInput
-            value={value}
-            onChange={handleChange}
-            errorText={errorText}
-            placeholder="почта"
-            name="почта"
-        />
-    )
+    return <UserInput value={value} onChange={handleChange} errorText={errorText} placeholder="почта" name="почта" />
 }

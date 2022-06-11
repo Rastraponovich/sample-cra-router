@@ -20,7 +20,6 @@ export const Router = () => {
                         </PrivateRoute>
                     }
                 />
-                <Route path="auth" element={<AuthPage />} />
                 <Route path="booking" element={<PrivateOutlet />}>
                     <Route index element={<BookingPage />} />
                     <Route path="scheduller" element={<SchedullerPage />} />
@@ -36,6 +35,7 @@ export const Router = () => {
 
                 <Route path="*" element={<NotFoundPage />} />
             </Route>
+            <Route path="auth" element={<AuthPage />} />
         </Routes>
     )
 }
