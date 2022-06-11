@@ -5,8 +5,12 @@ import { useStore } from "effector-react"
 import { BookingAPI, rules } from "shared/lib/api"
 import { TUser } from "../lib"
 
-export const getMeFx = createEffect<void, AxiosResponse<TUser>, Error>(BookingAPI.getMe)
-export const modifyUserFx = createEffect<TUser, AxiosResponse<any>, Error>(BookingAPI.modifyUser)
+export const getMeFx = createEffect<void, AxiosResponse<TUser>, Error>(
+    BookingAPI.getMe
+)
+export const modifyUserFx = createEffect<TUser, AxiosResponse<any>, Error>(
+    BookingAPI.modifyUser
+)
 
 export const $user = createStore<TUser | null>(null)
 const $serverError = restore(modifyUserFx.failData, null)
@@ -40,7 +44,6 @@ export const $profileForm = createForm<Partial<TUser>>({
 sample({
     clock: $profileForm.formValidated,
     fn: (user) => {
-        console.log(user)
         return user as TUser
     },
     target: modifyUserFx,

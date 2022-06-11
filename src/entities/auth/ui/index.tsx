@@ -1,33 +1,37 @@
+import { useField, useForm } from "effector-forms"
 import { useEvent } from "effector-react"
-import { InputHTMLAttributes, ReactNode, memo } from "react"
+import {
+    InputHTMLAttributes,
+    ReactNode,
+    memo,
+    ChangeEvent,
+    useCallback,
+    FormEvent,
+} from "react"
+import { UserInput } from "shared/ui/user-input"
 import { authModel } from ".."
-import { events, selectors } from "../model"
+import { selectors } from "../model"
+import { useServerError } from "../model/selectors"
 
 export const AuthForm = () => {
-    const handleSubmit = useEvent(events.login)
-    const handleChange = useEvent(events.setCredential)
-    const credential = selectors.useCredential()
+    const { fields, submit, eachValid } = useForm(authModel.$loginForm)
+
+    const error = useServerError()
+
+    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        if (eachValid) submit()
+    }
 
     return (
         <div className="flex w-full max-w-xl flex-col space-y-4 rounded-lg bg-gray-100 shadow-sm">
-            <h3 className=" rounded-t-lg bg-white p-2 text-center first-letter:uppercase">авторизация</h3>
+            <h3 className=" rounded-t-lg bg-white p-2 text-center first-letter:uppercase">
+                авторизация
+            </h3>
 
-            <form onSubmit={handleSubmit} className="flex flex-col space-y-4 p-4 ">
-                <InputFiled
-                    label="login"
-                    placeholder="email"
-                    name="email"
-                    value={credential.email}
-                    onChange={handleChange}
-                />
-                <InputFiled
-                    label="password"
-                    placeholder="password"
-                    type="password"
-                    name="password"
-                    value={credential.password}
-                    onChange={handleChange}
-                />
+            <form onSubmit={onSubmit} className="flex flex-col space-y-8 p-4 ">
+                <UserEmailField />
+                <UserPasswordField />
 
                 <button
                     type="submit"
@@ -36,7 +40,9 @@ export const AuthForm = () => {
                     войти
                 </button>
             </form>
-            <AuthError />
+            <span className="p-4 text-base italic text-rose-600">
+                {error?.response?.data.message}
+            </span>
         </div>
     )
 }
@@ -54,12 +60,6 @@ const InputFiled = memo(({ label, ...props }: InputFiledProps) => {
     )
 })
 
-const AuthError = () => {
-    const authError = selectors.useAuthError()
-
-    return <div>{authError}</div>
-}
-
 export const RegistrationForm = () => {
     const credential = authModel.selectors.useRegistrationCredential()
 
@@ -68,9 +68,14 @@ export const RegistrationForm = () => {
 
     return (
         <div className="flex w-full max-w-xl flex-col space-y-4 rounded-lg bg-gray-100 shadow-sm">
-            <h3 className=" rounded-t-lg bg-white p-2 text-center first-letter:uppercase">регистрация</h3>
+            <h3 className=" rounded-t-lg bg-white p-2 text-center first-letter:uppercase">
+                регистрация
+            </h3>
 
-            <form onSubmit={handleSubmit} className="flex flex-col space-y-4 p-4 ">
+            <form
+                onSubmit={handleSubmit}
+                className="flex flex-col space-y-4 p-4 "
+            >
                 <InputFiled
                     label="email"
                     placeholder="email"
@@ -102,5 +107,50 @@ export const RegistrationForm = () => {
                 </button>
             </form>
         </div>
+    )
+}
+
+const UserPasswordField = () => {
+    const { value, onChange, errorText } = useField(
+        authModel.$loginForm.fields!.password!
+    )
+    const handleChange = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+            onChange(e.target.value)
+        },
+        [value]
+    )
+
+    return (
+        <UserInput
+            value={value}
+            onChange={handleChange}
+            type="password"
+            errorText={errorText}
+            placeholder="пароль"
+            name="пароль"
+        />
+    )
+}
+
+const UserEmailField = () => {
+    const { value, onChange, errorText } = useField(
+        authModel.$loginForm.fields!.email!
+    )
+    const handleChange = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+            onChange(e.target.value)
+        },
+        [value]
+    )
+
+    return (
+        <UserInput
+            value={value}
+            onChange={handleChange}
+            errorText={errorText}
+            placeholder="почта"
+            name="почта"
+        />
     )
 }

@@ -15,6 +15,8 @@ module.exports = {
             name: "runtime",
         },
     },
+    // devtool: "eval-nosources-cheap-source-map",
+    devtool: "inline-source-map",
     devServer: {
         static: {
             directory: paths.public,
@@ -47,7 +49,9 @@ module.exports = {
                         loader: "ts-loader",
                         options: {
                             getCustomTransformers: () => ({
-                                before: [ReactRefreshTypeScript()].filter(Boolean),
+                                before: [ReactRefreshTypeScript()].filter(
+                                    Boolean
+                                ),
                             }),
                             transpileOnly: true,
                         },
@@ -60,7 +64,11 @@ module.exports = {
                     stylesHandler,
                     {
                         loader: "css-loader",
-                        options: { sourceMap: true, importLoaders: 1, modules: false },
+                        options: {
+                            sourceMap: true,
+                            importLoaders: 1,
+                            modules: false,
+                        },
                     },
                     { loader: "postcss-loader", options: { sourceMap: true } },
                 ],
