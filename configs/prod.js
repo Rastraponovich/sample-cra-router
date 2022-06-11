@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 module.exports = {
     mode: "production",
+    target: "browserslist",
     entry: {
         index: {
             import: `${paths.src}/index.tsx`,

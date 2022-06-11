@@ -31,7 +31,7 @@ export const AuthForm = () => {
 
                 <button
                     type="submit"
-                    className="flex justify-center rounded-lg bg-green-600 px-4 py-2 text-white duration-150 hover:bg-green-500"
+                    className="flex justify-center self-center rounded-lg bg-green-600 px-4 py-2  text-white duration-150 hover:bg-green-500"
                 >
                     войти
                 </button>
