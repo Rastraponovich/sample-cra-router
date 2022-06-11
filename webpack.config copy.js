@@ -1,15 +1,22 @@
-const paths = require("./paths")
+const paths = require("./configs/paths")
 
+const { ProgressPlugin } = require("webpack")
+
+const HtmlWebpackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const stylesHandler = MiniCssExtractPlugin.loader
 
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin")
 const ReactRefreshTypeScript = require("react-refresh-typescript")
-const HtmlWebpackPlugin = require("html-webpack-plugin")
 
+const isDevelopment = process.env.NODE_ENV !== "production"
 module.exports = {
     mode: "development",
     target: "web",
+    entry: {
+        app: `${paths.src}/index.tsx`,
+    },
+    devtool: "source-map",
     optimization: {
         runtimeChunk: {
             name: "runtime",
@@ -37,6 +44,24 @@ module.exports = {
             },
         },
     },
+    output: {
+        path: paths.build,
+        filename: "js/[name].bundle.js",
+        publicPath: "/",
+    },
+    resolve: {
+        alias: {
+            "@": `${paths.src}/modules`,
+            features: `${paths.src}/features`,
+            entities: `${paths.src}/entities`,
+            pages: `${paths.src}/pages`,
+            app: `${paths.src}/app`,
+            shared: `${paths.src}/shared`,
+            widgets: `${paths.src}/widgets`,
+        },
+        extensions: [".tsx", ".ts", ".js"],
+    },
+
     module: {
         rules: [
             {
@@ -44,12 +69,12 @@ module.exports = {
                 exclude: /node_modules/,
                 use: [
                     {
-                        loader: "ts-loader",
+                        loader: require.resolve("ts-loader"),
                         options: {
                             getCustomTransformers: () => ({
-                                before: [ReactRefreshTypeScript()].filter(Boolean),
+                                before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
                             }),
-                            transpileOnly: true,
+                            transpileOnly: isDevelopment,
                         },
                     },
                 ],
@@ -73,6 +98,13 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin(),
+
+        new ProgressPlugin({
+            percentBy: "entries",
+            handler(percentage, message, ...args) {
+                console.log(`${(percentage * 100).toFixed()}% ${message} ${args}`)
+            },
+        }),
         new ReactRefreshWebpackPlugin({
             overlay: {
                 entry: "@pmmmwh/react-refresh-webpack-plugin/client/ErrorOverlayEntry",

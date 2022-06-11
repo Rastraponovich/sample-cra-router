@@ -8,9 +8,7 @@ module.exports = {
     entry: {
         index: {
             import: `${paths.src}/index.tsx`,
-            dependOn: ["react"],
         },
-        react: ["react", "react-dom"],
     },
     devtool: false,
     output: {
