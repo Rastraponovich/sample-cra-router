@@ -49,14 +49,18 @@ module.exports = {
                         loader: "ts-loader",
                         options: {
                             getCustomTransformers: () => ({
-                                before: [ReactRefreshTypeScript()].filter(
-                                    Boolean
-                                ),
+                                before: [ReactRefreshTypeScript()].filter(Boolean),
                             }),
                             transpileOnly: true,
                         },
                     },
                 ],
+            },
+
+            {
+                test: /\.(js|jsx)$/,
+                use: "babel-loader",
+                exclude: /node_modules/,
             },
             {
                 test: /\.(sass|scss|css)$/,

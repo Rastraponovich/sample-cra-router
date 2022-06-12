@@ -5,7 +5,7 @@ export const ProfilePage = () => {
         <section className="relative flex grow flex-col">
             <div className="absolute inset-0 flex flex-col">
                 <div className="flex-1"></div>
-                <div className="relative flex-1 bg-slate-50">
+                <div className="relative flex-1 bg-slate-50 ">
                     <svg
                         className="absolute -translate-y-[80%] text-slate-50"
                         xmlns="http://www.w3.org/2000/svg"

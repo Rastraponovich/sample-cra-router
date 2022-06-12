@@ -1,3 +1,5 @@
+import { TReserve } from "entities/booking/lib"
+import { daysJS } from "./api"
 import type { TRoute } from "./models"
 
 export const routes: TRoute[] = [
@@ -16,3 +18,11 @@ export const privateRoutes: TRoute[] = [
     // { id: 2, path: "/admin/dashboard", title: "Dashboard" },
     // { id: 3, path: "/admin/lk", title: "LK" },
 ]
+
+export const weekFilter = (reserve: TReserve, currentWeek: number): boolean => {
+    return daysJS(Number(reserve.startDate)).week() - 1 === currentWeek
+}
+
+export const dayFilter = (reserve: TReserve, dayOfWeek: number): boolean => {
+    return daysJS(Number(reserve.startDate)).day() === dayOfWeek
+}

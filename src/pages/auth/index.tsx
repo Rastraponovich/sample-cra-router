@@ -1,6 +1,6 @@
 import clsx from "clsx"
-import { useMemo, useRef } from "react"
-import { Location, Navigate, NavLink, useLocation, useSearchParams } from "react-router-dom"
+import { useEffect, useMemo, useRef } from "react"
+import { Location, Navigate, NavLink, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 
 import { AuthForm, authModel, RegistrationForm } from "entities/auth"
 
@@ -10,13 +10,14 @@ export const AuthPage = () => {
     const isAuth = authModel.selectors.useIsAuth()
 
     const location: Location = useLocation()
+    const navigate = useNavigate()
     //@ts-ignore
     const fromPage = location.state?.from?.pathname || "/"
     const [searchParams, setSearchParams] = useSearchParams()
 
     const currentWindow = useMemo(() => {
         return searchParams.get("login") === "true" ?? true
-    }, [searchParams, location.search])
+    }, [location.search])
 
     if (isAuth) return <Navigate to={fromPage} replace />
 

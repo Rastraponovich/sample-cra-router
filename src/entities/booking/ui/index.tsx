@@ -23,9 +23,9 @@ export const ReserveCard = memo(({ reserve, onClick, selected, compact }: Reserv
             }}
             onClick={handleClick}
             className={clsx(
-                "group  relative bg-white bg-cover bg-no-repeat bg-origin-border text-white",
+                "group  relative bg-white bg-cover bg-no-repeat bg-origin-border ",
                 reserve.deletedAt && "opacity-30",
-                compact ? "flex-row text-gray-900" : "h-[200px] w-[200px] flex-col",
+                compact ? "flex-row text-gray-900" : "h-[200px] w-[200px] flex-col text-white",
                 selected && "  shadow-blue-100/50 ring-2 ring-blue-500/50 ring-offset-1 ring-offset-current ",
                 "text-md flex   justify-between rounded-lg border border-transparent  p-4 font-light shadow-lg duration-150  hover:shadow-2xl"
             )}

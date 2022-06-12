@@ -18,7 +18,7 @@ const AuthProvider = (props: AuthProviderProps) => {
 
     const navigate = useNavigate()
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const token = localStorage.getItem("token")
         if (token) {
             const decodedToken: { exp: number } = jwtDecode(token!)
@@ -32,7 +32,8 @@ const AuthProvider = (props: AuthProviderProps) => {
     }, [])
 
     useEffect(() => {
-        if (!isAuth) navigate("/auth?login=true", { state: { from: location } })
+        const token = localStorage.getItem("token")
+        if (!token) navigate("/auth?login=true", { state: { from: location } })
     }, [isAuth])
 
     return <AuthContext.Provider value={{ logout, registration, isAuth, checkAuth }} {...props} />

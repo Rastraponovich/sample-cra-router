@@ -2,7 +2,6 @@ import { useForm } from "effector-forms/dist-types"
 import { useEvent } from "effector-react"
 import { authModel } from "entities/auth"
 import { userModel } from "entities/user"
-import { $profileForm } from "entities/user/model"
 import { ReactNode } from "react"
 import { Link, NavLink } from "react-router-dom"
 import { BurgerButton } from "../../features/drawer"
@@ -19,9 +18,9 @@ export const Header = ({ children, title }: HeaderProps) => {
     const isAuth = authModel.selectors.useIsAuth()
 
     return (
-        <header className="flex items-center justify-between bg-blue-700 px-4 py-2 text-white shadow-md duration-150  hover:shadow-lg sm:space-x-12 md:px-8">
+        <header className="flex items-center justify-between bg-blue-700 px-4 py-2 text-white  sm:space-x-12 md:px-8">
             <NavLink to="/">
-                <h2 className="text-2xl font-bold duration-150 first-letter:uppercase hover:drop-shadow-xl">{title}</h2>
+                <h2 className="  text-2xl font-bold  first-letter:uppercase ">{title}</h2>
             </NavLink>
             {children}
             <div className="sm:grow"></div>
