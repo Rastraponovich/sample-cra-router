@@ -10,4 +10,5 @@ export type TAccessToken = {
 export type TRegistrationCredential = {
     name: string
     roleId?: number
+    confirm: string
 } & TCredentialUser

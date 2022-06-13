@@ -88,36 +88,61 @@ sample({
     target: appModel.events.startedApp,
 })
 
-const setRegistrationCredential =
-    AuthDomain.createEvent<ChangeEvent<HTMLInputElement>>()
-export const $registrationCredential =
-    AuthDomain.createStore<TRegistrationCredential>({
-        roleId: 1,
-    } as TRegistrationCredential).on(
-        setRegistrationCredential,
-        (state, event) => ({
-            ...state,
-            [event.target.name]: event.target.value,
-        })
-    )
+export const $registationForm = createForm<TRegistrationCredential>({
+    filter: $serverError.map((error) => error === null),
+    validateOn: ["submit", "blur"],
+    fields: {
+        name: {
+            init: "",
+            rules: [rules.required(), rules.minLength(1)],
+            validateOn: ["blur", "submit", "change"],
+        },
+        email: {
+            init: "" as string,
+            rules: [rules!.email(), rules.required()],
+            validateOn: ["blur", "change", "submit"],
+        },
+        password: {
+            init: "",
+            rules: [rules.minLength(1), rules.maxLength(10), rules.required()],
+            validateOn: ["submit"],
+        },
+        confirm: {
+            init: "",
+            rules: [
+                {
+                    name: "passwords-equal",
+                    validator: (value: string, { password }) => ({
+                        isValid: value === password,
+                        errorText: "пароли не совпадают",
+                    }),
+                },
+            ],
+            validateOn: ["change", "blur", "submit"],
+        },
+    },
+})
 
-const registration = AuthDomain.createEvent<FormEvent<HTMLFormElement>>()
-export const $registrationComplited = AuthDomain.createStore<boolean>(
-    false
-).reset([setRegistrationCredential])
 sample({
-    clock: registration,
-    source: $registrationCredential,
+    clock: $registationForm.formValidated,
+    fn: (user) => user as TRegistrationCredential,
     target: registrationFx,
 })
+$serverError.reset($registationForm.$values.updates)
+sample({
+    clock: registrationFx.done,
+    target: $registationForm.reset,
+})
+
+export const $registrationComplited = AuthDomain.createStore<boolean>(
+    false
+).reset([$registationForm.$values.updates])
 
 sample({
     clock: registrationFx.doneData,
     target: $registrationComplited,
     fn: () => true,
 })
-
-registration.watch((e) => e.preventDefault())
 
 const logout = AuthDomain.createEvent()
 
@@ -132,7 +157,7 @@ reset({
 })
 reset({
     clock: [$isAuth, loginFx.finally, logoutFx.finally],
-    target: [$registrationCredential, $registrationComplited],
+    target: [$registrationComplited],
 })
 
 reset({ clock: loginFx.fail, target: $accessToken })
@@ -178,6 +203,4 @@ export const $processing = pending({
 export const events = {
     logout,
     checkAuth,
-    registration,
-    setRegistrationCredential,
 }

@@ -1,6 +1,13 @@
 import clsx from "clsx"
-import { useEffect, useMemo, useRef } from "react"
-import { Location, Navigate, NavLink, useLocation, useNavigate, useSearchParams } from "react-router-dom"
+import { useMemo, useRef } from "react"
+import {
+    Location,
+    Navigate,
+    NavLink,
+    useLocation,
+    useNavigate,
+    useSearchParams,
+} from "react-router-dom"
 
 import { AuthForm, authModel, RegistrationForm } from "entities/auth"
 
@@ -26,7 +33,7 @@ export const AuthPage = () => {
     return (
         <div
             ref={ref}
-            className="relative flex grow flex-col items-center space-y-2 px-4 py-2 font-sans  md:space-y-4 md:px-10 md:pb-5 md:pt-20"
+            className="relative flex grow flex-col items-center justify-center font-sans  "
         >
             <BGSliceGradient />
 

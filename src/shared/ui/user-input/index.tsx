@@ -1,45 +1,49 @@
-import { EyeIcon } from "@heroicons/react/outline"
+import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline"
 import clsx from "clsx"
-import { InputHTMLAttributes, memo, useState, useRef, useEffect } from "react"
+import { Field, useField } from "effector-forms"
+import {
+    InputHTMLAttributes,
+    memo,
+    useState,
+    ChangeEvent,
+    FocusEvent,
+} from "react"
 
-interface UserInputProps extends InputHTMLAttributes<HTMLInputElement> {
-    onSaveClicked?(): void
-    errorText?: any
+interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
+    variant?: "normal" | "password"
+    pending: boolean
+    field: Field<string>
 }
-export const UserInput = memo(
-    ({
-        onSaveClicked,
-        value,
-        onChange,
-        errorText,
-        ...props
-    }: UserInputProps) => {
-        const [disabledField, setDisabledField] = useState(true)
-        const ref = useRef<HTMLInputElement | null>(null)
 
-        const toggledDisabledField = () => {
-            setDisabledField((prev) => !prev)
+export const FormInput = memo(
+    ({ field, pending, ...props }: FormInputProps) => {
+        const { onBlur, onChange, value, name, errorText } = useField(field)
 
-            ref.current?.focus()
-        }
+        const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
+            onChange(e.target.value)
+        const handleBlur = (e: FocusEvent<HTMLInputElement>) => onBlur()
 
-        useEffect(() => {
-            ref.current?.focus()
-        }, [disabledField])
+        const [passwordType, setPasswordType] = useState("password")
 
+        const handleTogglePasswordType = () =>
+            setPasswordType((prev) =>
+                prev === "password" ? "text" : "password"
+            )
         return (
             <label className="group relative flex w-full flex-col justify-between">
                 <input
-                    ref={ref}
                     value={value}
                     {...props}
-                    onChange={onChange}
+                    type={props.type === "password" ? passwordType : props.type}
+                    name={name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
                     className={clsx(
                         props.className,
                         "peer h-10 w-full border-b-2 border-gray-300 bg-transparent text-gray-900 placeholder-transparent",
                         "focus:border-rose-600 focus:outline-none"
                     )}
-                    // disabled={disabledField}
+                    disabled={pending}
                 />
                 <span
                     className={clsx(
@@ -51,33 +55,21 @@ export const UserInput = memo(
                     {props.name}
                 </span>
                 <span className="self-start text-sm italic text-rose-600">
-                    {errorText(props.name)}
+                    {errorText({ name })}
                 </span>
-                {/* <button
-                    onClick={toggledDisabledField}
-                    type="button"
-                    className={clsx(
-                        "absolute right-0 hidden rounded bg-gray-200 p-2",
-                        disabledField && "group-hover:block"
-                    )}
-                >
-                    <PencilIcon className="h-4 w-4" />
-                </button> */}
+
                 {props.type === "password" && (
-                    <button className="absolute right-2 top-2">
-                        <EyeIcon className="h-6 w-6 text-gray-500" />
+                    <button
+                        className="absolute right-2 top-2 text-gray-500 duration-150 hover:text-gray-900"
+                        onClick={handleTogglePasswordType}
+                    >
+                        {passwordType === "password" ? (
+                            <EyeIcon className="h-6 w-6 " />
+                        ) : (
+                            <EyeOffIcon className="h-6 w-6 " />
+                        )}
                     </button>
                 )}
-                {/* <button
-                    onClick={onSaveClicked}
-                    type="button"
-                    className={clsx(
-                        "absolute right-0  rounded bg-gray-200 p-2",
-                        !disabledField ? "block" : "hidden"
-                    )}
-                >
-                    <SaveIcon className="h-4 w-4" />
-                </button> */}
             </label>
         )
     },
@@ -86,5 +78,3 @@ export const UserInput = memo(
         return true
     }
 )
-
-UserInput.displayName = "UserInput"

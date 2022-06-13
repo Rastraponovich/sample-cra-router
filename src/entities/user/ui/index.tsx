@@ -1,11 +1,13 @@
 import { UserCircleIcon } from "@heroicons/react/outline"
-import { useField, useForm } from "effector-forms"
-import { ChangeEvent, FormEvent, useCallback } from "react"
-import { UserInput } from "shared/ui/user-input"
-import { $profileForm } from "../model"
+import { useForm } from "effector-forms"
+import { FormEvent } from "react"
+import { FormInput } from "shared/ui/user-input"
+import { userModel } from ".."
 
 export const ProfileForm = () => {
-    const { fields, submit, eachValid } = useForm($profileForm)
+    const { submit, eachValid } = useForm(userModel.$profileForm)
+
+    const pending = userModel.selectors.usePending()
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -20,84 +22,34 @@ export const ProfileForm = () => {
             <UserCircleIcon className="h-40 w-40 animate-pulse text-gray-200" />
 
             <div className="flex w-full grow flex-col space-y-8">
-                <UserNameField />
-                <UserEmailField />
-                <UserPasswordField />
+                <FormInput
+                    field={userModel.$profileForm.fields.name}
+                    placeholder="имя пользователя"
+                    name="имя"
+                    pending={pending}
+                />
+                <FormInput
+                    field={userModel.$profileForm.fields.email}
+                    pending={pending}
+                    placeholder="почта"
+                    name="почта"
+                />
+                <FormInput
+                    field={userModel.$profileForm.fields.password}
+                    pending={pending}
+                    type="password"
+                    placeholder="пароль"
+                    name="пароль"
+                />
             </div>
 
             <button
                 type="submit"
+                disabled={pending || !eachValid}
                 className="rounded bg-green-600 px-4 py-2 text-base uppercase text-white"
             >
                 сохранить
             </button>
         </form>
-    )
-}
-
-const UserNameField = () => {
-    const { value, onChange, errorText, hasError } = useField(
-        $profileForm!.fields!.name!
-    )
-    const handleChange = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            onChange(e.target.value)
-        },
-        [value]
-    )
-
-    return (
-        <UserInput
-            value={value}
-            onChange={handleChange}
-            errorText={errorText}
-            placeholder="имя пользователя"
-            name="имя"
-        />
-    )
-}
-
-const UserPasswordField = () => {
-    const { value, onChange, errorText } = useField(
-        $profileForm!.fields!.password!
-    )
-    const handleChange = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            onChange(e.target.value)
-        },
-        [value]
-    )
-
-    return (
-        <UserInput
-            value={value}
-            onChange={handleChange}
-            type="password"
-            errorText={errorText}
-            placeholder="пароль"
-            name="пароль"
-        />
-    )
-}
-
-const UserEmailField = () => {
-    const { value, onChange, errorText } = useField(
-        $profileForm!.fields!.email!
-    )
-    const handleChange = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            onChange(e.target.value)
-        },
-        [value]
-    )
-
-    return (
-        <UserInput
-            value={value}
-            onChange={handleChange}
-            errorText={errorText}
-            placeholder="почта"
-            name="почта"
-        />
     )
 }

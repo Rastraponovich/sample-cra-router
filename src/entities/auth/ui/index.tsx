@@ -1,12 +1,13 @@
 import { Transition } from "@headlessui/react"
-import { useField, useForm } from "effector-forms"
-import { useEvent } from "effector-react"
-import { InputHTMLAttributes, ReactNode, memo, ChangeEvent, useCallback, FormEvent, Fragment } from "react"
-import { UserInput } from "shared/ui/user-input"
+import { useForm } from "effector-forms"
+import { FormEvent, Fragment } from "react"
+import { FormInput } from "shared/ui/user-input"
 import { authModel } from ".."
+import { $registationForm, selectors } from "../model"
 
 export const AuthForm = () => {
-    const { fields, submit, eachValid } = useForm(authModel.$loginForm)
+    const { submit, eachValid } = useForm(authModel.$loginForm)
+    const pending = selectors.useProcessing()
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -25,9 +26,23 @@ export const AuthForm = () => {
             leaveTo="opacity-0"
             as={Fragment}
         >
-            <form onSubmit={onSubmit} className="flex w-full flex-col space-y-8">
-                <UserEmailField />
-                <UserPasswordField />
+            <form
+                onSubmit={onSubmit}
+                className="flex w-full flex-col space-y-8"
+            >
+                <FormInput
+                    field={authModel.$loginForm.fields.email}
+                    placeholder="почта"
+                    pending={pending}
+                    name="почта"
+                />
+                <FormInput
+                    field={authModel.$loginForm.fields.password}
+                    placeholder="пароль"
+                    pending={pending}
+                    name="пароль"
+                    type="password"
+                />
                 <div className="!my-2 flex justify-between text-sm text-gray-400">
                     <button className="hover:text-gray-900" type="button">
                         запомнить
@@ -39,6 +54,7 @@ export const AuthForm = () => {
 
                 <button
                     type="submit"
+                    disabled={!eachValid}
                     className="flex justify-center  rounded-lg bg-cyan-600 px-8 py-4 text-sm uppercase text-white duration-150 hover:bg-green-500"
                 >
                     вход
@@ -49,10 +65,14 @@ export const AuthForm = () => {
 }
 
 export const RegistrationForm = () => {
-    const credential = authModel.selectors.useRegistrationCredential()
+    const { eachValid, submit } = useForm($registationForm)
 
-    const handleChange = useEvent(authModel.events.setRegistrationCredential)
-    const handleSubmit = useEvent(authModel.events.registration)
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        submit()
+    }
+
+    const pending = selectors.useProcessing()
 
     return (
         <Transition
@@ -66,31 +86,40 @@ export const RegistrationForm = () => {
             leaveTo="opacity-0"
             as={Fragment}
         >
-            <form onSubmit={handleSubmit} className="flex w-full flex-col space-y-4 ">
-                <UserInput
-                    value={credential.email}
-                    onChange={handleChange}
-                    errorText={() => ""}
+            <form
+                onSubmit={handleSubmit}
+                className="flex w-full flex-col space-y-4 "
+            >
+                <FormInput
+                    field={$registationForm.fields.email}
                     placeholder="почта"
+                    pending={pending}
                     name="почта"
                 />
-                <UserInput
-                    value={credential.name}
-                    onChange={handleChange}
-                    errorText={() => ""}
+                <FormInput
+                    field={$registationForm.fields.name}
                     placeholder="имя"
+                    pending={pending}
                     name="имя"
                 />
-                <UserInput
-                    value={credential.password}
-                    onChange={handleChange}
-                    errorText={() => ""}
+                <FormInput
+                    field={$registationForm.fields.password}
                     placeholder="пароль"
+                    pending={pending}
+                    type="password"
                     name="пароль"
+                />
+                <FormInput
+                    field={$registationForm.fields.confirm}
+                    placeholder="подтверждение"
+                    name="подтверждение"
+                    pending={pending}
+                    type="password"
                 />
 
                 <button
                     type="submit"
+                    disabled={pending || !eachValid}
                     className="flex justify-center  rounded-lg bg-cyan-600 px-8 py-4 text-sm uppercase text-white duration-150 hover:bg-green-500"
                 >
                     регистрация
@@ -98,37 +127,4 @@ export const RegistrationForm = () => {
             </form>
         </Transition>
     )
-}
-
-const UserPasswordField = () => {
-    const { value, onChange, errorText } = useField(authModel.$loginForm.fields!.password!)
-    const handleChange = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            onChange(e.target.value)
-        },
-        [value]
-    )
-
-    return (
-        <UserInput
-            value={value}
-            onChange={handleChange}
-            type="password"
-            errorText={errorText}
-            placeholder="пароль"
-            name="пароль"
-        />
-    )
-}
-
-const UserEmailField = () => {
-    const { value, onChange, errorText } = useField(authModel.$loginForm.fields!.email!)
-    const handleChange = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            onChange(e.target.value)
-        },
-        [value]
-    )
-
-    return <UserInput value={value} onChange={handleChange} errorText={errorText} placeholder="почта" name="почта" />
 }
