@@ -1,4 +1,5 @@
 import { Transition, Dialog } from "@headlessui/react"
+import clsx from "clsx"
 import { Fragment, ReactNode, useRef } from "react"
 
 interface ModalProps {
@@ -24,12 +25,24 @@ interface ControlledModalProps {
     opened: boolean
     onClose(): void
     title: string | ReactNode
+    maxWidth?: string
 }
-export const ControlledModal = ({ children, opened, onClose, title }: ControlledModalProps) => {
+export const ControlledModal = ({
+    children,
+    opened,
+    onClose,
+    title,
+    maxWidth = "max-w-md",
+}: ControlledModalProps) => {
     const completeButtonRef = useRef(null)
     return (
         <Transition appear show={opened} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={onClose} initialFocus={completeButtonRef}>
+            <Dialog
+                as="div"
+                className="relative z-10"
+                onClose={onClose}
+                initialFocus={completeButtonRef}
+            >
                 <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -53,7 +66,12 @@ export const ControlledModal = ({ children, opened, onClose, title }: Controlled
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                            <Dialog.Panel
+                                className={clsx(
+                                    maxWidth,
+                                    "w-full  transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
+                                )}
+                            >
                                 <Dialog.Title
                                     as="h3"
                                     className=" text-lg font-medium leading-6 text-gray-900 first-letter:uppercase"

@@ -5,6 +5,7 @@ import duration from "dayjs/plugin/duration"
 import relativeTime from "dayjs/plugin/relativeTime"
 import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
+import localeData from "dayjs/plugin/localeData"
 
 import ru from "dayjs/locale/ru"
 import axios, { AxiosResponse } from "axios"
@@ -19,7 +20,7 @@ import { TCredentialUser, TRegistrationCredential } from "entities/auth/lib"
 import { TUser } from "entities/user/lib"
 import { Rule } from "effector-forms/dist-types"
 dayjs.extend(weekOfYear)
-
+dayjs.extend(localeData)
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
 dayjs.extend(utc)

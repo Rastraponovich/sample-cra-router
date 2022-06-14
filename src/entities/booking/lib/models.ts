@@ -31,7 +31,7 @@ export type TReserve = {
     tableId: TTable["id"]
     prepay: number
     guests: number
-    status: TDict
+    status: TDict | string
     hallplane: THallplane
     hallplaneId: THallplane["id"]
     startDate: number
@@ -50,4 +50,7 @@ export type TReservesParams = {
     withDeleted?: boolean
     hallplaneId?: number
     prepayType?: number
+    tableId?: number
+    startDate?: number
+    id?: number[]
 }

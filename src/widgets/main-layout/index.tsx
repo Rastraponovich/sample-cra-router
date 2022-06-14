@@ -1,9 +1,10 @@
 import { Transition } from "@headlessui/react"
 import { appModel } from "entities/app"
+import { AddReserveModal } from "features/add-reserve"
 import { Drawer } from "features/drawer"
 import { Poupup } from "features/poupup"
 import { useMemo } from "react"
-import { Outlet, useLocation } from "react-router-dom"
+import { Link, Outlet, useLocation } from "react-router-dom"
 import { SpinerLoader } from "shared/ui/spinner-loading"
 import { routes } from "../../shared/lib"
 import { Footer } from "../footer"
@@ -28,8 +29,12 @@ export const MainLayout = () => {
                 </div>
             </Header>
             <Drawer />
-            <main className="flex grow flex-col">{!isAppStarted ? <FirstLoader /> : <Outlet />}</main>
+            <main className="flex grow flex-col">
+                <BreadCrumbs />
+                {!isAppStarted ? <FirstLoader /> : <Outlet />}
+            </main>
             <Poupup />
+            <AddReserveModal />
             <Footer />
         </>
     )
@@ -56,5 +61,70 @@ const FirstLoader = () => {
                 ))}
             </div>
         </div>
+    )
+}
+
+type TBreadCrumbs = {
+    path: string
+    name: string
+    id: number
+}
+
+const BreadCrumbs = () => {
+    const location = useLocation()
+
+    const paths = useMemo(
+        () =>
+            location.pathname
+                .split("/")
+                .reduce(
+                    (
+                        acc: TBreadCrumbs[],
+                        path: string,
+                        currentIndex,
+                        array
+                    ) => {
+                        if (currentIndex === 0)
+                            return [
+                                {
+                                    id: currentIndex,
+                                    name: "home",
+                                    path: "/",
+                                },
+                            ]
+                        if (currentIndex === 1)
+                            return [
+                                ...acc,
+                                { id: currentIndex, name: path, path },
+                            ]
+                        if (currentIndex <= array.length - 1)
+                            return [
+                                ...acc,
+                                {
+                                    id: currentIndex,
+                                    name: path,
+                                    path: `/${array[currentIndex - 1]}/${path}`,
+                                },
+                            ]
+                        return []
+                    },
+                    []
+                ),
+
+        [location]
+    )
+
+    return (
+        <nav className="flex items-center space-x-2 px-10 ">
+            {paths.map(({ path, id, name }) => (
+                <Link
+                    to={path}
+                    key={id}
+                    className="first-letter:uppercase not-last-child:after:mx-2 not-last-child:after:content-['>']"
+                >
+                    {name}
+                </Link>
+            ))}
+        </nav>
     )
 }

@@ -6,6 +6,7 @@ import { bookingModel } from "entities/booking"
 import { Loader } from "entities/booking/ui"
 import { NavLink, useLocation, matchPath } from "react-router-dom"
 import clsx from "clsx"
+import { AddReserveButton } from "features/add-reserve"
 
 export const SchedullerPage = () => {
     const initPage = useEvent(bookingModel.events.initPage)
@@ -16,17 +17,21 @@ export const SchedullerPage = () => {
 
     const location = useLocation()
 
-    const links = useMemo(() => location.pathname.split("/"), [location.pathname])
+    const links = useMemo(
+        () => location.pathname.split("/"),
+        [location.pathname]
+    )
 
     return (
-        <div className=" z-50 flex grow flex-col space-y-2 px-4 py-2 font-sans md:space-y-4 md:px-10 md:py-5">
+        <div className=" relative z-10 flex grow flex-col space-y-2 px-4 py-2 font-sans md:space-y-4 md:px-10 md:py-5">
             <nav className="flex">
                 {links.map((link, idx) => (
                     <NavLink
                         key={idx}
                         to={`/${link}`}
                         className={clsx(
-                            idx !== links.length - 1 && "after:mx-4 after:content-['>']",
+                            idx !== links.length - 1 &&
+                                "after:mx-4 after:content-['>']",
                             matchPath(location.pathname, link) && "underline"
                         )}
                     >
@@ -36,6 +41,8 @@ export const SchedullerPage = () => {
             </nav>
 
             <Loader />
+
+            <AddReserveButton />
 
             {pageMounted && <ReservesSheduler />}
         </div>

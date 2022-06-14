@@ -151,11 +151,7 @@ const FormActions = () => {
             <button
                 type="submit"
                 className="rounded-lg bg-green-600 px-4 py-2 uppercase shadow-lg disabled:opacity-50 "
-                disabled={
-                    reserve.guests === 0 ||
-                    reserve.table.id === 0 ||
-                    reserve.status.value === "outOfServie"
-                }
+                disabled={reserve.guests === 0 || reserve.table.id === 0}
             >
                 добавить
             </button>

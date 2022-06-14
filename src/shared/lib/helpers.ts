@@ -20,7 +20,7 @@ export const privateRoutes: TRoute[] = [
 ]
 
 export const weekFilter = (reserve: TReserve, currentWeek: number): boolean => {
-    return daysJS(Number(reserve.startDate)).week() - 1 === currentWeek
+    return daysJS(Number(reserve.startDate)).week() === currentWeek
 }
 
 export const dayFilter = (reserve: TReserve, dayOfWeek: number): boolean => {

@@ -1,13 +1,29 @@
-import { combine, createEvent, createStore, sample } from "effector"
+import {
+    combine,
+    createApi,
+    createEvent,
+    createStore,
+    sample,
+    Store,
+} from "effector"
 import { useStore } from "effector-react"
 import { bookingModel } from "entities/booking"
-import { THallplane, TReserve, TTable } from "entities/booking/lib"
+import {
+    THallplane,
+    TReserve,
+    TReservesParams,
+    TTable,
+} from "entities/booking/lib"
 import { weekFilter } from "shared/lib"
 import { daysJS } from "shared/lib/api"
 import { API } from "../lib"
+import { getReservesByTableFx } from "../lib/api"
 
 const setCurrentWeek = createEvent<number>()
-const $currentWeek = createStore<number>(daysJS().week() - 1).on(setCurrentWeek, (_, payload) => payload)
+const $currentWeek = createStore<number>(daysJS().week()).on(
+    setCurrentWeek,
+    (_, payload) => payload
+)
 
 const prevWeekClicked = createEvent()
 
@@ -33,6 +49,11 @@ sample({
     },
     target: $currentWeek,
 })
+
+const $reserves = createStore<TReserve[]>([]).on(
+    getReservesByTableFx.doneData,
+    (_, res) => res.data[0]
+)
 
 const getHallPlanes = createEvent()
 
@@ -62,7 +83,9 @@ const $hallplanes = createStore<Array<THallplane>>([])
     ])
 
 const selectHallplane = createEvent<THallplane>()
-const $selectedHallplane = $hallplanes.map((hp) => hp[0]).on(selectHallplane, (_, payload) => payload)
+const $selectedHallplane = $hallplanes
+    .map((hp) => hp[0])
+    .on(selectHallplane, (_, payload) => payload)
 
 const getTables = createEvent<number>()
 
@@ -78,49 +101,69 @@ sample({
     target: API.getTablesFx,
 })
 
-const $tables = createStore<Array<TTable>>([]).on(API.getTablesFx.doneData, (_, res) => res.data[0])
+const $tables = createStore<Array<TTable>>([]).on(
+    API.getTablesFx.doneData,
+    (_, res) => res.data[0]
+)
 
-const $records = combine($currentWeek, $tables, (currentWeek, tables) => {
-    return tables.map((table) => ({
-        ...table,
-        reserves: table.reserves.filter((reserve) => weekFilter(reserve, currentWeek)),
-    }))
+type TRecord = {
+    reserves: TReserve[]
+    hallplaneId: number
+    id: number
+    isActive: boolean
+    name: string
+}
+
+const $records = combine<number, TTable[], TRecord[]>(
+    $currentWeek,
+    $tables,
+    (currentWeek, tables) => {
+        return tables.map((table) => ({
+            ...table,
+            reserves: table.reserves.filter((reserve) =>
+                weekFilter(reserve, currentWeek)
+            ),
+        }))
+    }
+)
+
+const $firstDayOfSelectedWeek = createStore<string>(
+    daysJS().day(1).format("DD.MM.YY")
+).on($currentWeek, (_, currentWeek) => {
+    return daysJS().week(currentWeek).day(1).format("DD.MM.YY")
+})
+const $lastDayOfSelectedWeek = createStore<string>(
+    daysJS().day(7).format("DD.MM.YY")
+).on($currentWeek, (_, currentWeek) => {
+    return daysJS().week(currentWeek).day(7).format("DD.MM.YY")
 })
 
-const $firstDayOfSelectedWeek = createStore<string>(daysJS().day(1).format("DD.MM.YY")).on(
-    $currentWeek,
-    (_, currentWeek) => {
-        return daysJS().week(currentWeek).day(1).format("DD.MM.YY")
-    }
-)
-const $lastDayOfSelectedWeek = createStore<string>(daysJS().day(7).format("DD.MM.YY")).on(
-    $currentWeek,
-    (_, currentWeek) => {
-        return daysJS().week(currentWeek).day(7).format("DD.MM.YY")
-    }
-)
-
-const selectReserves = createEvent<TReserve["id"][]>()
-const $selectedReserves = createStore<TReserve[]>([])
+const selectReserves = createEvent<TTable["id"]>()
+const $selectedReserves = createStore<TRecord | null>(null)
 
 sample({
     clock: selectReserves,
     source: $records,
-    fn: (records, selected) => {
-        let reserves: TReserve[] = []
-        records.forEach((r) => {
-            r.reserves.forEach((rs) => {
-                if (selected.some((s) => s === rs.id)) reserves.push(rs)
-            })
-        })
-        return reserves as TReserve[]
-    },
+    fn: (records, id) =>
+        ({ ...records.find((record) => record.id === id) } as TRecord),
     target: $selectedReserves,
 })
 const closedDialog = createEvent()
 const $showingDialog = createStore<boolean>(false)
-    .on($selectedReserves, (_, r) => (r.length > 0 ? true : false))
+    .on($selectedReserves, (_, r) => true)
     .reset(closedDialog)
+
+const $showAddReserveModal = createStore<boolean>(false)
+
+const {
+    closeReserveModalClicked,
+    openReserveModalClicked,
+    toggleReserveModal,
+} = createApi($showAddReserveModal, {
+    toggleReserveModal: (state) => !state,
+    closeReserveModalClicked: () => false,
+    openReserveModalClicked: () => true,
+})
 
 const useRecords = () => useStore($records)
 const useHallplanes = () => useStore($hallplanes)
@@ -132,20 +175,34 @@ const useSelectedReserves = () => useStore($selectedReserves)
 const useFirstDayOfSelectedWeek = () => useStore($firstDayOfSelectedWeek)
 const useLastDayOfSelectedWeek = () => useStore($lastDayOfSelectedWeek)
 
+const useShowingDialog = () => useStore($showingDialog)
+
+const useShowReserveModal = () => useStore($showAddReserveModal)
+
+const useRecord = (id: TTable["id"]) =>
+    useStore($records).find((record) => record.id === id)
+
 export const selectors = {
+    useRecord,
     useRecords,
     useHallplanes,
     useCurrentWeek,
+    useShowingDialog,
     useSelectedHallplane,
     useFirstDayOfSelectedWeek,
     useLastDayOfSelectedWeek,
     useSelectedReserves,
+    useShowReserveModal,
 }
 
 export const events = {
     selectReserves,
+    closedDialog,
     getHallPlanes,
     selectHallplane,
     nextWeekClicked,
     prevWeekClicked,
+    closeReserveModalClicked,
+    openReserveModalClicked,
+    toggleReserveModal,
 }

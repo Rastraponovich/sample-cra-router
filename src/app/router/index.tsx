@@ -7,6 +7,7 @@ import { AuthPage } from "pages/auth"
 import { authModel } from "entities/auth"
 import { NotFoundPage } from "pages/404"
 import { ProfilePage } from "pages/profile"
+import { AddReservePage } from "pages/booking/add"
 
 export const Router = () => {
     return (
@@ -23,6 +24,7 @@ export const Router = () => {
                 <Route path="booking" element={<PrivateOutlet />}>
                     <Route index element={<BookingPage />} />
                     <Route path="scheduller" element={<SchedullerPage />} />
+                    <Route path="add" element={<AddReservePage />} />
                 </Route>
                 <Route
                     path="profile"

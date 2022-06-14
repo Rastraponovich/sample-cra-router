@@ -1,8 +1,7 @@
 import clsx from "clsx"
-import { useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import {
     Location,
-    Navigate,
     NavLink,
     useLocation,
     useNavigate,
@@ -26,7 +25,9 @@ export const AuthPage = () => {
         return searchParams.get("login") === "true" ?? true
     }, [location.search])
 
-    if (isAuth) return <Navigate to={fromPage} replace />
+    useEffect(() => {
+        if (isAuth) navigate(fromPage, { replace: true })
+    }, [isAuth, currentWindow])
 
     const ref = useRef<HTMLDivElement>(null)
 

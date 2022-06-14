@@ -1,4 +1,8 @@
-import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
+import {
+    CalendarIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+} from "@heroicons/react/outline"
 import clsx from "clsx"
 import { memo, useEffect, useMemo, useState } from "react"
 import { Select } from "shared/ui/select"
@@ -9,6 +13,8 @@ import { events, selectors } from "../model"
 import { useEvent } from "effector-react"
 import { daysJS } from "shared/lib/api"
 import { dayFilter } from "shared/lib"
+import { ControlledModal, Modal } from "shared/ui/modal"
+import { ReserveCard } from "entities/booking/ui"
 
 export const ReservesSheduler = () => {
     const currentWeek = selectors.useCurrentWeek()
@@ -18,14 +24,16 @@ export const ReservesSheduler = () => {
     return (
         <div className="gorw flex flex-col space-y-4">
             <div className="flex items-center  ">
-                <h4 className="text-2xl font-semibold first-letter:uppercase">расписание</h4>
+                <h4 className="text-2xl font-semibold first-letter:uppercase">
+                    расписание
+                </h4>
                 <CalendarIcon className="mx-2 h-6 w-6" />
             </div>
             <div className="mb-2 flex items-center space-x-4">
                 <WeekSelector />
                 <HallplanesFilter />
             </div>
-            <div className="w-full overflow-x-auto">
+            <div className="relative z-10 w-full overflow-x-auto">
                 <table className="w-full border-collapse overflow-auto rounded border border-slate-400 text-sm font-normal text-gray-900">
                     <thead>
                         <tr>
@@ -36,13 +44,20 @@ export const ReservesSheduler = () => {
                                 </div>
                             </th>
                             {days.map((day) => (
-                                <Day number={day.dayOfWeek} key={day.id} week={currentWeek} />
+                                <Day
+                                    number={day.dayOfWeek}
+                                    key={day.id}
+                                    week={currentWeek}
+                                />
                             ))}
                         </tr>
                     </thead>
                     <tbody>
                         {records.map((record) => (
-                            <CalendarRow {...record} key={record.id + record.name} />
+                            <CalendarRow
+                                {...record}
+                                key={record.id + record.name}
+                            />
                         ))}
                     </tbody>
                     <tfoot></tfoot>
@@ -53,31 +68,51 @@ export const ReservesSheduler = () => {
     )
 }
 
-const Cell = memo(({ reserves }: { reserves: Array<TReserve["id"]> }) => {
-    const handleClick = useEvent(events.selectReserves)
-    const onClick = () => {
-        if (reserves.length) handleClick(reserves)
-    }
+const Cell = memo(
+    ({
+        reserves,
+        tableId,
+    }: {
+        reserves: Array<TReserve["id"]>
+        tableId: TTable["id"]
+    }) => {
+        const handleClick = useEvent(events.selectReserves)
+        const onClick = () => {
+            if (reserves.length) handleClick(tableId)
+        }
 
-    return (
-        <td onClick={onClick} className="border border-slate-300 bg-green-600 py-2 text-center text-white">
-            <span className="">{reserves.length}</span>
-        </td>
-    )
-})
+        return (
+            <td
+                onClick={onClick}
+                className="border border-slate-300 bg-green-600 py-2 text-center text-white"
+            >
+                <span className="">
+                    {reserves.length > 0 ? reserves.length : null}
+                </span>
+            </td>
+        )
+    }
+)
 Cell.displayName = "Cell"
 interface CalendarRowProps extends TTable {}
 
 const CalendarRow = memo(({ reserves, id, name }: CalendarRowProps) => {
     return (
-        <tr key={id}>
-            <td className="border border-slate-300 bg-gray-200 py-2 text-center">{name}</td>
+        <tr>
+            <td className="border border-slate-300 bg-gray-200 py-2 text-center">
+                {name}
+            </td>
             {days.map((day) =>
-                reserves.some((reserve) => dayFilter(reserve, day.dayOfWeek)) ? (
+                reserves.some((reserve) =>
+                    dayFilter(reserve, day.dayOfWeek)
+                ) ? (
                     <Cell
+                        tableId={id}
                         key={day.dayOfWeek}
                         reserves={reserves
-                            .filter((reserve) => dayFilter(reserve, day.dayOfWeek))
+                            .filter((reserve) =>
+                                dayFilter(reserve, day.dayOfWeek)
+                            )
                             .map((item) => item.id)}
                     />
                 ) : (
@@ -102,7 +137,12 @@ const Day = memo(({ number, week }: DayProps) => {
     const [currentDay, stringifyDay] = useCurrentDay(number, week)
 
     return (
-        <th className={clsx(currentDay && "bg-green-600 text-white", "border border-slate-300 p-2 ")}>
+        <th
+            className={clsx(
+                currentDay && "bg-green-600 text-white",
+                "border border-slate-300 p-2 "
+            )}
+        >
             <span>{stringifyDay}</span>
         </th>
     )
@@ -114,11 +154,19 @@ const useCurrentDay = (dayofWeek: number, weekNumber: number) => {
     const [isCurrentDay, setIsCurrentDay] = useState(false)
     const [stringifyDay, setStringifyDay] = useState("")
     useEffect(() => {
-        setIsCurrentDay(daysJS().week(weekNumber).day(dayofWeek).format("DD.MM.YY") === daysJS().format("DD.MM.YY"))
-        setStringifyDay(daysJS().week(weekNumber).day(dayofWeek).format("dd DD.MM.YY"))
+        setIsCurrentDay(
+            daysJS().week(weekNumber).day(dayofWeek).format("DD.MM.YY") ===
+                daysJS().format("DD.MM.YY")
+        )
+        setStringifyDay(
+            daysJS().week(weekNumber).day(dayofWeek).format("dd DD.MM.YY")
+        )
     }, [dayofWeek, weekNumber])
 
-    return useMemo(() => [isCurrentDay, stringifyDay], [isCurrentDay, stringifyDay])
+    return useMemo(
+        () => [isCurrentDay, stringifyDay],
+        [isCurrentDay, stringifyDay]
+    )
 }
 
 const WeekSelector = () => {
@@ -139,7 +187,9 @@ const WeekSelector = () => {
             <div className="flex items-center  rounded border py-2 px-4 text-sm">
                 <CalendarIcon className="mr-2 h-6 w-6" />
 
-                <span className=" after:mx-1 after:content-['-']">{firstDayOfSelectedWeek}</span>
+                <span className=" after:mx-1 after:content-['-']">
+                    {firstDayOfSelectedWeek}
+                </span>
                 <span className="mx-1">{lastDayOfSelectedWeek}</span>
             </div>
 
@@ -173,15 +223,89 @@ const HallplanesFilter = () => {
 }
 
 const SelectedReservesDialog = () => {
-    const selected = selectors.useSelectedReserves()
+    const record = selectors.useSelectedReserves()
 
-    console.log(selected)
+    const opened = selectors.useShowingDialog()
+    const handleClose = useEvent(events.closedDialog)
 
     return (
-        <div className="absolute inset-0 hidden">
-            <div className="absolute inset-0 bg-black/50"></div>
+        <ControlledModal
+            opened={opened}
+            onClose={handleClose}
+            title={`резервы стола ${record?.name} на дату `}
+            maxWidth="max-w-[80%]"
+        >
+            <ul className="mt-4 flex flex-col divide-y-2 px-4">
+                {record?.reserves.map((reserve) => (
+                    <ReserveRecordListItem reserve={reserve} key={reserve.id} />
+                ))}
+            </ul>
 
-            <div className="flex">asdsadsa</div>
-        </div>
+            <div className="mt-8">
+                <button
+                    onClick={handleClose}
+                    className="rounded-lg bg-rose-600 px-4 py-2 text-white"
+                >
+                    закрыть
+                </button>
+            </div>
+        </ControlledModal>
     )
 }
+
+interface ReserveRecordListItemProps {
+    reserve: TReserve
+}
+const ReserveRecordListItem = memo(
+    ({ reserve }: ReserveRecordListItemProps) => {
+        const isPastReserve = daysJS() > daysJS(Number(reserve.endDate))
+
+        return (
+            <li
+                className={clsx(
+                    isPastReserve && "bg-rose-600 text-white",
+                    "flex items-center justify-between rounded-lg px-4 py-2 text-sm font-normal"
+                )}
+            >
+                <div className="flex flex-col space-y-2">
+                    <span className="text-base font-semibold  after:content-[':']">
+                        начало резерва
+                    </span>
+                    <span>
+                        {daysJS(Number(reserve.startDate)).format(
+                            "DD.MM.YY HH:mm"
+                        )}
+                    </span>
+                </div>
+                <div className="flex flex-col space-y-2">
+                    <span className="text-base font-semibold after:content-[':']">
+                        окончание резерва
+                    </span>
+                    <span>
+                        {daysJS(Number(reserve.endDate)).format(
+                            "DD.MM.YY HH:mm"
+                        )}
+                    </span>
+                </div>
+                <div className="flex flex-col space-y-2">
+                    <span className="text-base font-semibold after:content-[':']">
+                        количество гостей
+                    </span>
+                    <span>{reserve.guests}</span>
+                </div>
+                <div className="flex flex-col space-y-2">
+                    <span className="text-base font-semibold after:content-[':']">
+                        предоплата
+                    </span>
+                    <span
+                        className={clsx(
+                            reserve.prepay > 0 && "after:content-['Р']"
+                        )}
+                    >
+                        {reserve.prepay > 0 ? reserve.prepay : "без предоплаты"}
+                    </span>
+                </div>
+            </li>
+        )
+    }
+)
