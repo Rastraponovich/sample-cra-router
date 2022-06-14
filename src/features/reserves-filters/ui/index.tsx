@@ -1,8 +1,12 @@
-import { AdjustmentsIcon } from "@heroicons/react/outline"
 import { useEvent } from "effector-react"
-import type { TDict, TPrepay } from "entities/booking/lib"
-import { Select } from "shared/ui/select"
+
 import { events, selectors } from "../model"
+
+import type { TDict, TPrepay } from "entities/booking/lib"
+
+import { AdjustmentsIcon } from "@heroicons/react/outline"
+
+import { Select } from "shared/ui/select"
 
 export const Filters = () => {
     const prepays = selectors.usePrepays()

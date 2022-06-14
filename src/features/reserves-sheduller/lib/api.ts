@@ -1,26 +1,17 @@
-import { AxiosResponse } from "axios"
-import { attach, createEffect } from "effector"
-import { bookingLib, bookingModel } from "entities/booking"
+import { attach } from "effector"
+import { bookingLib } from "entities/booking"
 import { TReservesParams } from "entities/booking/lib"
-import { BookingAPI } from "shared/lib/api"
 
-export const getTablesFx = attach<number, typeof BookingAPI.getTablesFx>({
-    effect: BookingAPI.getTablesFx,
+export const getTablesFx = attach<number, typeof bookingLib.API.getTablesFx>({
+    effect: bookingLib.API.getTablesFx,
     mapParams: (id) => id,
 })
 
 export const getHallplanesFx = attach({
-    effect: BookingAPI.getHallplanesFx,
+    effect: bookingLib.API.getHallplanesFx,
 })
 
-const getReservesFx = createEffect<TReservesParams, AxiosResponse<any>, Error>(
-    BookingAPI.getReserves
-)
-
-export const getReservesByTableFx = attach<
-    Partial<TReservesParams>,
-    typeof getReservesFx
->({
-    effect: getReservesFx,
+export const getReservesByTableFx = attach<Partial<TReservesParams>, typeof bookingLib.API.getReservesFx>({
+    effect: bookingLib.API.getReservesFx,
     mapParams: (params) => params,
 })

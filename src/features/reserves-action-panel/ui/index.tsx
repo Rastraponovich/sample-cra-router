@@ -3,9 +3,13 @@ import { ReactNode, memo } from "react"
 import { useEvent } from "effector-react"
 
 import { bookingModel } from "entities/booking"
-import { selectAllReservesClicked, toggleComactClicked } from "../model"
-
-import { deleteAllReservesClicked, deleteSelectedReservesClicked, resetAllFiltersClicked } from "../model"
+import {
+    selectAllReservesClicked,
+    toggleComactClicked,
+    deleteAllReservesClicked,
+    deleteSelectedReservesClicked,
+    resetAllFiltersClicked,
+} from "../model"
 
 import {
     TrashIcon,

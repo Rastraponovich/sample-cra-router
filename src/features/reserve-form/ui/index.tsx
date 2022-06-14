@@ -1,16 +1,8 @@
-import { Listbox, Transition } from "@headlessui/react"
-import {
-    PlusSmIcon,
-    MinusSmIcon,
-    CheckIcon,
-    SelectorIcon,
-    ChevronDoubleLeftIcon,
-    CalendarIcon,
-    ChevronDoubleDownIcon,
-} from "@heroicons/react/outline"
 import clsx from "clsx"
 import { useEvent } from "effector-react"
-import { TDict, THallplane, TTable, _statuses_ } from "entities/booking/lib"
+
+import { daysJS } from "shared/lib"
+
 import {
     createRef,
     Fragment,
@@ -24,10 +16,23 @@ import {
     useRef,
     useState,
 } from "react"
-import { daysJS } from "shared/lib/api"
-import { InputField } from "shared/ui/input-field"
-import { Select } from "shared/ui/select"
+import { TDict, THallplane, TTable, _statuses_ } from "entities/booking/lib"
+
 import { events, selectors } from "../model"
+
+import { Listbox, Transition } from "@headlessui/react"
+import {
+    PlusSmIcon,
+    MinusSmIcon,
+    CheckIcon,
+    SelectorIcon,
+    ChevronDoubleLeftIcon,
+    CalendarIcon,
+    ChevronDoubleDownIcon,
+} from "@heroicons/react/outline"
+
+import { Select } from "shared/ui/select"
+import { InputField } from "shared/ui/input-field"
 
 export const ReserveForm = () => {
     const tables = selectors.useTables()
@@ -92,32 +97,16 @@ export const ReserveForm = () => {
             </div>
 
             <div className="relative grid grid-cols-2  items-center justify-items-end  rounded-lg border py-2 px-4">
-                <span className="absolute left-2 -top-2.5 bg-white px-2 first-letter:uppercase">
-                    начало
-                </span>
-                <span className="justify-self-start">
-                    {daysJS(reserve.startDate).format("DD MMM YYYY HH:mm")}
-                </span>
-                <Calendar
-                    date={reserve.startDate}
-                    setDate={handleSetDate}
-                    id="startDate"
-                />
+                <span className="absolute left-2 -top-2.5 bg-white px-2 first-letter:uppercase">начало</span>
+                <span className="justify-self-start">{daysJS(reserve.startDate).format("DD MMM YYYY HH:mm")}</span>
+                <Calendar date={reserve.startDate} setDate={handleSetDate} id="startDate" />
             </div>
 
             <div className="relative grid grid-cols-2  items-center justify-items-end  rounded-lg border py-2 px-4">
-                <span className="absolute left-2 -top-2.5 bg-white px-2 first-letter:uppercase">
-                    конец
-                </span>
-                <span className="justify-self-start">
-                    {daysJS(reserve.endDate).format("DD MMM YYYY HH:mm")}
-                </span>
+                <span className="absolute left-2 -top-2.5 bg-white px-2 first-letter:uppercase">конец</span>
+                <span className="justify-self-start">{daysJS(reserve.endDate).format("DD MMM YYYY HH:mm")}</span>
 
-                <Calendar
-                    date={reserve.endDate}
-                    setDate={handleSetDate}
-                    id="endDate"
-                />
+                <Calendar date={reserve.endDate} setDate={handleSetDate} id="endDate" />
             </div>
 
             <FormActions />
@@ -133,9 +122,7 @@ const GuestsFormControl = () => {
             <span className="first-letter:uppercase">гости</span>
             <div className="col-span-2 flex items-center space-x-2">
                 <IncrementGuestsButton />
-                <span className="w-16 rounded-lg border py-2 px-4 text-center">
-                    {guests}
-                </span>
+                <span className="w-16 rounded-lg border py-2 px-4 text-center">{guests}</span>
                 <DecrementGuestsButton />
             </div>
         </div>
@@ -156,10 +143,7 @@ const FormActions = () => {
                 добавить
             </button>
 
-            <button
-                className="rounded-lg bg-rose-600 px-4 py-2 uppercase shadow-lg "
-                onClick={handleReset}
-            >
+            <button className="rounded-lg bg-rose-600 px-4 py-2 uppercase shadow-lg " onClick={handleReset}>
                 сбросить
             </button>
         </div>
@@ -170,11 +154,7 @@ const IncrementGuestsButton = () => {
     const handleIncrementGuestsClicked = useEvent(events.incrementGuestsClicked)
 
     return (
-        <button
-            type="button"
-            onClick={handleIncrementGuestsClicked}
-            className=" group text-white"
-        >
+        <button type="button" onClick={handleIncrementGuestsClicked} className=" group text-white">
             <PlusSmIcon className="h-9 w-9 rounded bg-green-600 group-active:shadow-inner group-active:shadow-black/30" />
         </button>
     )
@@ -203,13 +183,7 @@ interface TimeSelectProps {
     items: Array<string>
     caption: string
 }
-const TimeSelect = ({
-    containerClassName,
-    selected,
-    onSelect,
-    caption,
-    items,
-}: TimeSelectProps) => {
+const TimeSelect = ({ containerClassName, selected, onSelect, caption, items }: TimeSelectProps) => {
     return (
         <div className="flex items-center justify-between space-x-2">
             <span className="after:content-[':']">{caption}</span>
@@ -237,9 +211,7 @@ const TimeSelect = ({
                                     key={itemIdx}
                                     className={({ active }) =>
                                         `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                            active
-                                                ? "bg-amber-100 text-amber-900"
-                                                : "text-gray-900"
+                                            active ? "bg-amber-100 text-amber-900" : "text-gray-900"
                                         }`
                                     }
                                     value={item}
@@ -247,20 +219,13 @@ const TimeSelect = ({
                                     {({ selected }) => (
                                         <>
                                             <span
-                                                className={`block truncate ${
-                                                    selected
-                                                        ? "font-medium"
-                                                        : "font-normal"
-                                                }`}
+                                                className={`block truncate ${selected ? "font-medium" : "font-normal"}`}
                                             >
                                                 {item}
                                             </span>
                                             {selected ? (
                                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                                                    <CheckIcon
-                                                        className="h-5 w-5"
-                                                        aria-hidden="true"
-                                                    />
+                                                    <CheckIcon className="h-5 w-5" aria-hidden="true" />
                                                 </span>
                                             ) : null}
                                         </>
@@ -286,21 +251,14 @@ const Calendar = memo(({ date, setDate, id }: CalendarProps) => {
     const [daysInMonth, setDaysInMonth] = useState<Array<number>>([])
     const [selectedDay, setSelectedDay] = useState<number>(daysJS(date).date())
 
-    const [currentDay, setCurrentDay] = useState<number>(
-        daysJS(date).daysInMonth()
-    )
+    const [currentDay, setCurrentDay] = useState<number>(daysJS(date).daysInMonth())
 
-    const [currentMonth, setCurrentMonth] = useState<number>(
-        daysJS(date).month()
-    )
+    const [currentMonth, setCurrentMonth] = useState<number>(daysJS(date).month())
 
     const [resultDate, setResultDate] = useState<number>(date)
 
     const hours = useMemo(() => [...Array(24)].map((i, idx) => idx), [])
-    const minutes = useMemo(
-        () => [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55],
-        []
-    )
+    const minutes = useMemo(() => [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55], [])
 
     const [selectedHour, setSelectedHour] = useState(daysJS(date).hour())
     const [selectedMinutes, setSelectedMinutes] = useState(0)
@@ -392,11 +350,7 @@ const Calendar = memo(({ date, setDate, id }: CalendarProps) => {
                         <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
                             <div className="grid grid-cols-3 divide-x rounded-t-lg">
                                 <div className="flex max-h-[300px] w-full justify-between divide-x">
-                                    <TimeList
-                                        onSelect={setSelectedHour}
-                                        values={hours}
-                                        selected={selectedHour}
-                                    />
+                                    <TimeList onSelect={setSelectedHour} values={hours} selected={selectedHour} />
 
                                     <TimeList
                                         onSelect={setSelectedMinutes}
@@ -416,9 +370,7 @@ const Calendar = memo(({ date, setDate, id }: CalendarProps) => {
                                         </button>
                                         <div className="flex justify-center ">
                                             <span className=" text-xl font-bold first-letter:uppercase">
-                                                {daysJS()
-                                                    .month(currentMonth)
-                                                    .format("MMMM YYYY")}
+                                                {daysJS().month(currentMonth).format("MMMM YYYY")}
                                             </span>
                                         </div>
                                         <button
@@ -451,9 +403,7 @@ const Calendar = memo(({ date, setDate, id }: CalendarProps) => {
                                         </button>
                                     </div>
                                     <span className="mb-2 px-4 text-center">
-                                        {daysJS(resultDate).format(
-                                            "DD.MM.YYYY HH:mm"
-                                        )}
+                                        {daysJS(resultDate).format("DD.MM.YYYY HH:mm")}
                                     </span>
                                     <DaysGrid>
                                         {daysInMonth.map((day) => (
@@ -501,32 +451,22 @@ interface DayInMonthProps {
     currentMonth: number
     selectedDay: number
 }
-const DayInMonth = memo(
-    ({
-        selectedDay,
-        currentMonth,
-        day,
-        selectDay,
-        currentDay,
-    }: DayInMonthProps) => {
-        return (
-            <span
-                id={String(day)}
-                onClick={selectDay}
-                className={clsx(
-                    " flex h-8 w-8 cursor-pointer items-center justify-center rounded-full  p-1 font-semibold  duration-100 hover:bg-gray-300",
-                    day === currentDay &&
-                        daysJS().month() === currentMonth &&
-                        "bg-gray-200 text-gray-900",
+const DayInMonth = memo(({ selectedDay, currentMonth, day, selectDay, currentDay }: DayInMonthProps) => {
+    return (
+        <span
+            id={String(day)}
+            onClick={selectDay}
+            className={clsx(
+                " flex h-8 w-8 cursor-pointer items-center justify-center rounded-full  p-1 font-semibold  duration-100 hover:bg-gray-300",
+                day === currentDay && daysJS().month() === currentMonth && "bg-gray-200 text-gray-900",
 
-                    day === selectedDay && "bg-blue-600 !text-white"
-                )}
-            >
-                {day}
-            </span>
-        )
-    }
-)
+                day === selectedDay && "bg-blue-600 !text-white"
+            )}
+        >
+            {day}
+        </span>
+    )
+})
 DayInMonth.displayName = "DayInMonth"
 
 const DaysGrid = ({ children }: { children: ReactNode }) => {
@@ -541,9 +481,7 @@ const DaysGrid = ({ children }: { children: ReactNode }) => {
             leaveFrom="opacity-100 translate-x-0"
             leaveTo="opacity-0 -translate-x-full"
         >
-            <div className="grid grid-cols-7 place-items-center border-t p-1">
-                {children}
-            </div>
+            <div className="grid grid-cols-7 place-items-center border-t p-1">{children}</div>
         </Transition>
     )
 }
@@ -566,13 +504,10 @@ const TimeList = memo(({ values, selected, onSelect }: TimeListProps) => {
         }
     }
 
-    const refs = values.reduce(
-        (acc: Record<number, RefObject<HTMLLIElement | any>>, value) => {
-            acc[value] = createRef<HTMLLIElement>()
-            return acc
-        },
-        {}
-    )
+    const refs = values.reduce((acc: Record<number, RefObject<HTMLLIElement | any>>, value) => {
+        acc[value] = createRef<HTMLLIElement>()
+        return acc
+    }, {})
 
     useEffect(() => {
         refs[selected]?.current?.scrollIntoView({
@@ -586,13 +521,7 @@ const TimeList = memo(({ values, selected, onSelect }: TimeListProps) => {
         <div className="flex w-1/2 flex-col space-y-2">
             <ul className="flex  flex-col overflow-auto">
                 {values.map((value) => (
-                    <TimeListItem
-                        value={value}
-                        selected={selected}
-                        onSelected={onSelect}
-                        key={value}
-                        refs={refs}
-                    />
+                    <TimeListItem value={value} selected={selected} onSelected={onSelect} key={value} refs={refs} />
                 ))}
             </ul>
             <button
@@ -613,21 +542,16 @@ interface TimeListItemProps extends HTMLAttributes<HTMLLIElement> {
     value: number
     refs: any
 }
-const TimeListItem = memo(
-    ({ onSelected, selected, value, refs, ...props }: TimeListItemProps) => {
-        return (
-            <li
-                {...props}
-                ref={refs[value]}
-                onClick={() => onSelected(value)}
-                className={clsx(
-                    "  border-y p-2 text-center",
-                    selected === value && "bg-gray-200"
-                )}
-            >
-                {value}
-            </li>
-        )
-    }
-)
+const TimeListItem = memo(({ onSelected, selected, value, refs, ...props }: TimeListItemProps) => {
+    return (
+        <li
+            {...props}
+            ref={refs[value]}
+            onClick={() => onSelected(value)}
+            className={clsx("  border-y p-2 text-center", selected === value && "bg-gray-200")}
+        >
+            {value}
+        </li>
+    )
+})
 TimeListItem.displayName = "TimeListItem"

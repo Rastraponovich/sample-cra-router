@@ -1,14 +1,14 @@
 import { attach } from "effector"
-import { BookingAPI } from "shared/lib/api"
+import { bookingLib } from "entities/booking"
 
 export const getHallplanesFx = attach({
-    effect: BookingAPI.getHallplanesFx,
+    effect: bookingLib.API.getHallplanesFx,
 })
 
-export const getTablesFx = attach<number, typeof BookingAPI.getTablesFx>({
-    effect: BookingAPI.getTablesFx,
+export const getTablesFx = attach<number, typeof bookingLib.API.getTablesFx>({
+    effect: bookingLib.API.getTablesFx,
     mapParams: (id) => id,
 })
 export const PostReserveFx = attach({
-    effect: BookingAPI.postReserveFx,
+    effect: bookingLib.API.postReserveFx,
 })

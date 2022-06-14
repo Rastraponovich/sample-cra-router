@@ -1,9 +1,8 @@
 import { CalendarIcon } from "@heroicons/react/outline"
 import clsx from "clsx"
-import { useEvent, useList } from "effector-react"
+import { useEvent } from "effector-react"
 import { ActionPanel } from "features/reserves-action-panel"
 import { Filters } from "features/reserves-filters/ui"
-import React from "react"
 import { ScalesComponentAnimation } from "shared/ui/scale-animation-wrapper"
 import { ReserveCard } from "."
 import { bookingModel } from ".."
@@ -13,8 +12,6 @@ const ReservesList = () => {
     const filteredOrders = selectors.useReserves()
     const compact = bookingModel.selectors.useCompactList()
     const selectedReserves = bookingModel.selectors.useSelectedReserves()
-
-    const isLoading = selectors.useIsLoadingReserves()
 
     const handleSelectBooking = useEvent(events.selectReserve)
     return (

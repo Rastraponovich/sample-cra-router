@@ -1,13 +1,6 @@
 import { createDomain, sample } from "effector"
-import { useStore } from "effector-react"
 import { bookingModel } from "entities/booking"
-import {
-    TDict,
-    THallplane,
-    TReserve,
-    TTable,
-    _defaultReserve_,
-} from "entities/booking/lib"
+import { TDict, THallplane, TReserve, TTable, _defaultReserve_ } from "entities/booking/lib"
 import { debug } from "patronum"
 import { ChangeEvent, FormEvent } from "react"
 import { API } from "../lib"
@@ -21,12 +14,11 @@ const setReserveStatus = formDomain.createEvent<TDict>()
 const incrementGuestsClicked = formDomain.createEvent()
 const decrementGuestsClicked = formDomain.createEvent()
 
-const changeReserveNumber =
-    formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
+const changeReserveNumber = formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
 
 const changeReserveDate = formDomain.createEvent<{ date: number; id: string }>()
 
-const $reserve = formDomain
+export const $reserve = formDomain
     .createStore<TReserve>(_defaultReserve_)
     .reset([bookingModel.$reserves, resetClicked])
 
@@ -99,9 +91,7 @@ sample({
     target: API.getTablesFx,
 })
 
-const $tables = formDomain
-    .createStore<Array<TTable>>([])
-    .on(API.getTablesFx.doneData, (_, res) => res.data[0])
+export const $tables = formDomain.createStore<Array<TTable>>([]).on(API.getTablesFx.doneData, (_, res) => res.data[0])
 
 const reserveAddClicked = formDomain.createEvent<FormEvent<HTMLFormElement>>()
 reserveAddClicked.watch((e) => e.preventDefault())
@@ -112,18 +102,6 @@ sample({
     fn: (reserve, _) => reserve,
     target: API.PostReserveFx,
 })
-
-const useTables = () => useStore($tables)
-const useReserve = () => useStore($reserve)
-const useHallPlanes = () => useStore($hallPlanes)
-const useGuestsCount = () => useStore($reserve).guests
-
-export const selectors = {
-    useTables,
-    useReserve,
-    useHallPlanes,
-    useGuestsCount,
-}
 
 export const events = {
     selectTable,

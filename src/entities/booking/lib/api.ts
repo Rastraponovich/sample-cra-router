@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios"
-import { attach, createEffect, sample } from "effector"
-import { BookingAPI } from "shared/lib/api"
-import { TReserve, TReservesParams } from "./models"
+import { createEffect, sample } from "effector"
+import { BookingAPI } from "shared/lib"
+import { THallplane, TReserve, TReservesParams, TTable } from "./models"
 
 export const getReservesFx = createEffect<TReservesParams, AxiosResponse<[Array<TReserve>, number], Error>>(
     BookingAPI.getReserves
@@ -13,28 +13,30 @@ export const getFliteredReservesFx = createEffect<TReservesParams, AxiosResponse
 
 export const getReserveFx = createEffect<number, AxiosResponse<TReserve>>(BookingAPI.getReserve)
 
-export const getTablesFx = attach({
-    effect: BookingAPI.getTablesFx,
-})
+export const deleteAllReservesFx = createEffect(BookingAPI.deleteAllReserves)
 
-export const getHallPlanesFx = attach({
-    effect: BookingAPI.getHallplanesFx,
-})
+export const getHallplanesFx = createEffect<void, AxiosResponse<[Array<THallplane>, number], Error>>(
+    BookingAPI.getHallplanes
+)
 
-export const PostReserveFx = attach({
-    effect: BookingAPI.postReserveFx,
-})
+export const getTablesFx = createEffect<number | never | void, AxiosResponse<[Array<TTable>, number]>, Error>(
+    BookingAPI.getTables
+)
 
-export const deleteReserveById = attach({
-    effect: BookingAPI.deleteReserveByIdFx,
-})
+export const deleteReserveByIdFx = createEffect<number, AxiosResponse<any>, Error>(BookingAPI.deleteReserve)
+
+export const deleteSelectedReservesFx = createEffect<Array<number>, AxiosResponse<any>, Error>(
+    BookingAPI.deleteSelectedReserves
+)
+
+export const postReserveFx = createEffect<TReserve, AxiosResponse<TReserve>, Error>(BookingAPI.postReserve)
 
 sample({
     clock: [
-        BookingAPI.postReserveFx.doneData,
-        BookingAPI.deleteReserveByIdFx.doneData,
-        BookingAPI.deleteAllReservesFx.doneData,
-        BookingAPI.deleteSelectedReservesFx.doneData,
+        postReserveFx.doneData,
+        deleteReserveByIdFx.doneData,
+        deleteAllReservesFx.doneData,
+        deleteSelectedReservesFx.doneData,
     ],
     fn: () => ({}),
     target: getReservesFx,
