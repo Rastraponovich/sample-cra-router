@@ -1,6 +1,12 @@
 import { createDomain, sample } from "effector"
 import { bookingModel } from "entities/booking"
-import { TDict, THallplane, TReserve, TTable, _defaultReserve_ } from "entities/booking/lib"
+import {
+    TDict,
+    THallplane,
+    TReserve,
+    TTable,
+    _defaultReserve_,
+} from "entities/booking/lib"
 import { debug } from "patronum"
 import { ChangeEvent, FormEvent } from "react"
 import { API } from "../lib"
@@ -14,7 +20,8 @@ const setReserveStatus = formDomain.createEvent<TDict>()
 const incrementGuestsClicked = formDomain.createEvent()
 const decrementGuestsClicked = formDomain.createEvent()
 
-const changeReserveNumber = formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
+const changeReserveNumber =
+    formDomain.createEvent<ChangeEvent<HTMLInputElement>>()
 
 const changeReserveDate = formDomain.createEvent<{ date: number; id: string }>()
 
@@ -41,10 +48,6 @@ export const $reserve = formDomain
         ...state,
         [event.id]: event.date,
     }))
-// .on(changeReserveDate, (state, event) => ({
-//     ...state,
-//     [event.target.name]: event.target.value,
-// }))
 
 const getHallplanes = formDomain.createEvent()
 
@@ -91,7 +94,9 @@ sample({
     target: API.getTablesFx,
 })
 
-export const $tables = formDomain.createStore<Array<TTable>>([]).on(API.getTablesFx.doneData, (_, res) => res.data[0])
+export const $tables = formDomain
+    .createStore<Array<TTable>>([])
+    .on(API.getTablesFx.doneData, (_, res) => res.data[0])
 
 const reserveAddClicked = formDomain.createEvent<FormEvent<HTMLFormElement>>()
 reserveAddClicked.watch((e) => e.preventDefault())

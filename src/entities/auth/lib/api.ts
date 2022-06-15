@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse } from "axios"
 import { createEffect } from "effector"
-import { BookingAPI } from "shared/lib/api"
+import { BookingAPI } from "shared/lib"
 import type {
     TAccessToken,
     TCredentialUser,

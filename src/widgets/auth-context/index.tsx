@@ -3,14 +3,13 @@ import { authModel } from "entities/auth"
 import jwtDecode from "jwt-decode"
 import { createContext, useContext, useEffect, useLayoutEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { daysJS } from "shared/lib/api"
+import { daysJS } from "shared/lib"
 
 const AuthContext = createContext({})
 
 interface AuthProviderProps {}
 const AuthProvider = (props: AuthProviderProps) => {
     const logout = useEvent(authModel.events.logout)
-    const registration = useEvent(authModel.events.registration)
     const checkAuth = useEvent(authModel.events.checkAuth)
     const isAuth = authModel.selectors.useIsAuth()
 
@@ -36,7 +35,12 @@ const AuthProvider = (props: AuthProviderProps) => {
         if (!token) navigate("/auth?login=true", { state: { from: location } })
     }, [isAuth])
 
-    return <AuthContext.Provider value={{ logout, registration, isAuth, checkAuth }} {...props} />
+    return (
+        <AuthContext.Provider
+            value={{ logout, isAuth, checkAuth }}
+            {...props}
+        />
+    )
 }
 
 const useAuth = () => useContext(AuthContext)

@@ -2,7 +2,6 @@ import { createEvent, sample } from "effector"
 import { bookingLib, bookingModel } from "entities/booking"
 import type { TReserve } from "entities/booking/lib"
 import { reservesFilterModel } from "features/reserves-filters"
-import { BookingAPI } from "shared/lib"
 
 export const toggleComactClicked = createEvent()
 
@@ -33,11 +32,11 @@ sample({
     clock: selectAllReservesClicked,
     source: [bookingModel.$filteredReserves, bookingModel.$selectedReserves],
     //@ts-ignore
-    fn: ([filteredReserves, selectedReserves]: [Array<TReserve>, Array<number>], _) => {
-        const selectedAll = filteredReserves.length === selectedReserves.length
-
-        if (selectedAll) return []
-
+    fn: (
+        [filteredReserves, selectedReserves]: [Array<TReserve>, Array<number>],
+        _
+    ) => {
+        if (filteredReserves.length === selectedReserves.length) return []
         return filteredReserves.map((reserve) => reserve.id)
     },
 

@@ -3,7 +3,8 @@ import { createEffect, createStore, restore, sample } from "effector"
 import { createForm } from "effector-forms"
 import { useStore } from "effector-react"
 import { pending } from "patronum"
-import { BookingAPI, rules } from "shared/lib/api"
+import { BookingAPI } from "shared/lib"
+import { rules } from "shared/lib/api"
 import { TUser } from "../lib"
 
 export const getMeFx = createEffect<void, AxiosResponse<TUser>, Error>(

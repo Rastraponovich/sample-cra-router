@@ -4,12 +4,14 @@ import { AddReserveModal } from "features/add-reserve"
 import { Drawer } from "features/drawer"
 import { Poupup } from "features/poupup"
 import { useMemo } from "react"
-import { Link, Outlet, useLocation } from "react-router-dom"
+import { Outlet, useLocation } from "react-router-dom"
+import { BreadCrumbs } from "shared"
 import { SpinerLoader } from "shared/ui/spinner-loading"
-import { routes } from "../../shared/lib"
+import { routes } from "shared/lib"
 import { Footer } from "../footer"
 import { Header } from "../header"
 import { Nav } from "../navigations"
+import { ChevronRightIcon } from "@heroicons/react/outline"
 
 export const MainLayout = () => {
     const isAppStarted = appModel.selectors.useAppStarted()
@@ -30,7 +32,14 @@ export const MainLayout = () => {
             </Header>
             <Drawer />
             <main className="flex grow flex-col">
-                <BreadCrumbs />
+                <BreadCrumbs
+                    className="flex items-center space-x-2 px-10 py-5 text-gray-900"
+                    listClassName="flex space-x-2 items-center"
+                    inactiveItemClassName="text-gray-500 hover:bg-gray-200"
+                    activeItemClassName="font-semibold"
+                    listItemClassName="p-2 rounded-lg items-center "
+                    separator={<ChevronRightIcon className="h-3 w-3" />}
+                />
                 {!isAppStarted ? <FirstLoader /> : <Outlet />}
             </main>
             <Poupup />
@@ -61,70 +70,5 @@ const FirstLoader = () => {
                 ))}
             </div>
         </div>
-    )
-}
-
-type TBreadCrumbs = {
-    path: string
-    name: string
-    id: number
-}
-
-const BreadCrumbs = () => {
-    const location = useLocation()
-
-    const paths = useMemo(
-        () =>
-            location.pathname
-                .split("/")
-                .reduce(
-                    (
-                        acc: TBreadCrumbs[],
-                        path: string,
-                        currentIndex,
-                        array
-                    ) => {
-                        if (currentIndex === 0)
-                            return [
-                                {
-                                    id: currentIndex,
-                                    name: "home",
-                                    path: "/",
-                                },
-                            ]
-                        if (currentIndex === 1)
-                            return [
-                                ...acc,
-                                { id: currentIndex, name: path, path },
-                            ]
-                        if (currentIndex <= array.length - 1)
-                            return [
-                                ...acc,
-                                {
-                                    id: currentIndex,
-                                    name: path,
-                                    path: `/${array[currentIndex - 1]}/${path}`,
-                                },
-                            ]
-                        return []
-                    },
-                    []
-                ),
-
-        [location]
-    )
-
-    return (
-        <nav className="flex items-center space-x-2 px-10 ">
-            {paths.map(({ path, id, name }) => (
-                <Link
-                    to={path}
-                    key={id}
-                    className="first-letter:uppercase not-last-child:after:mx-2 not-last-child:after:content-['>']"
-                >
-                    {name}
-                </Link>
-            ))}
-        </nav>
     )
 }
