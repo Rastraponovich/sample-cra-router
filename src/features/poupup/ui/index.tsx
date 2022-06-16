@@ -1,42 +1,43 @@
 import { Transition } from "@headlessui/react"
 import { useEvent } from "effector-react"
-import { Fragment, useEffect, useState } from "react"
+import { Fragment, useCallback, useEffect, useState } from "react"
 import { poupupModel } from ".."
 
 export const Poupup = () => {
     const opened = poupupModel.selectors.useOpenedPoupup()
     const handleClose = useEvent(poupupModel.events.closePoupup)
 
+    const onClose = useCallback(() => {
+        handleClose()
+    }, [])
+
     const [show, setShow] = useState<boolean>(false)
 
     useEffect(() => {
-        if (opened) {
-            setShow(opened)
+        setShow(opened)
 
-            const timer = setTimeout(() => {
-                setShow((prev) => !prev)
-                handleClose()
-            }, 3000)
-            return () => clearTimeout(timer)
-        }
+        const timer = setTimeout(() => {
+            onClose()
+        }, 3000)
+        return () => clearTimeout(timer)
     }, [opened])
 
     return (
         <Transition
             as="div"
             show={show}
-            appear
-            className="absolute bottom-8 left-8 flex flex-col will-change-auto"
-            enter="duration-700 ease-in-out transform "
+            // appear
+            className="fixed left-8 bottom-8 z-50 ease-linear "
+            enter="duration-300 ease-linear transform transition"
             enterFrom="translate-y-full"
             enterTo="translate-y-0"
-            leave="duration-300 ease-in-out transform transition-opacity ease-linear"
+            leave="duration-300  transform transition ease-linear"
             leaveFrom="translate-y-0 opacity-100"
             leaveTo="translate-y-full opacity-0"
         >
             <div
                 className="
-            rounded-lg bg-green-600 px-10 py-5 shadow-lg"
+             rounded-lg bg-green-600 px-10 py-5 shadow-lg "
             >
                 <Message />
             </div>

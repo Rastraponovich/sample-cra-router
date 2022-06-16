@@ -19,6 +19,7 @@ export const dayFilter = (reserve: TReserve, dayOfWeek: number): boolean => {
 }
 
 export const _translateDict_: Record<string, string> = {
+    "/": "Booking",
     booking: "Резервы",
     scheduller: "Расписание",
     add: "Новый резерв",

@@ -16,8 +16,8 @@ export const SchedullerPage = () => {
     }, [])
 
     return (
-        <div className=" relative z-10 flex grow flex-col space-y-2 px-4 py-2 font-sans md:space-y-4 md:px-10 md:py-5">
-            <Loader />
+        <div className=" relative z-10 flex grow flex-col space-y-2  bg-gray-200 px-4 py-2 font-sans md:space-y-4 md:px-10 md:py-5">
+            {/* <Loader /> */}
 
             <AddReserveButton />
 

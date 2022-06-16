@@ -1,13 +1,39 @@
+import { lazy } from "react"
 import { Routes, Route, Navigate, Outlet } from "react-router-dom"
-import { Home } from "../../pages/home"
-import { MainLayout } from "../../widgets/main-layout"
-import { BookingPage } from "pages/booking"
-import { SchedullerPage } from "pages/booking/scheduller"
-import { AuthPage } from "pages/auth"
+import { MainLayout } from "widgets/main-layout"
 import { authModel } from "entities/auth"
-import { NotFoundPage } from "pages/404"
-import { ProfilePage } from "pages/profile"
-import { AddReservePage } from "pages/booking/add"
+
+const Home = lazy(() =>
+    import("pages/home").then((module) => ({ default: module.Home }))
+)
+
+const NotFoundPage = lazy(() =>
+    import("pages/404").then((module) => ({ default: module.NotFoundPage }))
+)
+
+const BookingPage = lazy(() =>
+    import("pages/booking").then((module) => ({ default: module.BookingPage }))
+)
+
+const ProfilePage = lazy(() =>
+    import("pages/profile").then((module) => ({ default: module.ProfilePage }))
+)
+
+const AuthPage = lazy(() =>
+    import("pages/auth").then((module) => ({ default: module.AuthPage }))
+)
+
+const SchedullerPage = lazy(() =>
+    import("pages/booking/scheduller").then((module) => ({
+        default: module.SchedullerPage,
+    }))
+)
+
+const AddReservePage = lazy(() =>
+    import("pages/booking/add").then((module) => ({
+        default: module.AddReservePage,
+    }))
+)
 
 export const Router = () => {
     return (

@@ -1,5 +1,6 @@
 import { createDomain, sample } from "effector"
 import { useStore } from "effector-react"
+import { bookingLib, bookingModel } from "entities/booking"
 
 const PoupupDomain = createDomain("PoupupDomain")
 

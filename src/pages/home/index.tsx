@@ -1,7 +1,9 @@
 import { CalculatorIcon, ClockIcon, WifiIcon } from "@heroicons/react/outline"
+import { useTitle } from "shared/lib/dom"
 import { NavCard } from "shared/ui/nav-card"
 
 export const Home = () => {
+    useTitle("Booking - сервис бронирования")
     return (
         <div className="flex flex-col px-10 py-5">
             <section className="flex flex-col">

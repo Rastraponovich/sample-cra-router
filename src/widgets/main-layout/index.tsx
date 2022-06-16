@@ -7,7 +7,7 @@ import { useMemo } from "react"
 import { Outlet, useLocation } from "react-router-dom"
 import { BreadCrumbs } from "shared"
 import { SpinerLoader } from "shared/ui/spinner-loading"
-import { routes } from "shared/lib"
+import { routes, _translateDict_ } from "shared/lib"
 import { Footer } from "../footer"
 import { Header } from "../header"
 import { Nav } from "../navigations"
@@ -19,8 +19,10 @@ export const MainLayout = () => {
     const location = useLocation()
 
     const pageName = useMemo(() => {
+        if (location.pathname === "/") return _translateDict_["/"]
         const names = location.pathname.split("/")
-        return names[names.length - 1]
+
+        return _translateDict_[names[names.length - 1]]
     }, [location])
 
     return (
